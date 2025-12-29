@@ -36,6 +36,10 @@
       --radius: 18px;
       --radius2: 26px;
       --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+      /* cursor glow vars (desktop only) */
+      --mx: 50%;
+      --my: 30%;
     }
 
     *{box-sizing:border-box}
@@ -50,6 +54,37 @@
         radial-gradient(900px 700px at 60% 85%, rgba(52,214,255,.12), transparent 55%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
+    }
+
+    /* Softer moving glow follows cursor (desktop only) */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:-160px;
+      z-index:-3;
+      pointer-events:none;
+      background:
+        radial-gradient(520px 420px at var(--mx) var(--my), rgba(52,214,255,.16), transparent 60%),
+        radial-gradient(680px 520px at calc(var(--mx) + 10%) calc(var(--my) + 10%), rgba(91,124,255,.16), transparent 62%),
+        radial-gradient(740px 560px at calc(var(--mx) - 12%) calc(var(--my) + 18%), rgba(138,92,255,.14), transparent 65%),
+        linear-gradient(180deg, rgba(0,0,0,.72), rgba(0,0,0,.86));
+      filter: blur(0px);
+      opacity:.95;
+    }
+
+    /* Subtle grid */
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      pointer-events:none;
+      opacity:.14;
+      background-image:
+        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at 35% 25%, rgba(0,0,0,.9), transparent 60%);
     }
 
     /* Animated BG */
@@ -98,6 +133,7 @@
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
       box-shadow: 0 0 34px rgba(91,124,255,.18);
+      flex:0 0 auto;
     }
     .loaderName{ font-weight:1000; font-size:18px; letter-spacing:.2px; }
     .loaderSub{ color:var(--muted); font-weight:800; font-size:13px; margin-top:2px; }
@@ -132,19 +168,27 @@
     }
     @keyframes spin{to{transform:rotate(360deg)}}
 
-    /* Top bar */
+    /* Top bar (FIXED mobile overlap) */
     .topbar{
       position:sticky; top:0; z-index:80;
       display:flex; align-items:center; justify-content:space-between;
+      gap: 12px;
       padding:14px 18px;
       border-bottom:1px solid rgba(255,255,255,.08);
       background: rgba(3,4,20,.56);
       backdrop-filter: blur(16px);
     }
+
+    /* allow wrapping on small devices (stops smash) */
+    @media (max-width: 560px){
+      .topbar{ flex-wrap: wrap; }
+    }
+
     .brand{
       display:flex; gap:12px; align-items:center;
       text-decoration:none; color:var(--text);
       min-width: 0;
+      flex: 1 1 auto;
     }
     .logo{
       width:42px; height:42px; border-radius:14px;
@@ -153,10 +197,11 @@
       background: rgba(255,255,255,.06);
       flex: 0 0 auto;
     }
-    .bname{font-weight:900; letter-spacing:.2px}
-    .btag{font-size:12px; color:var(--muted); margin-top:2px}
+    .brand > div{ min-width:0; }
+    .bname{font-weight:900; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    .btag{font-size:12px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 
-    .nav{ display:flex; gap:16px; align-items:center; }
+    .nav{ display:flex; gap:16px; align-items:center; flex: 0 0 auto; }
     .nav a{
       color:var(--muted);
       text-decoration:none;
@@ -165,10 +210,19 @@
       padding:10px 10px;
       border-radius:12px;
       transition:.18s ease;
+      white-space:nowrap;
     }
     .nav a:hover{ color:var(--text); background: rgba(255,255,255,.06); }
 
-    .actions{display:flex; gap:10px; align-items:center}
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
       gap:10px;
@@ -184,6 +238,7 @@
       box-shadow: 0 18px 50px rgba(0,0,0,.25);
       user-select:none;
       will-change: transform;
+      white-space:nowrap;
     }
     .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07)}
     .btn:active{transform: translateY(0px)}
@@ -196,46 +251,20 @@
     .btn.ghost{background: rgba(255,255,255,.04)}
     .iconbtn{ width:44px; height:44px; padding:0; border-radius:16px; }
 
+    /* Hide desktop nav + keep drawer button at <=920px */
     .menuBtn{display:none}
     @media (max-width: 920px){
       .nav{display:none}
       .menuBtn{display:inline-flex}
     }
-    /* ===== PHONE TOPBAR FIX (NO OVERLAP) ===== */
-@media (max-width: 520px){
-  .topbar{
-    flex-wrap: wrap;
-    gap: 10px;
-  }
 
-  .brand{
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  .bname, .btag{
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 180px;
-  }
-
-  .actions{
-    width: 100%;
-    justify-content: flex-end;
-  }
-
-  /* hide buttons that cause collision */
-  #youtubeBtn,
-  #botBtn,
-  #copyInvite{
-    display: none;
-  }
-
-  .menuBtn{
-    display: inline-flex;
-  }
-}
+    /* IMPORTANT: on very small phones, topbar should not show long labels */
+    .labelHideMobile{ display:inline; }
+    @media (max-width: 560px){
+      .labelHideMobile{ display:none; }   /* hides "YouTube"/"Join Discord"/"Add Bot" text */
+      .topbar .actions{ width:100%; justify-content:space-between; }
+      .topbar .actions .btn{ padding:12px 12px; }
+    }
 
     /* Mobile drawer */
     .drawer{
@@ -254,8 +283,14 @@
       padding: 14px;
       box-shadow: var(--shadow);
       display:grid; gap:10px;
+      animation: drawerIn .22s ease both;
+      transform-origin: top right;
     }
-    .drawerPanel a{
+    @keyframes drawerIn{
+      from{ opacity:0; transform: translateY(-6px) scale(.98); }
+      to{ opacity:1; transform: translateY(0) scale(1); }
+    }
+    .drawerPanel a, .drawerPanel button{
       text-decoration:none;
       color:var(--muted);
       font-weight:900;
@@ -264,7 +299,7 @@
       border:1px solid rgba(255,255,255,.08);
       background: rgba(255,255,255,.05);
     }
-    .drawerPanel a:hover{color:var(--text); background: rgba(255,255,255,.07)}
+    .drawerPanel a:hover, .drawerPanel button:hover{color:var(--text); background: rgba(255,255,255,.07)}
     .closeX{justify-self:end}
 
     /* ---------- GATE (Free / Premium) ---------- */
@@ -359,7 +394,7 @@
                   radial-gradient(circle at 70% 40%, rgba(91,124,255,.18), transparent 58%),
                   radial-gradient(circle at 55% 75%, rgba(138,92,255,.16), transparent 58%);
       filter: blur(38px);
-      opacity:.9;
+      opacity:.85;
       transition: opacity .2s ease;
       pointer-events:none;
     }
@@ -417,6 +452,12 @@
       font-weight:900;
       cursor:pointer;
       transition: transform .14s ease, background .14s ease, border-color .14s ease;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      white-space:nowrap;
     }
     .miniBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
     .miniBtn.primary{
@@ -543,6 +584,7 @@
       width:46px; height:46px; border-radius:16px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.06);
+      flex:0 0 auto;
     }
     .panelTitle{font-weight:1000; font-size:16px}
     .panelDesc{color:var(--muted); margin:6px 0 12px; line-height:1.55; font-weight:800}
@@ -616,18 +658,28 @@
     .footRight a{color:var(--muted); text-decoration:none; font-weight:1000}
     .footRight a:hover{color:var(--text)}
 
-    /* ---------- PREMIUM VIEW (FIXED PC LAYOUT) ---------- */
+    /* ---------- PREMIUM VIEW (Upgraded: prices first) ---------- */
     .premWrap{ padding: 28px 0 18px; }
     .premGrid{
       display:grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+      grid-template-columns: minmax(0, 1.0fr) minmax(0, 1.0fr);
       gap: 14px;
       align-items:start;
     }
     @media (max-width: 1100px){
       .premGrid{ grid-template-columns: 1fr; }
     }
-    .premLeft, .premRight{ min-width: 0; }
+
+    .premRightCard{
+      padding: 16px;
+      border-radius: 28px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      min-width: 0;
+    }
 
     .premHero{
       padding: 18px;
@@ -637,6 +689,7 @@
       box-shadow: var(--shadow);
       overflow:hidden;
       position:relative;
+      min-width: 0;
     }
     .premHeroGlow{
       position:absolute; inset:-160px;
@@ -649,11 +702,10 @@
       pointer-events:none;
       animation: float 12s ease-in-out infinite;
     }
-    .premTopPill{ position:relative; }
     .premTitleBig{
       position:relative;
       margin: 10px 0 8px;
-      font-size: clamp(44px, 5vw, 78px);
+      font-size: clamp(40px, 4.8vw, 72px);
       letter-spacing:-1.3px;
       line-height:1.02;
       font-weight:1000;
@@ -751,26 +803,8 @@
     }
     .cmdCopy:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
 
-    .premRightCard{
-      padding: 16px;
-      border-radius: 28px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-      min-width: 0;
-    }
-    .premRightCard h3{
-      margin: 0 0 10px;
-      font-size: 18px;
-      font-weight:1000;
-      letter-spacing:-.2px;
-      position:relative;
-    }
-
     .priceGrid{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px; margin-top: 12px; }
-    @media (max-width: 1100px){ .priceGrid{grid-template-columns: 1fr; } }
+    @media (max-width: 720px){ .priceGrid{grid-template-columns: 1fr; } }
 
     .priceCard{
       border-radius: 22px;
@@ -795,6 +829,7 @@
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.05);
       font-size:12px;
+      white-space:nowrap;
     }
     .priceBadge.best{
       border-color: rgba(52,214,255,.28);
@@ -819,7 +854,7 @@
       display:none;
       background: rgba(0,0,0,.66);
       place-items:center;
-      align-items: start; /* prevent pushing out of viewport */
+      align-items: start;
       padding: 18px;
       overflow:auto;
     }
@@ -833,10 +868,11 @@
       backdrop-filter: blur(18px);
       box-shadow: var(--shadow);
       padding: 16px;
-      overflow:auto; /* was hidden - caused cut/bug on PC */
+      overflow:auto;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
       position:relative;
+      animation: popIn .2s ease both;
     }
     .modalGlow{
       position:absolute; inset:-180px;
@@ -892,80 +928,21 @@
       display:none;
       box-shadow: 0 18px 60px rgba(0,0,0,.35);
       z-index:140;
+      transition: transform .14s ease, background .14s ease;
     }
+    .toTop:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
     .toTop.show{display:inline-grid; place-items:center}
 
     /* Lock page scroll when modal is open */
     html.modalOpen, body.modalOpen { overflow:hidden; }
 
     /* Smooth fade/slide in for panels */
-    .fadeIn{
-      animation: fadeIn .42s ease both;
-    }
+    .fadeIn{ animation: fadeIn .42s ease both; }
     @keyframes fadeIn{
       from{ opacity:0; transform: translateY(8px); filter: blur(2px); }
       to{ opacity:1; transform: translateY(0); filter: blur(0); }
     }
-
-    /* Cursor glow (desktop) */
-    .cursorDot, .cursorRing{
-      position: fixed;
-      left: 0; top: 0;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      opacity: 0;
-      transition: opacity .2s ease;
-    }
-    .cursorDot{
-      width: 8px; height: 8px;
-      border-radius: 999px;
-      background: rgba(160, 120, 255, .9);
-      filter: blur(.2px);
-    }
-    .cursorRing{
-      width: 44px; height: 44px;
-      border-radius: 999px;
-      border: 1px solid rgba(160, 120, 255, .35);
-      box-shadow:
-        0 0 30px rgba(160, 120, 255, .18),
-        0 0 90px rgba(80, 140, 255, .10);
-      backdrop-filter: blur(2px);
-    }
-    @media (hover:none){
-      .cursorDot, .cursorRing{ display:none !important; }
-    }
-
-    /* Reduce those harsh black blocks by smoothing background layers */
-    body:before{
-      content:"";
-      position: fixed;
-      inset: -120px;
-      z-index: -3;
-      background:
-        radial-gradient(circle at 20% 15%, rgba(140, 90, 255, .18), transparent 55%),
-        radial-gradient(circle at 85% 25%, rgba(70, 170, 255, .16), transparent 58%),
-        radial-gradient(circle at 60% 95%, rgba(255, 120, 210, .10), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,.76), rgba(0,0,0,.86));
-      filter: blur(0px);
-      pointer-events:none;
-    }
-
-    /* Subtle grid like the reference screenshot */
-    body:after{
-      content:"";
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      pointer-events:none;
-      opacity: .14;
-      background-image:
-        linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: radial-gradient(circle at 35% 25%, rgba(0,0,0,.9), transparent 60%);
-    }
-</style>
+  </style>
 </head>
 
 <body id="top">
@@ -1009,10 +986,17 @@
     </nav>
 
     <div class="actions">
-      <a class="btn ghost" id="youtubeBtn" href="#" target="_blank" rel="noreferrer" title="YouTube">▶️ YouTube</a>
+      <!-- On mobile only icons show (labelHideMobile hidden) -->
+      <a class="btn ghost" id="youtubeBtn" href="#" target="_blank" rel="noreferrer" title="YouTube">
+        ▶️ <span class="labelHideMobile">YouTube</span>
+      </a>
       <button class="btn ghost iconbtn" id="copyInvite" type="button" title="Copy Discord server invite">📋</button>
-      <a class="btn primary" id="inviteBtn" href="#" target="_blank" rel="noreferrer">💬 Join Discord</a>
-      <a class="btn ghost" id="botBtn" href="#" target="_blank" rel="noreferrer" title="Add the bot to your server">➕ Add Bot</a>
+      <a class="btn primary" id="inviteBtn" href="#" target="_blank" rel="noreferrer" title="Join Discord">
+        💬 <span class="labelHideMobile">Join</span>
+      </a>
+      <a class="btn ghost" id="botBtn" href="#" target="_blank" rel="noreferrer" title="Add the bot to your server">
+        ➕ <span class="labelHideMobile">Add Bot</span>
+      </a>
       <button class="btn ghost iconbtn menuBtn" id="menuBtn" type="button" aria-label="Open menu">☰</button>
     </div>
   </header>
@@ -1240,43 +1224,11 @@
   <div class="view" id="premView">
     <main class="container premWrap">
       <div class="premGrid">
-        <div class="premLeft">
-          <div class="premHero reveal">
-            <div class="premHeroGlow" aria-hidden="true"></div>
 
-            <div class="premTopPill">
-              <div class="pill"><span class="dot"></span> Premium • Keys • Extra Commands</div>
-            </div>
-
-            <div class="premTitleBig">Nozzarri Tickets <span class="grad">Premium</span></div>
-
-            <p class="premSub">
-              Premium unlocks extra commands and customization for your server.
-              Buy a key, then contact the owner to receive your redeem code. (Manual verification = safer.)
-            </p>
-
-            <div class="premActions">
-              <button class="btn primary" id="premBuyOpen" type="button">💎 Buy Premium</button>
-              <button class="btn ghost" id="premCmdsScroll" type="button">✨ Premium commands</button>
-              <button class="btn ghost" id="copyOwner" type="button">👤 Copy owner</button>
-              <button class="btn ghost" id="backGate3" type="button">⬅ Free / Premium</button>
-            </div>
-
-            <div class="tabs" style="margin-top:16px;">
-              <button class="tabBtn active" id="tabFeatures" type="button">Features</button>
-              <button class="tabBtn" id="tabCommands" type="button">Commands</button>
-              <button class="tabBtn" id="tabHow" type="button">How to buy</button>
-            </div>
-
-            <div class="premPanel" id="premPanel">
-              <!-- Filled by JS -->
-            </div>
-          </div>
-        </div>
-
+        <!-- RIGHT FIRST (Prices) -->
         <div class="premRight">
           <div class="premRightCard reveal">
-            <h3>Premium Plans</h3>
+            <h3 style="margin:0;font-size:18px;font-weight:1000;letter-spacing:-.2px;">Premium Plans</h3>
 
             <div class="priceGrid">
               <div class="priceCard fadeIn" data-plan="15 DAYS" data-price="1">
@@ -1339,6 +1291,38 @@
             </div>
           </div>
         </div>
+
+        <!-- LEFT (Premium info + commands) -->
+        <div class="premLeft">
+          <div class="premHero reveal">
+            <div class="premHeroGlow" aria-hidden="true"></div>
+
+            <div class="pill" style="position:relative;"><span class="dot"></span> Premium • Keys • Extra Commands</div>
+
+            <div class="premTitleBig">Nozzarri Tickets <span class="grad">Premium</span></div>
+
+            <p class="premSub">
+              Premium unlocks extra commands and customization for your server.
+              Buy a key, then contact the owner to receive your redeem code. (Manual verification = safer.)
+            </p>
+
+            <div class="premActions">
+              <button class="btn primary" id="premBuyOpen" type="button">💎 Buy Premium</button>
+              <button class="btn ghost" id="premCmdsScroll" type="button">✨ Premium commands</button>
+              <button class="btn ghost" id="copyOwner" type="button">👤 Copy owner</button>
+              <button class="btn ghost" id="backGate3" type="button">⬅ Free / Premium</button>
+            </div>
+
+            <div class="tabs" style="margin-top:16px;">
+              <button class="tabBtn active" id="tabFeatures" type="button">Features</button>
+              <button class="tabBtn" id="tabCommands" type="button">Commands</button>
+              <button class="tabBtn" id="tabHow" type="button">How to buy</button>
+            </div>
+
+            <div class="premPanel" id="premPanel"></div>
+          </div>
+        </div>
+
       </div>
     </main>
   </div>
@@ -1405,25 +1389,29 @@
       `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=bot%20applications.commands&permissions=${PERMISSIONS}`;
 
     const YT_URL = "https://www.youtube.com/channel/UC8Ovc5xT-tXXIjxLnVe72dQ";
-
     const SERVER_INVITE_URL = "https://discord.gg/FHRSPyXw";
 
     // Your LTC address
     const LTC_ADDRESS = "LPxonLCBtrcHnYAompBSXsboTfJQ8Eyuz8";
 
-    // ===== LINKS =====
-    [inviteBtn, inviteBtn2, inviteBtn3].forEach(a => { if(a) a.href = SERVER_INVITE_URL; });
-    [botBtn, botBtn2, botBtn3].forEach(a => { if(a) a.href = BOT_INVITE_URL; });
+    // ===== LINKS (safe if ids are not global) =====
+    const $ = (id) => document.getElementById(id);
 
-    [youtubeBtn, youtubeBtn2, youtubeBtn3, premYoutube, footerYoutube].forEach(a => { if(a) a.href = YT_URL; });
-    const footerDiscord = document.getElementById("footerDiscord");
+    ["inviteBtn","inviteBtn2","inviteBtn3"].forEach(id => { const a=$(id); if(a) a.href = SERVER_INVITE_URL; });
+    ["botBtn","botBtn2","botBtn3"].forEach(id => { const a=$(id); if(a) a.href = BOT_INVITE_URL; });
+
+    ["youtubeBtn","youtubeBtn2","youtubeBtn3","premYoutube","footerYoutube"].forEach(id => {
+      const a=$(id); if(a) a.href = YT_URL;
+    });
+
+    const footerDiscord = $("footerDiscord");
     if(footerDiscord) footerDiscord.href = SERVER_INVITE_URL;
 
-    document.getElementById("year").textContent = new Date().getFullYear();
-    document.getElementById("ownerName").textContent = OWNER_DISCORD;
+    $("year").textContent = new Date().getFullYear();
+    $("ownerName").textContent = OWNER_DISCORD;
 
     // ===== TOAST + COPY =====
-    const toast = document.getElementById("toast");
+    const toast = $("toast");
     let toastTimer = null;
 
     function showToast(msg){
@@ -1443,14 +1431,14 @@
     }
 
     // copy buttons
-    document.getElementById("copyInvite")?.addEventListener("click", ()=>copyText(SERVER_INVITE_URL));
-    document.getElementById("copyInvite2")?.addEventListener("click", ()=>copyText(SERVER_INVITE_URL));
-    document.getElementById("copyBot2")?.addEventListener("click", ()=>copyText(BOT_INVITE_URL));
-    document.getElementById("copyInvite3")?.addEventListener("click", ()=>copyText(SERVER_INVITE_URL));
-    document.getElementById("copySite")?.addEventListener("click", ()=>copyText(location.href));
+    $("copyInvite")?.addEventListener("click", ()=>copyText(SERVER_INVITE_URL));
+    $("copyInvite2")?.addEventListener("click", ()=>copyText(SERVER_INVITE_URL));
+    $("copyBot2")?.addEventListener("click", ()=>copyText(BOT_INVITE_URL));
+    $("copyInvite3")?.addEventListener("click", ()=>copyText(SERVER_INVITE_URL));
+    $("copySite")?.addEventListener("click", ()=>copyText(location.href));
 
-    document.getElementById("copyOwner")?.addEventListener("click", ()=>copyText(OWNER_DISCORD));
-    document.getElementById("copyLTC")?.addEventListener("click", ()=>copyText(LTC_ADDRESS));
+    $("copyOwner")?.addEventListener("click", ()=>copyText(OWNER_DISCORD));
+    $("copyLTC")?.addEventListener("click", ()=>copyText(LTC_ADDRESS));
     document.querySelectorAll(".copyLtcBtn").forEach(btn => btn.addEventListener("click", ()=>copyText(LTC_ADDRESS)));
 
     document.querySelectorAll("[data-copy]").forEach(btn=>{
@@ -1461,7 +1449,7 @@
     window.fakeClick = (name) => showToast(`${name} (demo)`);
 
     // ===== TOP BUTTON =====
-    const toTop = document.getElementById("toTop");
+    const toTop = $("toTop");
     window.addEventListener("scroll", ()=>{
       if(window.scrollY > 500) toTop.classList.add("show");
       else toTop.classList.remove("show");
@@ -1469,9 +1457,9 @@
     toTop.addEventListener("click", ()=>window.scrollTo({top:0, behavior:"smooth"}));
 
     // ===== MOBILE DRAWER =====
-    const drawer = document.getElementById("drawer");
-    const menuBtn = document.getElementById("menuBtn");
-    const closeDrawer = document.getElementById("closeDrawer");
+    const drawer = $("drawer");
+    const menuBtn = $("menuBtn");
+    const closeDrawer = $("closeDrawer");
 
     function setDrawer(open){
       drawer.classList.toggle("open", open);
@@ -1491,7 +1479,7 @@
     document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
 
     // ===== STARS CANVAS =====
-    const canvas = document.getElementById("stars");
+    const canvas = $("stars");
     const ctx = canvas.getContext("2d");
 
     function resize(){
@@ -1536,10 +1524,10 @@
     draw();
 
     // ===== LOADER =====
-    const loader = document.getElementById("loader");
-    const barFill = document.getElementById("barFill");
-    const loadPct = document.getElementById("loadPct");
-    const loadText = document.getElementById("loadText");
+    const loader = $("loader");
+    const barFill = $("barFill");
+    const loadPct = $("loadPct");
+    const loadText = $("loadText");
 
     const steps = [
       ["Booting UI", 18],
@@ -1567,9 +1555,9 @@
     })();
 
     // ===== VIEW SWITCH =====
-    const gateRoot = document.getElementById("gateRoot");
-    const freeView = document.getElementById("freeView");
-    const premView = document.getElementById("premView");
+    const gateRoot = $("gateRoot");
+    const freeView = $("freeView");
+    const premView = $("premView");
 
     function showGate(){
       gateRoot.style.display = "block";
@@ -1601,17 +1589,17 @@
     }
 
     // Gate buttons
-    document.getElementById("pickFree").addEventListener("click", (e)=>{ if(e.target.closest("button")) return; showFree(); });
-    document.getElementById("freeOpen").addEventListener("click", showFree);
-    document.getElementById("freeInvite").addEventListener("click", ()=> window.open(SERVER_INVITE_URL, "_blank"));
+    $("pickFree").addEventListener("click", (e)=>{ if(e.target.closest("button")) return; showFree(); });
+    $("freeOpen").addEventListener("click", showFree);
+    $("freeInvite").addEventListener("click", ()=> window.open(SERVER_INVITE_URL, "_blank"));
 
-    document.getElementById("pickPrem").addEventListener("click", (e)=>{ if(e.target.closest("a,button")) return; showPrem(); });
-    document.getElementById("premOpen").addEventListener("click", showPrem);
+    $("pickPrem").addEventListener("click", (e)=>{ if(e.target.closest("a,button")) return; showPrem(); });
+    $("premOpen").addEventListener("click", showPrem);
 
     // Back buttons
-    document.getElementById("backGate1")?.addEventListener("click", showGate);
-    document.getElementById("backGate2")?.addEventListener("click", (e)=>{ e.preventDefault(); showGate(); });
-    document.getElementById("backGate3")?.addEventListener("click", showGate);
+    $("backGate1")?.addEventListener("click", showGate);
+    $("backGate2")?.addEventListener("click", (e)=>{ e.preventDefault(); showGate(); });
+    $("backGate3")?.addEventListener("click", showGate);
 
     // Nav links: if user clicks Features etc while on gate -> open free
     document.querySelectorAll(".navLink").forEach(a=>{
@@ -1623,10 +1611,10 @@
     });
 
     // ===== PREMIUM TABS CONTENT =====
-    const premPanel = document.getElementById("premPanel");
-    const tabFeatures = document.getElementById("tabFeatures");
-    const tabCommands = document.getElementById("tabCommands");
-    const tabHow = document.getElementById("tabHow");
+    const premPanel = $("premPanel");
+    const tabFeatures = $("tabFeatures");
+    const tabCommands = $("tabCommands");
+    const tabHow = $("tabHow");
 
     const premiumCommands = [
       { cmd: "?premium-help", desc: "Shows all premium commands you can use." },
@@ -1691,7 +1679,7 @@
       premPanel.innerHTML = `
         <div style="font-weight:1000;font-size:16px;">How to buy & receive your key</div>
         <div class="muted" style="margin-top:8px;font-weight:900;line-height:1.65;">
-          1) Click a plan on the right (15d / 1m / 3m). <br>
+          1) Click a plan (15d / 1m / 3m). <br>
           2) Copy the LTC address and send payment. <br>
           3) Add/DM the owner <b class="mono">${OWNER_DISCORD}</b> with your Discord username and plan. <br>
           4) Owner verifies payment and sends your redeem code. <br>
@@ -1709,13 +1697,13 @@
     tabHow.addEventListener("click", ()=>{ setActiveTab(tabHow); renderHow(); });
 
     // ===== BUY MODAL =====
-    const buyModal = document.getElementById("buyModal");
-    const closeBuy = document.getElementById("closeBuy");
-    const buyTitle = document.getElementById("buyTitle");
-    const buyText = document.getElementById("buyText");
-    const buyerDiscord = document.getElementById("buyerDiscord");
-    const ltcAddr = document.getElementById("ltcAddr");
-    const msgOwner = document.getElementById("msgOwner");
+    const buyModal = $("buyModal");
+    const closeBuy = $("closeBuy");
+    const buyTitle = $("buyTitle");
+    const buyText = $("buyText");
+    const buyerDiscord = $("buyerDiscord");
+    const ltcAddr = $("ltcAddr");
+    const msgOwner = $("msgOwner");
 
     let currentPlan = null;
     let currentPrice = null;
@@ -1752,8 +1740,8 @@
     buyModal.addEventListener("click", (e)=>{ if(e.target === buyModal) closeBuyModal(); });
 
     // open modal buttons
-    document.getElementById("premBuyOpen")?.addEventListener("click", ()=>openBuy("Premium", ""));
-    document.getElementById("premBuyOpen2")?.addEventListener("click", ()=>openBuy("Premium", ""));
+    $("premBuyOpen")?.addEventListener("click", ()=>openBuy("Premium", ""));
+    $("premBuyOpen2")?.addEventListener("click", ()=>openBuy("Premium", ""));
 
     // plan cards
     document.querySelectorAll(".priceCard").forEach(card=>{
@@ -1763,39 +1751,37 @@
     });
 
     // modal copy buttons
-    document.getElementById("copyPayInfo")?.addEventListener("click", ()=>{
+    $("copyPayInfo")?.addEventListener("click", ()=>{
       updateOwnerMsg();
       copyText(`Plan: ${currentPlan}\nPrice: $${currentPrice}\nLTC: ${LTC_ADDRESS}\nMessage: ${msgOwner.value}`);
     });
-    document.getElementById("copyAddrOnly")?.addEventListener("click", ()=>copyText(LTC_ADDRESS));
-    document.getElementById("copyOwnerOnly")?.addEventListener("click", ()=>copyText(OWNER_DISCORD));
+    $("copyAddrOnly")?.addEventListener("click", ()=>copyText(LTC_ADDRESS));
+    $("copyOwnerOnly")?.addEventListener("click", ()=>copyText(OWNER_DISCORD));
 
     // premium scroll
-    document.getElementById("premCmdsScroll")?.addEventListener("click", ()=>{
+    $("premCmdsScroll")?.addEventListener("click", ()=>{
       tabCommands.click();
       premPanel.scrollIntoView({behavior:"smooth", block:"start"});
     });
 
-    // cursor glow
-    const dot = document.createElement("div");
-    dot.className = "cursorDot";
-    const ring = document.createElement("div");
-    ring.className = "cursorRing";
-    document.body.appendChild(ring);
-    document.body.appendChild(dot);
+    // ===== Cursor glow update (desktop only) =====
+    // On touch devices it won't run.
+    if (matchMedia("(hover:hover)").matches) {
+      let mx = 0.5, my = 0.3;
+      let tx = mx, ty = my;
+      window.addEventListener("mousemove", (e)=>{
+        tx = e.clientX / innerWidth;
+        ty = e.clientY / innerHeight;
+      }, {passive:true});
 
-    let hasMoved = false;
-    window.addEventListener("mousemove", (e)=>{
-      if(!hasMoved){ dot.style.opacity = "1"; ring.style.opacity = "1"; hasMoved = true; }
-      dot.style.left = e.clientX + "px";
-      dot.style.top = e.clientY + "px";
-      ring.style.left = e.clientX + "px";
-      ring.style.top = e.clientY + "px";
-    }, {passive:true});
-
-    // fix some missing handlers in case browser doesn't globalize ids
-    // (safe no-op)
+      (function anim(){
+        mx += (tx - mx) * 0.08;
+        my += (ty - my) * 0.08;
+        document.documentElement.style.setProperty("--mx", (mx*100).toFixed(2) + "%");
+        document.documentElement.style.setProperty("--my", (my*100).toFixed(2) + "%");
+        requestAnimationFrame(anim);
+      })();
+    }
   </script>
 </body>
 </html>
-

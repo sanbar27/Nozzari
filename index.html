@@ -3,1141 +3,1367 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Nozzarri Ticket | Discord Tickets</title>
-  <meta name="description" content="Nozzarri Ticket — premium Discord ticket bot. Support & Trade tickets, fast setup, clean panels, logs, and more." />
+  <title>Nozzarri Tickets | Discord Tickets</title>
+  <meta name="description" content="Nozzarri Tickets — premium Discord ticket bot. Support & Trade tickets, fast setup, clean panels, logs, and more." />
 
   <!-- Social preview -->
-  <meta property="og:title" content="Nozzarri Ticket | Discord Tickets" />
-  <meta property="og:description" content="Ticket bot — Support & Trade tickets, setup panel, logs, clean UI." />
+  <meta property="og:title" content="Nozzarri Tickets | Discord Tickets" />
+  <meta property="og:description" content="Premium Discord ticket bot — Support & Trade tickets, setup panel, logs, clean UI." />
   <meta property="og:type" content="website" />
-  <meta name="theme-color" content="#7c3aed" />
 
   <style>
-    /* =========================
-       Base + Theme
-    ========================== */
     :root{
-      --bg0:#07070b;
-      --bg1:#0a0a12;
-      --card:#0f0f1b;
-      --card2:#101024;
-      --muted:#a7a7b5;
-      --text:#f2f2f7;
-      --line:rgba(255,255,255,.08);
-      --line2:rgba(255,255,255,.12);
-      --p:#8b5cf6;
-      --p2:#a78bfa;
-      --good:#22c55e;
-      --warn:#f59e0b;
-      --bad:#ef4444;
-      --shadow: 0 18px 80px rgba(0,0,0,.55);
-      --radius: 18px;
-      --radius2: 26px;
-      --blur: 18px;
-      --trans: 280ms cubic-bezier(.2,.8,.2,1);
+      --bg:#05070f;
+      --panel: rgba(10,12,28,.82);
+      --panel2: rgba(255,255,255,.05);
+      --line: rgba(255,255,255,.10);
+      --text: rgba(238,242,255,.96);
+      --muted: rgba(238,242,255,.70);
+      --muted2: rgba(238,242,255,.52);
+      --acc: #34d6ff;
+      --acc2:#5b7cff;
+      --acc3:#8a5cff;
+      --good:#45ff9a;
+      --bad:#ff4d6d;
+      --shadow: 0 22px 80px rgba(0,0,0,.55);
+      --radius: 26px;
+      --radius2: 18px;
+      --mx: 50vw;
+      --my: 50vh;
     }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:var(--text);
-      background: radial-gradient(1200px 700px at 10% -10%, rgba(139,92,246,.22), transparent 65%),
-                  radial-gradient(900px 550px at 90% 0%, rgba(167,139,250,.16), transparent 60%),
-                  radial-gradient(900px 550px at 50% 110%, rgba(139,92,246,.14), transparent 60%),
-                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 900px at var(--mx) var(--my), rgba(52,214,255,.18), transparent 55%),
+                  radial-gradient(1000px 700px at 18% 12%, rgba(138,92,255,.15), transparent 60%),
+                  radial-gradient(1200px 900px at 85% 78%, rgba(91,124,255,.12), transparent 55%),
+                  var(--bg);
+      color: var(--text);
       overflow-x:hidden;
     }
 
-    a{ color:inherit; text-decoration:none; }
-    .container{ width:min(1180px, calc(100% - 32px)); margin:0 auto; }
+    a{color:inherit; text-decoration:none}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;}
+    .wrap{min-height:100%; display:flex; flex-direction:column}
+    .container{width:min(1200px, 92vw); margin:0 auto;}
 
-    /* =========================
-       Background FX
-    ========================== */
-    .gateRoot{
-      position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:-1;
+    /* subtle grid */
+    .gridBg{
+      position:fixed; inset:0; pointer-events:none; opacity:.22;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at 50% 15%, rgba(0,0,0,1) 0%, rgba(0,0,0,.35) 45%, rgba(0,0,0,0) 72%);
     }
-    .backGate{
-      position:absolute; inset:-40%;
-      background:
-        radial-gradient(closest-side at 35% 40%, rgba(139,92,246,.18), transparent 60%),
-        radial-gradient(closest-side at 75% 30%, rgba(167,139,250,.12), transparent 55%),
-        radial-gradient(closest-side at 55% 80%, rgba(139,92,246,.10), transparent 60%);
-      filter: blur(18px);
-      transform: translateZ(0);
-      opacity:.95;
-    }
-    #backGate1{ animation: float1 9s ease-in-out infinite; }
-    #backGate2{ animation: float2 12s ease-in-out infinite; opacity:.75;}
-    #backGate3{ animation: float3 14s ease-in-out infinite; opacity:.65;}
-    @keyframes float1{ 0%,100%{ transform:translate(-2%, -1%) scale(1.02);} 50%{ transform:translate(2%, 1%) scale(1.05);} }
-    @keyframes float2{ 0%,100%{ transform:translate(2%, -2%) scale(1.02);} 50%{ transform:translate(-2%, 2%) scale(1.06);} }
-    @keyframes float3{ 0%,100%{ transform:translate(0%, 2%) scale(1.02);} 50%{ transform:translate(0%, -2%) scale(1.06);} }
 
-    /* =========================
-       Buttons / UI
-    ========================== */
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:10px;
-      border:1px solid var(--line2);
-      background: rgba(255,255,255,.04);
-      color:var(--text);
-      padding:12px 14px;
-      border-radius: 14px;
-      cursor:pointer;
-      transition: transform var(--trans), background var(--trans), border-color var(--trans), box-shadow var(--trans);
-      user-select:none;
-      font-weight: 650;
-      letter-spacing:.2px;
+    /* cursor glow */
+    .cursorGlow{
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background: radial-gradient(400px 300px at var(--mx) var(--my), rgba(52,214,255,.18), transparent 60%);
+      mix-blend-mode: screen;
+      opacity:.9;
     }
-    .btn:hover{ transform: translateY(-1px); border-color: rgba(167,139,250,.38); background: rgba(255,255,255,.06); }
-    .btn:active{ transform: translateY(0px); }
-    .btn.primary{
-      background: linear-gradient(135deg, rgba(139,92,246,.95), rgba(167,139,250,.9));
-      border-color: rgba(167,139,250,.5);
-      box-shadow: 0 16px 48px rgba(139,92,246,.22);
-      color:#0b0b12;
-    }
-    .btn.ghost{ background: rgba(255,255,255,.03); }
-    .btn.small{ padding:10px 12px; border-radius: 12px; font-size: 13px; }
-    .btn.iconbtn{ width:44px; padding:0; }
 
-    .tag{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px;
-      border:1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255,255,255,.03);
-      color: rgba(242,242,247,.9);
-      font-weight:650;
-      font-size: 13px;
-    }
-    .muted{ color: var(--muted); }
-    .pill{
-      display:inline-flex; align-items:center; gap:10px;
-      padding:8px 12px;
-      background: rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      border-radius: 999px;
-      font-weight:650;
-      font-size:13px;
-    }
-    .dot{ width:8px; height:8px; border-radius:50%; background: var(--p); box-shadow:0 0 0 6px rgba(139,92,246,.18); }
-
-    /* =========================
-       Navbar
-    ========================== */
     header{
-      position:sticky; top:0; z-index:20;
-      backdrop-filter: blur(var(--blur));
-      background: rgba(7,7,11,.45);
-      border-bottom: 1px solid var(--line);
+      position:sticky; top:0; z-index:40;
+      background: linear-gradient(to bottom, rgba(5,7,15,.88), rgba(5,7,15,.55));
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(255,255,255,.08);
     }
-    .nav{
+    .topbar{
       display:flex; align-items:center; justify-content:space-between;
       padding:14px 0;
-      gap:14px;
+      gap:12px;
     }
-    .brand{
-      display:flex; align-items:center; gap:12px;
-    }
+    .brand{display:flex; align-items:center; gap:12px;}
     .logo{
-      width:38px; height:38px; border-radius: 12px;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), transparent 60%),
-                  linear-gradient(135deg, rgba(139,92,246,.85), rgba(167,139,250,.75));
-      box-shadow: 0 18px 60px rgba(139,92,246,.18);
-      border: 1px solid rgba(255,255,255,.10);
+      width:44px; height:44px; border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 18px 48px rgba(0,0,0,.35);
+      object-fit:cover;
     }
-    .brandTitle{ font-weight: 850; letter-spacing:.2px; }
-    .navLinks{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+    .bname{font-weight:1000; letter-spacing:-.4px; line-height:1.1}
+    .btag{color:var(--muted2); font-weight:900; font-size:12px; margin-top:2px}
 
-    /* =========================
-       Hero
-    ========================== */
-    .hero{
+    .nav{
+      display:flex; gap:18px; align-items:center;
+      padding: 0 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .nav a{
+      padding:10px 10px;
+      color: rgba(238,242,255,.84);
+      font-weight:1000;
+      font-size:13px;
+      letter-spacing:-.2px;
       position:relative;
-      padding: 64px 0 34px;
+      border-radius: 999px;
+      transition: background .15s ease, color .15s ease;
+    }
+    .nav a:hover{
+      background: rgba(255,255,255,.06);
+      color: rgba(238,242,255,.96);
+    }
+
+    .actions{display:flex; align-items:center; gap:10px;}
+    .btn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(238,242,255,.92);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight:1000;
+      font-size:13px;
+      letter-spacing:-.2px;
+      cursor:pointer;
+      display:inline-flex; align-items:center; gap:8px;
+      transition: transform .14s ease, background .14s ease, border-color .14s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(52,214,255,.22); }
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(52,214,255,.20), rgba(91,124,255,.20), rgba(138,92,255,.20));
+      border-color: rgba(52,214,255,.24);
+      box-shadow: 0 18px 60px rgba(52,214,255,.10);
+    }
+    .btn.primary:hover{ background: linear-gradient(90deg, rgba(52,214,255,.26), rgba(91,124,255,.26), rgba(138,92,255,.26)); }
+    .btn.ghost{ background: rgba(255,255,255,.04); }
+    .btn.iconbtn{ padding: 10px 12px; width:42px; justify-content:center; }
+
+    .menuBtn{ display:none; }
+    @media (max-width: 920px){
+      .nav{display:none;}
+      .menuBtn{display:inline-flex;}
+    }
+
+    /* Mobile drawer */
+    .drawer{
+      position:fixed; inset:0; z-index:80;
+      display:none;
+      background: rgba(0,0,0,.70);
+      padding: 16px;
+      place-items:center;
+    }
+    .drawer.show{display:grid;}
+    .drawerCard{
+      width: min(520px, 92vw);
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,12,28,.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      padding: 14px;
+    }
+    .drawerTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .drawerLinks{
+      display:grid; gap:10px;
+      margin-top: 12px;
+    }
+    .drawerLinks a{ padding: 12px 14px; border-radius: 18px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.04); font-weight:1000; }
+    .drawerLinks a:hover{ background: rgba(255,255,255,.06); border-color: rgba(52,214,255,.20); }
+
+    /* Sections */
+    main{ position:relative; z-index:1; padding: 28px 0 80px; }
+    .hero{
+      padding: 42px 0 26px;
+      position:relative;
     }
     .heroGrid{
       display:grid;
       grid-template-columns: 1.15fr .85fr;
-      gap: 28px;
-      align-items: center;
+      gap: 18px;
+      align-items:stretch;
     }
-    .h1{
-      font-size: clamp(30px, 4.2vw, 52px);
-      margin: 10px 0 10px;
-      line-height: 1.06;
-      letter-spacing:-.6px;
-    }
-    .lead{
-      color: rgba(242,242,247,.86);
-      line-height: 1.6;
-      margin: 0 0 22px;
-      font-size: 15px;
-      max-width: 62ch;
-    }
-    .heroCard{
-      border:1px solid var(--line);
-      background: rgba(15,15,27,.55);
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow);
-      position:relative;
-      overflow:hidden;
-      padding: 18px;
-    }
-    .heroCard::before{
-      content:"";
-      position:absolute; inset:-1px;
-      background: radial-gradient(800px 500px at 20% 0%, rgba(139,92,246,.22), transparent 60%),
-                  radial-gradient(700px 450px at 90% 30%, rgba(167,139,250,.16), transparent 60%);
-      opacity:.9;
-      pointer-events:none;
-    }
-    .heroCardInner{
-      position:relative; z-index:1;
-    }
-    .miniGrid{
-      display:grid; grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .mini{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: 18px;
-      padding: 14px;
-    }
-    .miniTitle{ font-weight: 800; }
-    .miniDesc{ color: var(--muted); font-size: 13px; line-height:1.5; margin-top:8px; }
-
-    /* =========================
-       Sections
-    ========================== */
-    section{ padding: 34px 0; }
-    .secTop{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom: 14px; }
-    .h2{ margin:0; font-size: 22px; letter-spacing:-.2px; }
-    .cards{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
+    @media (max-width: 980px){
+      .heroGrid{grid-template-columns: 1fr; }
     }
     .card{
-      border:1px solid var(--line);
-      background: rgba(15,15,27,.55);
       border-radius: var(--radius);
-      padding: 16px;
-      box-shadow: 0 18px 70px rgba(0,0,0,.35);
-      position:relative;
-      overflow:hidden;
-    }
-    .card .k{ font-weight: 850; margin-bottom:8px; }
-    .card p{ margin:0; color: var(--muted); line-height:1.55; font-size: 14px; }
-
-    /* Pricing */
-    .pricing{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-    }
-    .priceCard{
-      border:1px solid var(--line);
-      background: rgba(15,15,27,.62);
-      border-radius: var(--radius2);
-      padding: 18px;
-      position:relative;
-      overflow:hidden;
-    }
-    .priceCard.featured{
-      border-color: rgba(167,139,250,.35);
-      box-shadow: 0 22px 90px rgba(139,92,246,.18);
-    }
-    .priceName{ font-weight: 900; letter-spacing:.2px; font-size: 16px; }
-    .price{
-      font-size: 30px; font-weight: 950; margin: 10px 0 10px;
-      letter-spacing:-.6px;
-    }
-    .features{ display:flex; flex-direction:column; gap:10px; margin: 10px 0 14px; }
-    .feat{ display:flex; gap:10px; align-items:flex-start; color: rgba(242,242,247,.9); font-size: 14px; }
-    .feat i{ color: var(--p2); font-style: normal; }
-
-    /* FAQ */
-    details.card summary{
-      cursor:pointer;
-      list-style:none;
-      font-weight: 850;
-      display:flex; align-items:center; justify-content:space-between;
-      gap: 10px;
-    }
-    details.card summary::-webkit-details-marker{ display:none; }
-    details.card p{ margin-top: 10px; }
-
-    /* Footer */
-    .footer{
-      padding: 22px 0 34px;
-      border-top:1px solid var(--line);
-      color: rgba(242,242,247,.78);
-    }
-    .footRow{
-      display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap;
-    }
-
-    /* =========================
-       Modals
-    ========================== */
-    .modal{
-      position:fixed; inset:0;
-      display:none;
-      place-items:center;
-      background: rgba(0,0,0,.62);
-      backdrop-filter: blur(10px);
-      z-index: 50;
-      padding: 12px;
-    }
-    .modal.show{ display:grid; }
-    .modalCard{
-      width: min(1100px, calc(100vw - 24px));
-      max-height: calc(100vh - 24px);
-      overflow:auto;
-      border:1px solid var(--line);
-      background: rgba(12,12,20,.72);
-      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,12,28,.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       box-shadow: var(--shadow);
+      overflow:hidden;
       position:relative;
+      min-width:0;
+      isolation:isolate;
     }
-    .modalGlow{
+    .card::before{
+      content:"";
       position:absolute; inset:-1px;
-      background: radial-gradient(900px 600px at 10% 0%, rgba(139,92,246,.22), transparent 60%),
-                  radial-gradient(700px 500px at 90% 30%, rgba(167,139,250,.16), transparent 60%);
-      opacity:.9;
+      background:
+        radial-gradient(800px 260px at 30% 20%, rgba(52,214,255,.20), transparent 55%),
+        radial-gradient(680px 240px at 70% 60%, rgba(138,92,255,.18), transparent 55%);
+      opacity:.55;
       pointer-events:none;
+      z-index:-1;
     }
-    .modalTop{
-      position:sticky; top:0;
-      display:flex; justify-content:space-between; align-items:center; gap:12px;
-      padding: 16px;
-      border-bottom:1px solid var(--line);
-      background: rgba(10,10,12,.78);
-      backdrop-filter: blur(12px);
-      z-index: 5;
-    }
-    .modalTitle{ font-weight: 950; letter-spacing:-.4px; font-size: 18px; }
-    .subline{ color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .cardPad{ padding: 18px 18px 18px; }
 
-    /* Checkout layout */
-    .checkout{
-      display:grid;
-      grid-template-columns: 360px 1fr;
-      gap: 16px;
-      padding: 16px;
-    }
-    .summary{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: 18px;
-      padding: 14px;
-      position: sticky;
-      top: 76px;
-      height: fit-content;
-    }
-    .sumBrand{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-    .sumLogo{ width:34px; height:34px; border-radius: 12px; background: linear-gradient(135deg, rgba(139,92,246,.9), rgba(167,139,250,.75)); border:1px solid rgba(255,255,255,.12); }
-    .sumTitle{ font-weight: 950; }
-    .sumLine{ display:flex; justify-content:space-between; color: rgba(242,242,247,.88); margin: 10px 0; font-weight: 700; }
-    .sumLine small{ color: var(--muted); font-weight: 650; }
-    .divider{ height:1px; background: var(--line); margin: 12px 0; }
-
-    .stepWrap{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      border-radius: 18px;
-      padding: 14px;
-    }
-    .stepper{
-      display:flex; align-items:center; gap:10px;
-      padding: 10px;
-      border-radius: 14px;
-      background: rgba(10,10,12,.75);
-      backdrop-filter: blur(10px);
-      position: sticky;
-      top: 0;
-      z-index: 4;
-    }
-    .stepDot{
-      width:34px; height:34px;
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 7px 10px;
       border-radius: 999px;
-      border:1px solid var(--line2);
-      background: rgba(255,255,255,.03);
-      color: rgba(242,242,247,.92);
-      cursor:pointer;
-      font-weight: 900;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: rgba(238,242,255,.88);
+      font-weight:1000;
+      font-size:12px;
     }
-    .stepDot.active{
-      background: linear-gradient(135deg, rgba(139,92,246,.95), rgba(167,139,250,.9));
-      color:#0b0b12;
-      border-color: rgba(167,139,250,.55);
+    h1{
+      margin: 12px 0 0;
+      font-size: clamp(32px, 4.2vw, 52px);
+      line-height:1.05;
+      letter-spacing:-1px;
+      font-weight:1000;
     }
-    .stepLine{ height:2px; flex:1; background: rgba(255,255,255,.10); border-radius: 999px; }
-    .stepPanel{ display:none; padding-top: 14px; }
-    .stepPanel.show{ display:block; }
-
-    .h3{ margin: 8px 0 12px; font-weight: 950; letter-spacing:-.3px; }
-
-    .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .fieldRow{ display:flex; flex-direction:column; gap:8px; }
-    .label{ color: rgba(242,242,247,.78); font-size: 13px; font-weight: 750; }
-    .input{
-      border:1px solid var(--line2);
-      background: rgba(0,0,0,.20);
-      padding: 12px 12px;
-      border-radius: 14px;
-      color: var(--text);
-      outline:none;
-      transition: border-color var(--trans), background var(--trans);
+    .lead{
+      margin-top: 10px;
+      color: var(--muted);
+      line-height:1.65;
+      font-weight:900;
+      max-width: 62ch;
     }
-    .input:focus{ border-color: rgba(167,139,250,.5); background: rgba(0,0,0,.26); }
+    .heroBtns{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 16px; }
+    .heroNote{ margin-top: 10px; color: var(--muted2); font-weight:900; font-size:12px; line-height:1.55; }
 
-    .rowBtns{ display:flex; gap:10px; margin-top: 12px; flex-wrap:wrap; }
-
-    .payGrid{
+    .side{
       display:grid;
-      grid-template-columns: 1fr 1fr;
       gap: 12px;
+      min-width:0;
+    }
+    .mini{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,12,28,.65);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      min-width:0;
+      padding: 14px;
+    }
+    .mini h3{
+      margin:0;
+      font-size:14px;
+      font-weight:1000;
+      letter-spacing:-.2px;
+    }
+    .mini p{
+      margin:8px 0 0;
+      color: var(--muted);
+      font-weight:900;
+      font-size:13px;
+      line-height:1.55;
+    }
+    .statRow{
+      display:grid; grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:10px;
       margin-top: 10px;
     }
-    .payMethod{
-      text-align:left;
-      border:1px solid var(--line2);
-      background: rgba(0,0,0,.18);
-      border-radius: 16px;
-      padding: 12px;
-      cursor:pointer;
-      transition: transform var(--trans), border-color var(--trans), background var(--trans);
-      color: var(--text);
-    }
-    .payMethod:hover{ transform: translateY(-1px); border-color: rgba(167,139,250,.45); background: rgba(0,0,0,.22); }
-    .payMethod.active{ border-color: rgba(167,139,250,.6); box-shadow: 0 18px 60px rgba(139,92,246,.12); }
-    .payName{ font-weight: 900; }
-    .paySub{ color: var(--muted); font-size: 13px; margin-top: 6px; }
-
-    .payDetails{
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.14);
-      border-radius: 16px;
-      padding: 12px;
-      margin-top: 12px;
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 12px;
-      align-items: start;
-    }
-    .qrWrap{ border-left:1px solid var(--line); padding-left: 12px; }
-    .qrBox{
-      border:1px solid var(--line2);
-      background: rgba(255,255,255,.03);
-      border-radius: 16px;
+    .stat{
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
       padding: 10px;
-      min-height: 220px;
+      min-width:0;
+    }
+    .stat b{ display:block; font-size: 18px; letter-spacing:-.4px; font-weight:1000; }
+    .stat span{ color: var(--muted2); font-weight:900; font-size:12px; }
+
+    .section{
+      margin-top: 18px;
+    }
+    .sectionHeader{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+      margin-bottom: 12px;
+    }
+    .sectionHeader h2{
+      margin:0;
+      font-size: 18px;
+      font-weight:1000;
+      letter-spacing:-.4px;
+    }
+    .sectionHeader .sub{
+      color: var(--muted2);
+      font-weight:900;
+      font-size:12px;
+    }
+
+    .grid3{
       display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+    }
+    @media (max-width: 980px){
+      .grid3{ grid-template-columns: 1fr; }
+    }
+    .feat{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,12,28,.68);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      overflow:hidden;
+      position:relative;
+      min-width:0;
+    }
+    .feat .icon{
+      width:42px; height:42px; border-radius: 16px;
+      display:grid; place-items:center;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-size:18px;
+      margin-bottom: 10px;
+    }
+    .feat h4{ margin:0; font-size:14px; font-weight:1000; letter-spacing:-.2px; }
+    .feat p{ margin:7px 0 0; color: var(--muted); font-weight:900; font-size:13px; line-height:1.55; }
+
+    /* Toggle views */
+    .view{ display:none; }
+    .view.show{ display:block; }
+
+    /* Premium page layout */
+    .premiumGrid{
+      display:grid;
+      grid-template-columns: 1fr .95fr;
+      gap: 12px;
+      align-items:start;
+    }
+    @media (max-width: 980px){ .premiumGrid{grid-template-columns:1fr} }
+
+    .premLeft .tabRow{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding: 10px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .tabBtn{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(238,242,255,.90);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight:1000;
+      font-size:13px;
+      cursor:pointer;
+      transition: background .14s ease, border-color .14s ease, transform .14s ease;
+    }
+    .tabBtn:hover{ transform: translateY(-1px); border-color: rgba(52,214,255,.22); background: rgba(255,255,255,.06); }
+    .tabBtn.active{
+      background: linear-gradient(90deg, rgba(52,214,255,.18), rgba(91,124,255,.18), rgba(138,92,255,.18));
+      border-color: rgba(52,214,255,.22);
+    }
+
+    .panel{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,12,28,.68);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      overflow:hidden;
+      position:relative;
+      min-width:0;
+    }
+    .panelTitle{ margin:0; font-size:15px; font-weight:1000; letter-spacing:-.2px; }
+    .panelDesc{ margin-top: 8px; color: var(--muted); font-weight:900; font-size:13px; line-height:1.6; }
+    .list{
+      margin: 10px 0 0;
+      padding: 0;
+      list-style:none;
+      display:grid;
+      gap: 8px;
+    }
+    .list li{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding: 10px 12px;
+      font-weight:900;
+      color: rgba(238,242,255,.88);
+      line-height:1.55;
+    }
+
+    .premRightCard{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,12,28,.68);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      min-width: 0;
+      isolation:isolate;
+      padding: 14px;
+    }
+    .premRightCard h3{
+      margin: 0 0 10px;
+      font-size: 18px;
+      font-weight:1000;
+      letter-spacing:-.2px;
+      position:relative;
+    }
+
+    .priceGrid{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px; margin-top: 12px; }
+    @media (max-width: 1100px){ .priceGrid{grid-template-columns: 1fr; } }
+
+    .priceCard{
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      padding: 14px;
+      position:relative;
+      overflow:hidden;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
+      min-width: 0;
+      transform: translateZ(0);
+    }
+    .priceCard:hover{
+      transform: translateY(-2px);
+      background: rgba(0,0,0,.22);
+      border-color: rgba(52,214,255,.22);
+    }
+    .priceTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .priceBadge{
+      font-weight:1000;
+      padding:7px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      font-size:12px;
+    }
+    .priceBadge.best{
+      border-color: rgba(52,214,255,.28);
+      background: rgba(52,214,255,.12);
+    }
+    .priceName{ font-weight:1000; margin-top:10px; }
+    .priceMoney{ font-weight:1000; font-size:28px; margin-top:6px; letter-spacing:-.6px; }
+    .priceSub{ color:var(--muted); font-weight:900; margin-top:6px; line-height:1.55; }
+    .priceBtnRow{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
+
+    .miniBtn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(238,242,255,.92);
+      border-radius: 999px;
+      padding: 10px 12px;
+      font-weight:1000;
+      font-size:13px;
+      cursor:pointer;
+      transition: transform .14s ease, background .14s ease, border-color .14s ease;
+      user-select:none;
+    }
+    .miniBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(52,214,255,.22); }
+    .miniBtn.primary{
+      background: linear-gradient(90deg, rgba(52,214,255,.20), rgba(91,124,255,.20), rgba(138,92,255,.20));
+      border-color: rgba(52,214,255,.24);
+    }
+
+    .finePrint{
+      margin-top: 12px;
+      color: rgba(238,242,255,.72);
+      font-weight:900;
+      font-size:12px;
+      line-height:1.55;
+    }
+
+    /* Modal (PC BUG FIX: never overflow screen) */
+    .modal{
+      position:fixed; inset:0; z-index:300;
+      display:none;
+      background: rgba(0,0,0,.66);
+      place-items:center;
+      padding: 18px;
+    }
+    .modal.show{display:grid}
+    .modalCard{
+      width:min(740px, calc(100vw - 36px));
+      max-height: min(92vh, 760px);
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,12,28,.92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      padding: 16px;
+      display:flex;
+      flex-direction:column;
+    }
+    .modalGlow{
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(520px 240px at 25% 20%, rgba(52,214,255,.20), transparent 60%),
+        radial-gradient(520px 240px at 75% 70%, rgba(138,92,255,.18), transparent 60%);
+      opacity:.55;
+      pointer-events:none;
+      z-index:-1;
+    }
+    .modalTop{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+    }
+    .modalTitle{ font-weight:1000; letter-spacing:-.3px; font-size:18px; }
+    .modalText{ color: var(--muted); font-weight:900; font-size:13px; line-height:1.6; margin-top:4px; }
+    .divider{ height:1px; background: rgba(255,255,255,.08); margin: 12px 0; }
+    .fieldRow{ display:grid; gap:8px; margin-top: 10px; }
+    .label{ color: rgba(238,242,255,.86); font-weight:1000; font-size:12px; }
+    .input{
+      width:100%;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      color: rgba(238,242,255,.92);
+      padding: 12px 12px;
+      outline:none;
+      font-weight:900;
+    }
+    .input:focus{ border-color: rgba(52,214,255,.25); box-shadow: 0 0 0 3px rgba(52,214,255,.12); }
+
+    .rowBtns{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
+    .hint{ color: rgba(238,242,255,.60); font-weight:900; font-size:12px; line-height:1.5; }
+    .inline{ display:flex; gap:10px; align-items:center; }
+    .inline .input{ flex:1; }
+
+    /* auth card slightly smaller */
+    .authCard{ width:min(620px, calc(100vw - 36px)); }
+
+    /* Footer */
+    footer{
+      border-top:1px solid rgba(255,255,255,.08);
+      padding: 22px 0;
+      color: rgba(238,242,255,.70);
+      font-weight:900;
+      font-size:13px;
+      background: rgba(5,7,15,.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .footGrid{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      flex-wrap:wrap;
+    }
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(10,12,28,.92);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow);
+      padding: 12px 14px;
+      border-radius: 18px;
+      color: rgba(238,242,255,.92);
+      font-weight:1000;
+      font-size:13px;
+      z-index:500;
+      display:none;
+      max-width: min(640px, 92vw);
+    }
+    .toast.show{ display:block; animation: popIn .24s ease both; }
+    @keyframes popIn{
+      from{ opacity:0; transform: translateX(-50%) translateY(12px) scale(.98); }
+      to{ opacity:1; transform: translateX(-50%) translateY(0) scale(1); }
+    }
+
+    /* Reveal */
+    .reveal{ opacity:0; transform: translateY(10px); transition: opacity .45s ease, transform .45s ease; }
+    .reveal.on{ opacity:1; transform: translateY(0); }
+
+    /* Back to top */
+    .toTop{
+      position:fixed; right:18px; bottom:18px; z-index:60;
+      width:46px; height:46px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(238,242,255,.92);
+      font-weight:1000;
+      cursor:pointer;
+      display:none;
       place-items:center;
     }
-    .finePrint{ color: rgba(242,242,247,.72); font-size: 12.5px; line-height:1.45; margin-top: 10px; }
+    .toTop.show{ display:grid; }
 
     /* Loader */
     .loader{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.70);
+      position:fixed; inset:0; z-index:999;
       display:grid; place-items:center;
-      z-index: 70;
-      transition: opacity var(--trans), transform var(--trans);
+      background: rgba(0,0,0,.68);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: opacity .3s ease;
     }
-    .loader.hide{ opacity:0; pointer-events:none; transform: scale(.98); }
-    .loadCard{
-      width:min(520px, calc(100vw - 28px));
-      border:1px solid var(--line);
-      background: rgba(12,12,20,.82);
-      border-radius: 22px;
-      padding: 18px;
+    .loader.hide{ opacity:0; pointer-events:none; }
+    .loaderCard{
+      width:min(560px, 92vw);
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,12,28,.92);
       box-shadow: var(--shadow);
-    }
-    .bar{
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
+      padding: 16px;
+      position:relative;
       overflow:hidden;
+    }
+    .loadTop{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .loadBar{
+      height:10px;
+      border-radius: 999px;
       border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      overflow:hidden;
       margin-top: 12px;
     }
-    .bar > div{
+    .loadFill{
       height:100%;
       width:0%;
-      background: linear-gradient(90deg, rgba(139,92,246,.95), rgba(167,139,250,.9));
-      transition: width var(--trans);
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(52,214,255,.55), rgba(91,124,255,.55), rgba(138,92,255,.55));
     }
-
-    /* Responsive */
-    @media (max-width: 980px){
-      .heroGrid{ grid-template-columns: 1fr; }
-      .cards, .pricing{ grid-template-columns: 1fr; }
-      .checkout{ grid-template-columns: 1fr; }
-      .summary{ position:relative; top:auto; }
-      .payGrid{ grid-template-columns: 1fr; }
-      .grid2{ grid-template-columns: 1fr; }
-      .payDetails{ grid-template-columns: 1fr; }
-      .qrWrap{ border-left:none; padding-left:0; border-top:1px solid var(--line); padding-top:12px; }
-    }
-  </style>
-
-  <!-- PATCH: layout + anti-overflow fixes -->
-  <style id="nozzarriPatch">
-    *,*::before,*::after{box-sizing:border-box}
-    html,body{overflow-x:hidden}
-    img,svg,video,canvas{max-width:100%;height:auto}
-    .container{width:min(1180px, calc(100% - 32px))}
-    /* Prevent “menus going out of texture” on desktop */
-    .modalCard{
-      width:min(1100px, calc(100vw - 24px)) !important;
-      max-height:calc(100vh - 24px);
-      overflow:auto;
-      -webkit-overflow-scrolling:touch;
-    }
-    /* Checkout grid wraps nicely */
-    .checkout{
-      grid-template-columns: 360px 1fr !important;
-      align-items:start;
-    }
-    @media (max-width: 980px){
-      .checkout{grid-template-columns:1fr !important}
-      .summary{position:relative !important; top:auto !important}
-      .payGrid{grid-template-columns:1fr !important}
-      .grid2{grid-template-columns:1fr !important}
-      .rowBtns{flex-wrap:wrap}
-    }
-    /* Remove random “black blocks” artifacts from heavy blends/filters */
-    .backGate, #backGate1, #backGate2, #backGate3{
-      filter:none !important;
-      mix-blend-mode:normal !important;
-      opacity:0.85;
-      transform:translateZ(0);
-    }
-    /* Cleaner stepper */
-    .stepper{position:sticky; top:0; background:rgba(10,10,12,.75); backdrop-filter: blur(10px); border-radius:14px; padding:10px; z-index:3}
-    /* Discord button emphasis */
-    .discordBtnGlow{box-shadow:0 0 0 1px rgba(140, 90, 255, .35), 0 12px 40px rgba(140, 90, 255, .18)}
   </style>
 </head>
 
 <body>
-  <!-- Background -->
-  <div class="gateRoot" id="gateRoot" aria-hidden="true">
-    <div class="backGate" id="backGate1"></div>
-    <div class="backGate" id="backGate2"></div>
-    <div class="backGate" id="backGate3"></div>
-  </div>
+  <div class="gridBg"></div>
+  <div class="cursorGlow"></div>
 
   <!-- Loader -->
   <div class="loader" id="loader">
-    <div class="loadCard">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
-        <div style="font-weight:950;letter-spacing:-.3px;">Loading Nozzarri Ticket…</div>
-        <div class="tag"><span id="loadPct">0%</span></div>
+    <div class="loaderCard">
+      <div class="loadTop">
+        <span class="pill">✨ Nozzarri Tickets</span>
+        <span class="mono" id="loadPct">0%</span>
       </div>
-      <div class="muted" id="loadText" style="margin-top:8px;">Initializing…</div>
-      <div class="bar"><div id="barFill"></div></div>
+      <div class="loadBar"><div class="loadFill" id="loadFill"></div></div>
+      <div class="heroNote" style="margin-top:10px;">Booting UI</div>
     </div>
   </div>
 
-  <header>
-    <div class="container">
-      <div class="nav">
-        <a class="brand" href="#" id="brandHome">
-          <div class="logo" aria-hidden="true"></div>
+  <div class="wrap" id="top">
+    <header>
+      <div class="container topbar">
+        <a class="brand" href="#top" id="brandHome">
+          <img class="logo" src="assets/nozzarri.png" alt="Nozzarri Tickets" />
           <div>
-            <div class="brandTitle">NOZZARRI TICKET</div>
-            <div class="muted" style="font-size:12.5px;">Tickets • Panels • Logs</div>
+            <div class="bname">Nozzarri Tickets</div>
+            <div class="btag">Tickets Bot</div>
           </div>
         </a>
 
-        <div class="navLinks">
-          <a class="btn ghost small" href="#features">Features</a>
-          <a class="btn ghost small" href="#pricing">Pricing</a>
-          <a class="btn ghost small" href="#faq">FAQ</a>
-          <a class="btn primary small discordBtnGlow" id="joinDiscordBtn" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">Join Discord</a>
-          <button class="btn ghost small" id="loginBtn" type="button">Login</button>
-          <button class="btn ghost small" id="logoutBtn" type="button" style="display:none;">Logout</button>
+        <nav class="nav">
+          <a href="#features" class="navLink">Features</a>
+          <a href="#commands" class="navLink">Commands</a>
+          <a href="#faq" class="navLink">FAQ</a>
+        </nav>
+
+        <div class="actions">
+          <a class="btn ghost" id="youtubeBtn" href="#" target="_blank" rel="noreferrer" title="YouTube">▶️ YouTube</a>
+          <a class="btn ghost" id="joinDiscordBtn" href="#" target="_blank" rel="noreferrer" title="Join Discord">💬 Discord</a>
+          <button class="btn ghost iconbtn" id="copyInvite" type="button" title="Copy bot invite">📋</button>
+          <a class="btn primary" id="inviteBtn" href="#" target="_blank" rel="noreferrer">➕ Add Bot</a>
+          <button class="btn ghost" id="loginBtn" type="button">🔐 Login</button>
+          <button class="btn ghost iconbtn menuBtn" id="menuBtn" type="button" aria-label="Open menu">☰</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile drawer -->
+    <div class="drawer" id="drawer" aria-hidden="true">
+      <div class="drawerCard">
+        <div class="drawerTop">
+          <div class="bname">Menu</div>
+          <button class="btn ghost iconbtn" id="closeDrawer" type="button" aria-label="Close">✕</button>
+        </div>
+        <div class="drawerLinks">
+          <a href="#features" class="navLink">Features</a>
+          <a href="#commands" class="navLink">Commands</a>
+          <a href="#faq" class="navLink">FAQ</a>
+          <a href="#premium" class="navLink">Premium</a>
+        </div>
+        <div class="rowBtns" style="margin-top:12px;">
+          <a class="btn ghost" id="youtubeBtn2" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
+          <a class="btn ghost" id="joinDiscordBtn2" href="#" target="_blank" rel="noreferrer">💬 Discord</a>
+          <a class="btn primary" id="inviteBtn2" href="#" target="_blank" rel="noreferrer">➕ Add Bot</a>
         </div>
       </div>
     </div>
-  </header>
 
-  <main>
-    <div class="container">
-      <!-- HERO -->
-      <section class="hero" id="home">
-        <div class="heroGrid">
-          <div>
-            <div class="tag"><span class="dot"></span> Fast setup • Clean UI • Safe workflow</div>
-            <h1 class="h1">Professional Discord tickets — without the mess.</h1>
-            <p class="lead">
-              Nozzarri Ticket gives you a smooth ticket experience: clean panels, easy setup, logs, and a modern checkout flow.
-              Built for Support & Trade/Middleman servers.
-            </p>
-
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="btn primary" id="freeOpen" type="button">Open Panel</button>
-              <button class="btn ghost" id="freeView" type="button">See Plans</button>
-              <a class="btn ghost discordBtnGlow" id="inviteBtn" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">Discord Invite</a>
-            </div>
-
-            <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
-              <span class="pill"><span class="dot"></span> 24/7 Tickets</span>
-              <span class="pill"><span class="dot"></span> Clean panels</span>
-              <span class="pill"><span class="dot"></span> Simple setup</span>
-            </div>
-          </div>
-
-          <div class="heroCard">
-            <div class="heroCardInner">
-              <div class="secTop" style="margin-bottom:10px;">
-                <div>
-                  <div class="h2" style="font-size:18px;">Quick Highlights</div>
-                  <div class="muted" style="font-size:13px;">What people like most</div>
+    <main class="container">
+      <!-- FREE VIEW -->
+      <div class="view" id="freeView">
+        <section class="hero">
+          <div class="heroGrid">
+            <div class="card">
+              <div class="cardPad">
+                <span class="pill">🧠 Smart ticket automation</span>
+                <h1>Nozzarri Tickets</h1>
+                <div class="lead">
+                  Clean ticket panels, fast setup, logs, and pro workflow — built to keep your server organized.
                 </div>
-                <button class="btn small ghost" id="buyNowTop" type="button">Buy</button>
+
+                <div class="heroBtns">
+                  <a class="btn primary" id="inviteBtn3" href="#" target="_blank" rel="noreferrer">➕ Add to Server</a>
+                  <a class="btn ghost" id="joinDiscordBtnHero" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">💬 Join Discord</a>
+                  <button class="btn ghost" id="goPremiumBtn" type="button">⭐ Premium</button>
+                </div>
+
+                <div class="heroNote">
+                  No Administrator perms needed. Minimal permissions. Safer for your server.
+                </div>
               </div>
+            </div>
 
-              <div class="miniGrid">
-                <div class="mini">
-                  <div class="miniTitle">✅ Clean UI</div>
-                  <div class="miniDesc">No more broken layouts or weird popups. Works on PC & mobile.</div>
-                </div>
-                <div class="mini">
-                  <div class="miniTitle">⚡ Fast Setup</div>
-                  <div class="miniDesc">Categories/roles/logs setup in minutes with clear steps.</div>
-                </div>
-                <div class="mini">
-                  <div class="miniTitle">🔒 Safe Flow</div>
-                  <div class="miniDesc">Optional verification + clear payment instructions.</div>
-                </div>
-                <div class="mini">
-                  <div class="miniTitle">📌 Logs</div>
-                  <div class="miniDesc">Keep everything organized and track ticket actions.</div>
+            <div class="side">
+              <div class="mini reveal">
+                <h3>Why people use it</h3>
+                <p>Fast + clean UI, easy setup, and structured support tickets that staff can handle instantly.</p>
+                <div class="statRow">
+                  <div class="stat"><b>1 min</b><span>Setup</span></div>
+                  <div class="stat"><b>Logs</b><span>Included</span></div>
+                  <div class="stat"><b>Panels</b><span>Clean</span></div>
                 </div>
               </div>
 
-              <div class="divider"></div>
-              <div class="muted" style="font-size:12.5px;">
-                Tip: Replace logo image by putting your file at <b>assets/nozzarri.png</b> and updating the brand/logo if you want.
+              <div class="mini reveal">
+                <h3>Join Discord</h3>
+                <p>Need help? Want premium? Join our Discord and talk with the owner.</p>
+                <div class="rowBtns" style="margin-top:12px;">
+                  <a class="btn primary" id="joinDiscordBtnSide" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">💬 Open Discord</a>
+                  <a class="btn ghost" id="youtubeBtn3" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- FEATURES -->
-      <section id="features">
-        <div class="secTop">
-          <div>
-            <h2 class="h2">Why choose us</h2>
-            <div class="muted">Short, clean, and built for real servers.</div>
-          </div>
-          <a class="btn ghost small" id="joinDiscordBtn2" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">Support</a>
-        </div>
-
-        <div class="cards">
-          <div class="card">
-            <div class="k">Modern Ticket UI</div>
-            <p>Clean panels, smooth animations, and no buggy menus.</p>
-          </div>
-          <div class="card">
-            <div class="k">Support + Trade/Middleman</div>
-            <p>Ready-made flows for Support and MM tickets.</p>
-          </div>
-          <div class="card">
-            <div class="k">Easy Setup & Logs</div>
-            <p>Fast configuration + organized logs for every action.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- PRICING -->
-      <section id="pricing">
-        <div class="secTop">
-          <div>
-            <h2 class="h2">Plans</h2>
-            <div class="muted">Pick what fits your server.</div>
-          </div>
-        </div>
-
-        <div class="pricing">
-          <div class="priceCard">
-            <div class="priceName">Starter</div>
-            <div class="price">$0</div>
-            <div class="features">
-              <div class="feat"><i>✓</i> Basic ticket panels</div>
-              <div class="feat"><i>✓</i> Simple setup</div>
-              <div class="feat"><i>✓</i> Basic logs</div>
-            </div>
-            <button class="btn primary" id="freeInvite" type="button">Get Started</button>
-          </div>
-
-          <div class="priceCard featured">
-            <div class="priceName">Premium</div>
-            <div class="price">$15+</div>
-            <div class="features">
-              <div class="feat"><i>✓</i> Advanced UI + clean layout</div>
-              <div class="feat"><i>✓</i> Extra categories & tools</div>
-              <div class="feat"><i>✓</i> Better logging & control</div>
-            </div>
-            <button class="btn primary" id="premiumOpen" type="button">Buy Premium</button>
-          </div>
-
-          <div class="priceCard">
-            <div class="priceName">Custom</div>
-            <div class="price">DM</div>
-            <div class="features">
-              <div class="feat"><i>✓</i> Custom features</div>
-              <div class="feat"><i>✓</i> Private setup help</div>
-              <div class="feat"><i>✓</i> Priority support</div>
-            </div>
-            <a class="btn ghost" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">Contact</a>
-          </div>
-        </div>
-      </section>
-
-      <!-- FAQ -->
-      <section id="faq">
-        <div class="secTop">
-          <div>
-            <h2 class="h2">FAQ</h2>
-            <div class="muted">Common questions.</div>
-          </div>
-        </div>
-
-        <div class="cards" style="grid-template-columns: 1fr; gap:12px;">
-          <details class="card">
-            <summary>How do I setup the bot?</summary>
-            <p>Run the setup panel, choose categories/roles/log channel, then you’re ready.</p>
-          </details>
-          <details class="card">
-            <summary>What payment methods do you support?</summary>
-            <p>Litecoin (LTC) and PayPal (Friends & Family) — more can be added later.</p>
-          </details>
-          <details class="card">
-            <summary>Why does it say “Finish setup”?</summary>
-            <p>If setup isn’t completed (categories/roles/log channel), the bot blocks ticket creation until you finish setup.</p>
-          </details>
-        </div>
-      </section>
-
-      <footer class="footer">
-        <div class="footRow">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div class="logo" aria-hidden="true"></div>
+        <section id="features" class="section">
+          <div class="sectionHeader">
             <div>
-              <div style="font-weight:950;">NOZZARRI TICKET</div>
-              <div class="muted" style="font-size:12.5px;">© <span id="y"></span> — All rights reserved.</div>
+              <h2>Features</h2>
+              <div class="sub">Everything you need for a pro ticket system.</div>
             </div>
           </div>
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <a class="btn ghost small" href="#home">Top</a>
-            <a class="btn ghost small" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">Discord</a>
+          <div class="grid3">
+            <div class="feat reveal">
+              <div class="icon">🎛️</div>
+              <h4>Modern Panel</h4>
+              <p>Create & manage tickets with a clean panel UI — no messy commands needed.</p>
+            </div>
+            <div class="feat reveal">
+              <div class="icon">🧾</div>
+              <h4>Logs & Tracking</h4>
+              <p>Keep proof, transcripts, and logs for staff visibility and safety.</p>
+            </div>
+            <div class="feat reveal">
+              <div class="icon">⚡</div>
+              <h4>Fast Setup</h4>
+              <p>Works in minutes. Minimal permissions. Designed for speed + stability.</p>
+            </div>
           </div>
-        </div>
-      </footer>
-    </div>
-  </main>
+        </section>
 
-  <!-- AUTH MODAL (front-end demo) -->
-  <div class="modal" id="authModal" aria-hidden="true">
-    <div class="modalCard">
-      <div class="modalGlow" aria-hidden="true"></div>
-      <div class="modalTop">
-        <div>
-          <div class="modalTitle">Login</div>
-          <div class="subline">We’ll send a verification code (demo UI).</div>
-        </div>
-        <button class="btn ghost iconbtn" id="closeAuth" type="button" aria-label="Close">✕</button>
-      </div>
-      <div style="padding:16px;">
-        <div class="grid2">
-          <div class="fieldRow">
-            <div class="label">E-mail</div>
-            <input class="input" id="authEmail" placeholder="you@example.com" autocomplete="email" />
-          </div>
-          <div class="fieldRow">
-            <div class="label">Code</div>
-            <input class="input" id="authCode" placeholder="123456" inputmode="numeric" />
-          </div>
-        </div>
-        <div class="finePrint" id="authHint">This is a UI-only demo. For real email codes you need a backend (Node/Express + email provider).</div>
-        <div class="rowBtns">
-          <button class="btn primary" id="sendCode" type="button">Send code</button>
-          <button class="btn ghost" id="verifyCode" type="button">Verify</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BUY MODAL -->
-  <div class="modal" id="buyModal" aria-hidden="true">
-    <div class="modalCard checkoutCard">
-      <div class="modalGlow" aria-hidden="true"></div>
-
-      <div class="modalTop">
-        <div>
-          <div class="modalTitle" id="buyTitle">Checkout</div>
-          <div class="subline" id="buySub">Step 1 • Order Information</div>
-        </div>
-        <button class="btn ghost iconbtn" id="closeBuy" type="button" aria-label="Close">✕</button>
-      </div>
-
-      <div class="checkout">
-        <!-- LEFT SUMMARY -->
-        <aside class="summary">
-          <div class="sumBrand">
-            <div class="sumLogo" aria-hidden="true"></div>
+        <section id="commands" class="section">
+          <div class="sectionHeader">
             <div>
-              <div class="sumTitle" id="sumShop">Nozzarri Ticket</div>
-              <div class="muted" style="font-size:12.5px;">Secure checkout</div>
+              <h2>Commands</h2>
+              <div class="sub">Simple, clean, and staff-friendly.</div>
             </div>
           </div>
 
-          <div class="divider"></div>
-
-          <div class="sumLine">
-            <span>Product</span>
-            <span id="sumProduct">Premium</span>
+          <div class="panel reveal">
+            <h3 class="panelTitle">Core</h3>
+            <div class="panelDesc">The bot is built mainly around panels, but you still have important admin commands.</div>
+            <ul class="list">
+              <li><b>/setup</b> — create ticket panel</li>
+              <li><b>/add</b> — add user to ticket</li>
+              <li><b>/remove</b> — remove user from ticket</li>
+              <li><b>/close</b> — close ticket with transcript</li>
+            </ul>
           </div>
-          <div class="sumLine">
-            <small>Subtotal</small>
-            <small id="sumSub">$15.00</small>
-          </div>
-          <div class="sumLine" style="margin-top:14px;">
-            <span style="font-weight:950;">Total</span>
-            <span style="font-weight:950;" id="sumTotal">$15.00</span>
-          </div>
+        </section>
 
-          <div class="divider"></div>
-          <div class="finePrint">
-            Having issues? Open a ticket in Discord and we’ll help.
-          </div>
-
-          <div class="rowBtns">
-            <a class="btn ghost" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">Open Support Ticket</a>
-          </div>
-        </aside>
-
-        <!-- RIGHT STEPS -->
-        <div class="stepWrap">
-          <div class="stepper">
-            <button class="stepDot active" data-step="1" type="button">1</button>
-            <div class="stepLine"></div>
-            <button class="stepDot" data-step="2" type="button">2</button>
-            <div class="stepLine"></div>
-            <button class="stepDot" data-step="3" type="button">3</button>
-          </div>
-
-          <!-- STEP 1 -->
-          <div class="stepPanel show" data-step-panel="1">
-            <div class="pill" style="margin-bottom:10px;"><span class="dot"></span> Step 1</div>
-            <h3 class="h3">Order Information</h3>
-
-            <div class="grid2">
-              <div class="fieldRow">
-                <div class="label">E-mail (optional)</div>
-                <input class="input" id="buyerEmail" placeholder="you@example.com" autocomplete="email" />
-              </div>
-
-              <div class="fieldRow">
-                <div class="label">Discord username *</div>
-                <input class="input" id="buyerDiscord" placeholder="example: nozzarri" />
-              </div>
+        <section id="faq" class="section">
+          <div class="sectionHeader">
+            <div>
+              <h2>FAQ</h2>
+              <div class="sub">Common questions.</div>
             </div>
+          </div>
 
-            <div class="divider"></div>
+          <div class="grid3">
+            <div class="feat reveal">
+              <div class="icon">🔒</div>
+              <h4>Is it safe?</h4>
+              <p>Yes — minimal permissions, no admin needed. Designed to avoid risky setups.</p>
+            </div>
+            <div class="feat reveal">
+              <div class="icon">💬</div>
+              <h4>Need help?</h4>
+              <p>Join our Discord and contact the owner for support or premium access.</p>
+            </div>
+            <div class="feat reveal">
+              <div class="icon">⭐</div>
+              <h4>Premium?</h4>
+              <p>Premium unlocks extra panels, better logs, and more customization.</p>
+            </div>
+          </div>
+        </section>
+      </div>
 
+      <!-- PREMIUM VIEW -->
+      <div class="view" id="premiumView">
+        <section class="section" id="premium">
+          <div class="sectionHeader">
+            <div>
+              <h2>Premium</h2>
+              <div class="sub">Upgrade for more power & customization.</div>
+            </div>
             <div class="rowBtns">
-              <button class="btn primary" id="toStep2" type="button">Continue →</button>
-              <button class="btn ghost" id="prefillFromLogin" type="button">✨ Use login info</button>
+              <button class="btn ghost" id="backToFree" type="button">← Back</button>
+              <button class="btn primary" id="premBuyOpen2" type="button">Buy premium</button>
+              <a class="btn ghost" id="premYoutube" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
             </div>
           </div>
 
-          <!-- STEP 2 -->
-          <div class="stepPanel" data-step-panel="2">
-            <div class="pill" style="margin-bottom:10px;"><span class="dot"></span> Step 2</div>
-            <h3 class="h3">Confirm & Pay</h3>
+          <div class="premiumGrid">
+            <div class="premLeft">
+              <div class="panel reveal">
+                <div class="tabRow" role="tablist" aria-label="Premium tabs">
+                  <button class="tabBtn active" id="tabFeatures" type="button">Features</button>
+                  <button class="tabBtn" id="tabCommands" type="button">Commands</button>
+                  <button class="tabBtn" id="tabHow" type="button">How to buy</button>
+                </div>
 
-            <div class="payGrid">
-              <button class="payMethod" data-method="paypal" type="button">
-                <div class="payName">PayPal (Friends & Family)</div>
-                <div class="paySub">Fast • fee may apply</div>
-              </button>
-
-              <button class="payMethod active" data-method="ltc" type="button">
-                <div class="payName">Litecoin (LTC)</div>
-                <div class="paySub">Crypto • instant checkout UI</div>
-              </button>
+                <div class="premPanel" id="premPanel"></div>
+              </div>
             </div>
 
-            <div class="payDetails" id="payDetails">
-              <div>
-                <div class="label">Payment info</div>
-                <div class="finePrint" style="margin-top:6px;">
-                  Send the exact amount. Your order auto-processes once payment is received.
-                </div>
+            <div class="premRight">
+              <div class="premRightCard reveal">
+                <h3>Premium Plans</h3>
 
-                <div class="divider"></div>
+                <div class="priceGrid">
+                  <div class="priceCard" data-plan="15 DAYS" data-price="1">
+                    <div class="priceTop">
+                      <div class="priceBadge">15 DAYS</div>
+                      <div class="priceBadge">$1</div>
+                    </div>
+                    <div class="priceName">Starter Key</div>
+                    <div class="priceMoney">$1</div>
+                    <div class="priceSub">Try premium for 15 days.</div>
+                    <div class="priceBtnRow">
+                      <button class="miniBtn primary planBtn" type="button">Buy 15d</button>
+                      <button class="miniBtn copyLtcBtn" type="button">Copy LTC</button>
+                    </div>
+                  </div>
 
-                <div class="fieldRow">
-                  <div class="label">LTC Address</div>
-                  <input class="input" id="ltcAddress" value="ltc1qhw5zvj4ztutrw64v3ea38h09s6f5rgtdk52l7w" readonly />
-                </div>
+                  <div class="priceCard" data-plan="1 MONTH" data-price="2">
+                    <div class="priceTop">
+                      <div class="priceBadge best">1 MONTH • BEST</div>
+                      <div class="priceBadge">$2</div>
+                    </div>
+                    <div class="priceName">Pro Key</div>
+                    <div class="priceMoney">$2</div>
+                    <div class="priceSub">Most popular plan.</div>
+                    <div class="priceBtnRow">
+                      <button class="miniBtn primary planBtn" type="button">Buy 1m</button>
+                      <button class="miniBtn copyLtcBtn" type="button">Copy LTC</button>
+                    </div>
+                  </div>
 
-                <div class="fieldRow" style="margin-top:10px;">
-                  <div class="label">Amount (LTC)</div>
-                  <input class="input" id="ltcAmount" value="0.02268179" readonly />
+                  <div class="priceCard" data-plan="3 MONTHS" data-price="4">
+                    <div class="priceTop">
+                      <div class="priceBadge">3 MONTHS</div>
+                      <div class="priceBadge">$4</div>
+                    </div>
+                    <div class="priceName">Ultra Key</div>
+                    <div class="priceMoney">$4</div>
+                    <div class="priceSub">Best value (longer access).</div>
+                    <div class="priceBtnRow">
+                      <button class="miniBtn primary planBtn" type="button">Buy 3m</button>
+                      <button class="miniBtn copyLtcBtn" type="button">Copy LTC</button>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="finePrint">
-                  Tip: Convert <b>$<span id="usdValue">15.00</span></b> to LTC using your wallet/exchange rate if needed.
-                </div>
-
-                <div class="rowBtns" style="margin-top:10px;">
-                  <a class="btn ghost" id="openWallet2" href="#" target="_blank" rel="noreferrer">Open wallet</a>
-                  <button class="btn ghost" id="copyPayInfo" type="button">Copy all</button>
-                </div>
-              </div>
-
-              <div class="qrWrap">
-                <div class="label">QR code</div>
-                <div class="qrBox" id="qrBox">
-                  <div class="muted">QR will appear here.</div>
+                  Owner contact: <b class="mono" id="ownerName">n_om_e</b>
                 </div>
               </div>
             </div>
-
-            <div class="divider"></div>
-
-            <div class="rowBtns">
-              <button class="btn ghost" id="backStep1" type="button">← Back</button>
-              <button class="btn primary" id="toStep3" type="button">I paid →</button>
-            </div>
           </div>
+        </section>
+      </div>
+    </main>
 
-          <!-- STEP 3 -->
-          <div class="stepPanel" data-step-panel="3">
-            <div class="pill" style="margin-bottom:10px;"><span class="dot"></span> Step 3</div>
-            <h3 class="h3">Receive your items</h3>
-            <div class="card" style="margin-top:10px;">
-              <div class="k">Next steps</div>
-              <p>
-                After payment, open a Discord ticket and send your order info. We’ll confirm and deliver fast.
-              </p>
-            </div>
-
-            <div class="rowBtns">
-              <button class="btn ghost" id="backStep2" type="button">← Back</button>
-              <a class="btn primary" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">Open Ticket</a>
-            </div>
-          </div>
+    <footer>
+      <div class="container footGrid">
+        <div>© <span id="year"></span> Nozzarri Tickets. All rights reserved.</div>
+        <div class="rowBtns">
+          <a class="btn ghost" id="footerYoutube" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
+          <a class="btn ghost" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">💬 Discord</a>
         </div>
+      </div>
+    </footer>
+  </div>
+
+<!-- AUTH / LOGIN -->
+<div class="modal" id="authModal" aria-hidden="true">
+  <div class="modalCard authCard">
+    <div class="modalGlow" aria-hidden="true"></div>
+    <div class="modalTop">
+      <div class="modalTitle">Login</div>
+      <button class="btn ghost iconbtn" id="closeAuth" type="button" aria-label="Close">✕</button>
+    </div>
+
+    <div class="modalText">
+      Login is optional — it saves your checkout details and unlocks the customer dashboard.
+    </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <div class="fieldRow">
+        <div class="label">E-mail</div>
+        <input class="input" id="authEmail" placeholder="you@example.com" autocomplete="email" />
+      </div>
+
+      <div class="fieldRow">
+        <div class="label">Verification code</div>
+        <div class="inline">
+          <input class="input mono" id="authCode" placeholder="6-digit code" inputmode="numeric" maxlength="6" />
+          <button class="btn ghost" id="sendCodeBtn" type="button">Send</button>
+        </div>
+        <div class="hint" id="authHint">We’ll show the code here (demo). In real setup, send it via e-mail.</div>
+      </div>
+    </div>
+
+    <div class="rowBtns" style="margin-top:12px;">
+      <button class="btn primary" id="authLogin" type="button">✅ Verify & Save</button>
+      <button class="btn ghost" id="authLogout" type="button">Logout</button>
+    </div>
+  </div>
+</div>
+
+<!-- BUY MODAL -->
+  <div class="modal" id="buyModal" aria-hidden="true">
+    <div class="modalCard">
+      <div class="modalGlow" aria-hidden="true"></div>
+      <div class="modalTop">
+        <div class="modalTitle" id="buyTitle">Buy Premium</div>
+        <button class="btn ghost iconbtn" id="closeBuy" type="button" aria-label="Close">✕</button>
+      </div>
+
+      <div class="modalText" id="buyText">
+        Choose a plan to see the payment details.
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="fieldRow">
+        <div class="label">Your Discord username (so owner can give you the code)</div>
+        <input class="input" id="buyerDiscord" placeholder="example: nozzarri#0001 or nozzarri" />
+      </div>
+
+      <div class="fieldRow">
+        <div class="label">LTC address</div>
+        <input class="input mono" id="ltcAddr" readonly />
+      </div>
+
+      <div class="fieldRow">
+        <div class="label">Message to owner (copy & send after you pay)</div>
+        <input class="input" id="msgOwner" readonly />
+      </div>
+
+      <div class="rowBtns">
+        <button class="btn primary" id="copyPayInfo" type="button">📋 Copy payment + message</button>
+        <button class="btn ghost" id="copyAddrOnly" type="button">📋 Copy LTC only</button>
+        <button class="btn ghost" id="copyOwnerOnly" type="button">👤 Copy owner</button>
+        <a class="btn ghost" id="openWallet2" href="#" target="_blank" rel="noreferrer">🔗 Open wallet</a>
+      </div>
+
+      <div class="finePrint" style="position:relative; margin-top:10px;">
+        After you send payment, add/DM the owner on Discord: <b class="mono" id="ownerName2">n_om_e</b> and paste the message.
+        Manual verification avoids fake auto systems.
       </div>
     </div>
   </div>
 
+  <button id="toTop" class="toTop" type="button" aria-label="Back to top">⬆️</button>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
   <script>
-    // Footer year
-    document.getElementById("y").textContent = new Date().getFullYear();
+    // ===== CONFIG =====
+    const BRAND = "Nozzarri Tickets";
+    const OWNER_DISCORD = "n_om_e";
 
-    // ---------- Modal helpers ----------
-    const show = (el)=>{ el.classList.add("show"); el.setAttribute("aria-hidden","false"); };
-    const hide = (el)=>{ el.classList.remove("show"); el.setAttribute("aria-hidden","true"); };
+    const CLIENT_ID = "1442592762108186675";
 
+    // Minimal perms (no Administrator) but enough for a ticket bot:
+    // VIEW_CHANNEL, SEND_MESSAGES, EMBED_LINKS, ATTACH_FILES, READ_MESSAGE_HISTORY, ADD_REACTIONS,
+    // MANAGE_CHANNELS, MANAGE_MESSAGES
+    const PERMISSIONS = "126032";
+
+    const INVITE_URL =
+      `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=bot%20applications.commands&permissions=${PERMISSIONS}`;
+
+    const YT_URL = "https://www.youtube.com/channel/UC8Ovc5xT-tXXIjxLnVe72dQ";
+
+    // Your Discord server invite
+    const DISCORD_SERVER_URL = "https://discord.gg/FHRSPyXw";
+
+    // Your LTC address
+    const LTC_ADDRESS = "LPxonLCBtrcHnYAompBSXsboTfJQ8Eyuz8";
+
+    // ===== GLOBAL CURSOR ANIM =====
+    let lastMove = 0;
+    window.addEventListener("mousemove", (e) => {
+      const now = performance.now();
+      if (now - lastMove < 12) return;
+      lastMove = now;
+      document.documentElement.style.setProperty("--mx", e.clientX + "px");
+      document.documentElement.style.setProperty("--my", e.clientY + "px");
+    }, { passive: true });
+
+    // ===== LINKS =====
+    const inviteBtn = document.getElementById("inviteBtn");
+    const inviteBtn2 = document.getElementById("inviteBtn2");
+    const inviteBtn3 = document.getElementById("inviteBtn3");
+    const youtubeBtn = document.getElementById("youtubeBtn");
+    const youtubeBtn2 = document.getElementById("youtubeBtn2");
+    const youtubeBtn3 = document.getElementById("youtubeBtn3");
+    const premYoutube = document.getElementById("premYoutube");
+    const footerYoutube = document.getElementById("footerYoutube");
+    const joinDiscordBtn = document.getElementById("joinDiscordBtn");
+    const joinDiscordBtn2 = document.getElementById("joinDiscordBtn2");
+
+    [inviteBtn, inviteBtn2, inviteBtn3].forEach(a => { if(a) a.href = INVITE_URL; });
+    [youtubeBtn, youtubeBtn2, youtubeBtn3, premYoutube, footerYoutube].forEach(a => { if(a) a.href = YT_URL; });
+    [joinDiscordBtn, joinDiscordBtn2].forEach(a => { if(a) a.href = DISCORD_SERVER_URL; });
+
+    // ===== UTIL =====
+    const toast = document.getElementById("toast");
+    let toastT = null;
+    function showToast(msg){
+      clearTimeout(toastT);
+      toast.textContent = msg;
+      toast.classList.add("show");
+      toastT = setTimeout(()=>toast.classList.remove("show"), 2600);
+    }
+    async function copyText(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast("Copied ✅");
+      } catch(e){
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        showToast("Copied ✅");
+      }
+    }
+
+    // ===== YEAR =====
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // ===== MOBILE DRAWER =====
+    const drawer = document.getElementById("drawer");
+    const menuBtn = document.getElementById("menuBtn");
+    const closeDrawer = document.getElementById("closeDrawer");
+    function openDrawer(){
+      drawer.classList.add("show");
+      drawer.setAttribute("aria-hidden", "false");
+      document.body.style.overflow="hidden";
+    }
+    function closeDrawerFn(){
+      drawer.classList.remove("show");
+      drawer.setAttribute("aria-hidden", "true");
+      document.body.style.overflow="";
+    }
+    menuBtn?.addEventListener("click", openDrawer);
+    closeDrawer?.addEventListener("click", closeDrawerFn);
+    drawer?.addEventListener("click", (e)=>{ if(e.target === drawer) closeDrawerFn(); });
+
+    // ===== VIEWS =====
+    const freeView = document.getElementById("freeView");
+    const premiumView = document.getElementById("premiumView");
+    const goPremiumBtn = document.getElementById("goPremiumBtn");
+    const backToFree = document.getElementById("backToFree");
+    const brandHome = document.getElementById("brandHome");
+
+    function showFree(){
+      freeView.classList.add("show");
+      premiumView.classList.remove("show");
+    }
+    function showPremium(){
+      premiumView.classList.add("show");
+      freeView.classList.remove("show");
+      setTimeout(()=>document.getElementById("premium")?.scrollIntoView({behavior:"smooth", block:"start"}), 50);
+    }
+
+    goPremiumBtn?.addEventListener("click", showPremium);
+    backToFree?.addEventListener("click", showFree);
+    brandHome?.addEventListener("click", (e)=>{ e.preventDefault(); showFree(); window.scrollTo({top:0, behavior:"smooth"}); });
+
+    // ===== REVEAL ON SCROLL =====
+    const rev = Array.from(document.querySelectorAll(".reveal"));
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{
+        if(en.isIntersecting) en.target.classList.add("on");
+      });
+    }, { threshold: 0.08 });
+    rev.forEach(el=>io.observe(el));
+
+    // ===== COPY INVITE BUTTON =====
+    document.getElementById("copyInvite")?.addEventListener("click", ()=>copyText(INVITE_URL));
+
+    // ===== AUTH / LOGIN (demo) =====
     const authModal = document.getElementById("authModal");
-    const buyModal  = document.getElementById("buyModal");
-
     const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-
     const closeAuth = document.getElementById("closeAuth");
-    const closeBuy  = document.getElementById("closeBuy");
-
-    loginBtn.addEventListener("click", ()=> show(authModal));
-    closeAuth.addEventListener("click", ()=> hide(authModal));
-
-    document.getElementById("premiumOpen").addEventListener("click", ()=> show(buyModal));
-    document.getElementById("buyNowTop").addEventListener("click", ()=> show(buyModal));
-    document.getElementById("freeView").addEventListener("click", ()=> document.getElementById("pricing").scrollIntoView({behavior:"smooth"}));
-    document.getElementById("freeOpen").addEventListener("click", ()=> document.getElementById("pricing").scrollIntoView({behavior:"smooth"}));
-    document.getElementById("freeInvite").addEventListener("click", ()=> window.open("https://discord.gg/FHRSPyXw","_blank"));
-
-    closeBuy.addEventListener("click", ()=> hide(buyModal));
-
-    // Click outside closes
-    [authModal, buyModal].forEach(m=>{
-      m.addEventListener("click",(e)=>{ if(e.target === m) hide(m); });
-    });
-
-    // ---------- Fake login (front-end only) ----------
     const authEmail = document.getElementById("authEmail");
     const authCode = document.getElementById("authCode");
+    const sendCodeBtn = document.getElementById("sendCodeBtn");
     const authHint = document.getElementById("authHint");
+    const authLogin = document.getElementById("authLogin");
+    const authLogout = document.getElementById("authLogout");
 
-    let storedEmail = "";
     let demoCode = "";
 
-    document.getElementById("sendCode").addEventListener("click", ()=>{
-      storedEmail = (authEmail.value || "").trim();
-      if(!storedEmail.includes("@")){
-        authHint.textContent = "Enter a valid email first.";
-        authHint.style.color = "rgba(239,68,68,.95)";
+    function openAuth(){
+      authModal.classList.add("show");
+      authModal.setAttribute("aria-hidden","false");
+      document.body.style.overflow="hidden";
+    }
+    function closeAuthFn(){
+      authModal.classList.remove("show");
+      authModal.setAttribute("aria-hidden","true");
+      document.body.style.overflow="";
+    }
+
+    loginBtn?.addEventListener("click", openAuth);
+    closeAuth?.addEventListener("click", closeAuthFn);
+    authModal?.addEventListener("click", (e)=>{ if(e.target === authModal) closeAuthFn(); });
+
+    sendCodeBtn?.addEventListener("click", ()=>{
+      const email = (authEmail.value || "").trim();
+      if(!email || !email.includes("@")){
+        showToast("Enter a valid email");
         return;
       }
       demoCode = String(Math.floor(100000 + Math.random()*900000));
-      authHint.textContent = "Demo code generated: " + demoCode + " (UI demo).";
-      authHint.style.color = "rgba(34,197,94,.95)";
+      authHint.textContent = `Demo code: ${demoCode} (in real setup this is sent via email).`;
+      showToast("Code generated");
     });
 
-    document.getElementById("verifyCode").addEventListener("click", ()=>{
+    authLogin?.addEventListener("click", ()=>{
+      const email = (authEmail.value || "").trim();
       const code = (authCode.value || "").trim();
-      if(!storedEmail || !demoCode){
-        authHint.textContent = "Press “Send code” first.";
-        authHint.style.color = "rgba(245,158,11,.95)";
-        return;
-      }
-      if(code !== demoCode){
-        authHint.textContent = "Wrong code. Try again.";
-        authHint.style.color = "rgba(239,68,68,.95)";
-        return;
-      }
-
-      authHint.textContent = "Verified ✅ Logged in.";
-      authHint.style.color = "rgba(34,197,94,.95)";
-      loginBtn.style.display = "none";
-      logoutBtn.style.display = "inline-flex";
-      hide(authModal);
+      if(!email || !email.includes("@")) return showToast("Invalid email");
+      if(!demoCode) return showToast("Press Send first");
+      if(code !== demoCode) return showToast("Wrong code");
+      localStorage.setItem("nz_auth", JSON.stringify({ email, time: Date.now() }));
+      showToast("Logged in ✅");
+      closeAuthFn();
     });
 
-    logoutBtn.addEventListener("click", ()=>{
-      storedEmail = "";
-      demoCode = "";
-      authEmail.value = "";
-      authCode.value = "";
-      authHint.textContent = "We’ll send a verification code (demo UI).";
-      authHint.style.color = "rgba(242,242,247,.72)";
-      loginBtn.style.display = "inline-flex";
-      logoutBtn.style.display = "none";
+    authLogout?.addEventListener("click", ()=>{
+      localStorage.removeItem("nz_auth");
+      showToast("Logged out");
     });
 
-    // ---------- Checkout steps ----------
-    const buySub = document.getElementById("buySub");
-    const stepDots = Array.from(document.querySelectorAll(".stepDot"));
-    const panels = Array.from(document.querySelectorAll("[data-step-panel]"));
+    // ===== PREMIUM TABS =====
+    const premPanel = document.getElementById("premPanel");
+    const tabFeatures = document.getElementById("tabFeatures");
+    const tabCommands = document.getElementById("tabCommands");
+    const tabHow = document.getElementById("tabHow");
 
-    const setStep = (n)=>{
-      stepDots.forEach(d=>d.classList.toggle("active", Number(d.dataset.step)===n));
-      panels.forEach(p=>p.classList.toggle("show", Number(p.dataset.stepPanel)===n));
-      const label = n===1 ? "Step 1 • Order Information" : n===2 ? "Step 2 • Confirm & Pay" : "Step 3 • Receive";
-      buySub.textContent = label;
+    const premViews = {
+      features: `
+        <h3 class="panelTitle">Premium features</h3>
+        <div class="panelDesc">More control, better logs, and extra customization.</div>
+        <ul class="list">
+          <li>More ticket panels + categories</li>
+          <li>Better transcript / log formatting</li>
+          <li>Priority support</li>
+          <li>Extra options for staff workflows</li>
+        </ul>
+      `,
+      commands: `
+        <h3 class="panelTitle">Premium commands</h3>
+        <div class="panelDesc">Extra utilities for big servers.</div>
+        <ul class="list">
+          <li><b>/premium</b> — show premium status</li>
+          <li><b>/setlogs</b> — configure logs channel</li>
+          <li><b>/autoclose</b> — auto close inactive tickets</li>
+        </ul>
+      `,
+      how: `
+        <h3 class="panelTitle">How to buy</h3>
+        <div class="panelDesc">
+          Choose a plan, copy the payment info, then DM the owner with your Discord username. You'll receive a redeem code.
+        </div>
+        <ul class="list">
+          <li>Pick a plan (15d / 1m / 3m)</li>
+          <li>Pay via Litecoin (LTC)</li>
+          <li>DM owner: <span class="mono">${OWNER_DISCORD}</span></li>
+          <li>Receive code & redeem</li>
+        </ul>
+      `
     };
 
-    stepDots.forEach(d=> d.addEventListener("click", ()=> setStep(Number(d.dataset.step)) ));
-    document.getElementById("toStep2").addEventListener("click", ()=>{
-      // basic validation
-      const dc = (document.getElementById("buyerDiscord").value || "").trim();
-      if(dc.length < 2){ alert("Please enter your Discord username."); return; }
-      setStep(2);
-    });
-    document.getElementById("backStep1").addEventListener("click", ()=> setStep(1));
-    document.getElementById("toStep3").addEventListener("click", ()=> setStep(3));
-    document.getElementById("backStep2").addEventListener("click", ()=> setStep(2));
+    function setTab(which){
+      tabFeatures.classList.toggle("active", which==="features");
+      tabCommands.classList.toggle("active", which==="commands");
+      tabHow.classList.toggle("active", which==="how");
+      premPanel.innerHTML = premViews[which] || premViews.features;
+    }
+    tabFeatures?.addEventListener("click", ()=>setTab("features"));
+    tabCommands?.addEventListener("click", ()=>setTab("commands"));
+    tabHow?.addEventListener("click", ()=>setTab("how"));
+    setTab("features");
 
-    document.getElementById("prefillFromLogin").addEventListener("click", ()=>{
-      if(storedEmail) document.getElementById("buyerEmail").value = storedEmail;
+    // ===== BUY MODAL =====
+    const buyModal = document.getElementById("buyModal");
+    const buyTitle = document.getElementById("buyTitle");
+    const buyText = document.getElementById("buyText");
+    const closeBuy = document.getElementById("closeBuy");
+    const buyerDiscord = document.getElementById("buyerDiscord");
+    const ltcAddr = document.getElementById("ltcAddr");
+    const msgOwner = document.getElementById("msgOwner");
+    const copyPayInfo = document.getElementById("copyPayInfo");
+    const copyAddrOnly = document.getElementById("copyAddrOnly");
+    const copyOwnerOnly = document.getElementById("copyOwnerOnly");
+    const openWallet2 = document.getElementById("openWallet2");
+    const ownerName2 = document.getElementById("ownerName2");
+    const ownerName = document.getElementById("ownerName");
+
+    if(ownerName) ownerName.textContent = OWNER_DISCORD;
+    if(ownerName2) ownerName2.textContent = OWNER_DISCORD;
+
+    let currentPlan = "";
+    let currentPrice = "";
+
+    function openBuy(plan, price){
+      currentPlan = plan || "Premium";
+      currentPrice = price || "";
+      buyTitle.textContent = `Buy Premium — ${currentPlan}`;
+      buyText.textContent = `Send $${currentPrice} in LTC to the address below. Then copy the message and DM the owner.`;
+
+      if(ltcAddr) ltcAddr.value = LTC_ADDRESS;
+      if(openWallet2) openWallet2.href = `litecoin:${LTC_ADDRESS}`;
+
+      const discord = (buyerDiscord.value || "").trim();
+      msgOwner.value = buildOwnerMessage(discord);
+
+      buyModal.classList.add("show");
+      buyModal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeBuyModal(){
+      buyModal.classList.remove("show");
+      buyModal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    function buildOwnerMessage(discordName){
+      const who = discordName ? `Discord: ${discordName}` : `Discord: (your username here)`;
+      return `Hi! I bought Nozzarri Tickets Premium (${currentPlan}) for $${currentPrice}. ${who}. Please send my redeem code.`;
+    }
+
+    buyerDiscord.addEventListener("input", ()=>{
+      msgOwner.value = buildOwnerMessage((buyerDiscord.value || "").trim());
     });
 
-    // ---------- Payment method UI ----------
-    const payMethods = Array.from(document.querySelectorAll(".payMethod"));
-    payMethods.forEach(btn=>{
+    document.querySelectorAll(".planBtn").forEach(btn=>{
       btn.addEventListener("click", ()=>{
-        payMethods.forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-
-        const m = btn.dataset.method;
-        const addr = document.getElementById("ltcAddress");
-        const amt  = document.getElementById("ltcAmount");
-        const qrBox = document.getElementById("qrBox");
-
-        if(m === "paypal"){
-          addr.value = "PayPal F&F (send in Discord ticket after clicking Open Ticket)";
-          amt.value  = "—";
-          qrBox.innerHTML = '<div class="muted">No QR for PayPal. Open a ticket for PayPal details.</div>';
-        }else{
-          addr.value = "ltc1qhw5zvj4ztutrw64v3ea38h09s6f5rgtdk52l7w";
-          amt.value  = "0.02268179";
-
-          // QR via simple public api (works online). If offline, it just won't load.
-          const data = encodeURIComponent(addr.value);
-          qrBox.innerHTML = '<img alt="LTC QR" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+data+'" />';
-        }
+        const card = btn.closest(".priceCard");
+        const plan = card?.getAttribute("data-plan") || "Premium";
+        const price = card?.getAttribute("data-price") || "";
+        openBuy(plan, price);
       });
     });
 
-    document.getElementById("copyPayInfo").addEventListener("click", async ()=>{
-      const addr = document.getElementById("ltcAddress").value;
-      const amt  = document.getElementById("ltcAmount").value;
-      const text = `Nozzarri Ticket Payment\\nAddress: ${addr}\\nAmount: ${amt}`;
-      try{
-        await navigator.clipboard.writeText(text);
-        alert("Copied ✅");
-      }catch{
-        alert("Copy failed. Please copy manually.");
-      }
+    closeBuy?.addEventListener("click", closeBuyModal);
+    buyModal?.addEventListener("click", (e)=>{ if(e.target === buyModal) closeBuyModal(); });
+    window.addEventListener("keydown", (e)=>{ if(e.key === "Escape" && buyModal.classList.contains("show")) closeBuyModal(); });
+
+    copyPayInfo?.addEventListener("click", ()=>{
+      const payload = `LTC Address: ${LTC_ADDRESS}\n\nMessage:\n${msgOwner.value}`;
+      copyText(payload);
+    });
+    copyAddrOnly?.addEventListener("click", ()=>copyText(LTC_ADDRESS));
+    copyOwnerOnly?.addEventListener("click", ()=>copyText(OWNER_DISCORD));
+
+    // Copy LTC quick buttons
+    document.querySelectorAll(".copyLtcBtn").forEach(btn=>{
+      btn.addEventListener("click", ()=>copyText(LTC_ADDRESS));
     });
 
-    // ---------- Loader ----------
+    // ===== SMOOTH NAV =====
+    document.querySelectorAll('a.navLink').forEach(a=>{
+      a.addEventListener("click", (e)=>{
+        const href = a.getAttribute("href") || "";
+        if(!href.startsWith("#")) return;
+
+        if(drawer.classList.contains("show")) closeDrawerFn();
+
+        const el = document.querySelector(href);
+        if(el){ e.preventDefault(); el.scrollIntoView({behavior:"smooth", block:"start"}); }
+      });
+    });
+
+    // ===== To Top =====
+    const toTop = document.getElementById("toTop");
+    window.addEventListener("scroll", ()=>{
+      if(window.scrollY > 700) toTop.classList.add("show");
+      else toTop.classList.remove("show");
+    }, { passive:true });
+    toTop?.addEventListener("click", ()=>window.scrollTo({top:0, behavior:"smooth"}));
+
+    // ===== LOADER =====
     const loader = document.getElementById("loader");
-    const loadText = document.getElementById("loadText");
+    const loadFill = document.getElementById("loadFill");
     const loadPct = document.getElementById("loadPct");
-    const barFill = document.getElementById("barFill");
 
-    const steps = [
-      {t:"Loading assets…", p:20},
-      {t:"Preparing UI…", p:55},
-      {t:"Finalizing…", p:85},
-      {t:"Ready!", p:100}
-    ];
-    let idx = 0;
-
-    function showFree(){
-      // nothing extra: homepage already visible
-    }
-
+    let pct = 0;
     function advance(){
-      const s = steps[idx];
-      loadText.textContent = s.t;
-      loadPct.textContent = s.p + "%";
-      barFill.style.width = s.p + "%";
-      idx++;
-      if(idx < steps.length) setTimeout(advance, 180);
-      else setTimeout(()=>{ loader.classList.add("hide"); showFree(); }, 250);
+      pct = Math.min(100, pct + Math.round(6 + Math.random()*10));
+      loadFill.style.width = pct + "%";
+      loadPct.textContent = pct + "%";
+      if(pct >= 100){
+        setTimeout(()=>{ loader.classList.add("hide"); showFree(); }, 160);
+        return;
+      }
+      setTimeout(advance, 120);
     }
-    requestAnimationFrame(()=> setTimeout(advance, 120));
-  </script>
-
-  <script id="nozzarriPatchJS">
-    // PATCH: make modals always fit viewport and never overflow screen
-    (function(){
-      const fit = () => {
-        document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-      };
-      window.addEventListener('resize', fit, {passive:true});
-      fit();
-    })();
+    setTimeout(advance, 120);
   </script>
 </body>
 </html>

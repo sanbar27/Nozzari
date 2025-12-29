@@ -3,274 +3,179 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Nozzarri Tickets | Discord Tickets</title>
-  <meta name="description" content="Nozzarri Tickets — ticket bot for Discord. Support & Trade tickets, clean panels, logs, and more." />
+  <title>Nozzarri Tickets | Tickets</title>
+  <meta name="description" content="Ticket bot — Support & Trade tickets, fast setup, clean panels, logs, and more." />
 
   <!-- Social preview -->
-  <meta property="og:title" content="Nozzarri Tickets | Discord Tickets" />
+  <meta property="og:title" content="Nozzarri Tickets | Tickets" />
   <meta property="og:description" content="Ticket bot — Support & Trade tickets, setup panel, logs, clean UI." />
-  <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/nozzarri.png" />
+  <meta name="theme-color" content="#090a12" />
 
-  <link rel="icon" type="image/png" href="assets/nozzarri.png" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/nozzarri.png" />
 
   <style>
     :root{
-      --bg0:#030414;
-      --bg1:#07082a;
-      --card: rgba(255,255,255,.06);
-      --card2: rgba(255,255,255,.09);
-      --border: rgba(255,255,255,.10);
-      --text: #eef2ff;
-      --muted: rgba(238,242,255,.72);
-
-      --cyan: #34d6ff;
-      --blue: #5b7cff;
-      --purple: #8a5cff;
-
-      --shadow: 0 22px 70px rgba(0,0,0,.62);
-      --radius: 18px;
-      --radius2: 26px;
-      --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-
-      --ok: #2cff7b;
-      --warn: #ffd36e;
-      --bad: #ff5b7a;
-
-      --glass: rgba(10,12,28,.72);
-      --glass2: rgba(10,12,28,.90);
+      --bg: #070813;
+      --card: rgba(255,255,255,.045);
+      --card2: rgba(255,255,255,.03);
+      --text:#eaf0ff;
+      --muted: rgba(234,240,255,.70);
+      --muted2: rgba(234,240,255,.55);
+      --line: rgba(255,255,255,.10);
+      --shadow: 0 20px 70px rgba(0,0,0,.55);
+      --glow: 0 0 0 1px rgba(255,255,255,.05), 0 18px 60px rgba(156,90,255,.18);
+      --radius: 22px;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box }
+    html,body{ height:100%; scroll-behavior:smooth; }
     body{
       margin:0;
-      font-family:var(--font);
-      color:var(--text);
-      background:
-        radial-gradient(1100px 700px at 18% 18%, rgba(91,124,255,.20), transparent 55%),
-        radial-gradient(900px 700px at 85% 25%, rgba(138,92,255,.18), transparent 55%),
-        radial-gradient(900px 700px at 60% 85%, rgba(52,214,255,.12), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 70% 0%, rgba(156,90,255,.18), transparent 55%),
+                  radial-gradient(1000px 700px at 20% 10%, rgba(0,212,255,.12), transparent 55%),
+                  linear-gradient(180deg, #060711, #05050e);
+      color: var(--text);
       overflow-x:hidden;
     }
 
-    /* Animated BG */
-    .bg{ position:fixed; inset:0; z-index:-2; pointer-events:none; }
-    .noise{
-      position:absolute; inset:-220px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(91,124,255,.22), transparent 46%),
-        radial-gradient(circle at 80% 35%, rgba(138,92,255,.20), transparent 48%),
-        radial-gradient(circle at 55% 85%, rgba(52,214,255,.13), transparent 50%);
-      filter: blur(46px);
-      opacity:.95;
-      animation: float 11s ease-in-out infinite;
-    }
-    @keyframes float{
-      0%,100%{ transform: translate3d(0,0,0) scale(1); }
-      50%{ transform: translate3d(26px,-16px,0) scale(1.02); }
-    }
-    canvas#stars{ position:absolute; inset:0; width:100%; height:100%; opacity:.35; }
+    a{ color:inherit }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
-    .container{max-width:1180px; margin:0 auto; padding:0 20px}
-
-    /* ---------- LOADER ---------- */
-    .loaderWrap{
-      position:fixed; inset:0; z-index:999;
+    /* ===== Loader ===== */
+    #loader{
+      position:fixed; inset:0; z-index:9999;
       display:grid; place-items:center;
-      background:
-        radial-gradient(1000px 800px at 20% 20%, rgba(91,124,255,.20), transparent 50%),
-        radial-gradient(1000px 800px at 80% 35%, rgba(138,92,255,.20), transparent 50%),
-        linear-gradient(180deg, #020314, #07082a);
-      transition: opacity .55s ease, transform .55s ease;
+      background: radial-gradient(900px 500px at 50% 30%, rgba(156,90,255,.18), transparent 55%),
+                  linear-gradient(180deg, #05050e, #070813);
+      transition: opacity .35s ease, visibility .35s ease;
     }
-    .loaderWrap.hide{ opacity:0; pointer-events:none; transform: scale(1.02); }
-
+    #loader.hide{ opacity:0; visibility:hidden; pointer-events:none; }
     .loaderCard{
-      width:min(560px, calc(100vw - 40px));
-      border-radius: 26px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      position:relative;
-      overflow:hidden;
-    }
-    .loaderCard::before{
-      content:"";
-      position:absolute; inset:-220px;
-      background:
-        radial-gradient(circle at 30% 25%, rgba(52,214,255,.16), transparent 55%),
-        radial-gradient(circle at 70% 40%, rgba(91,124,255,.14), transparent 60%),
-        radial-gradient(circle at 50% 80%, rgba(138,92,255,.14), transparent 60%);
-      filter: blur(48px);
-      opacity:.9;
-      pointer-events:none;
-      animation: float 10s ease-in-out infinite;
-    }
-    .loaderTop{ position:relative; display:flex; align-items:center; gap:12px; }
-    .loaderLogo{
-      width:54px; height:54px; border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      box-shadow: 0 0 34px rgba(91,124,255,.18);
-    }
-    .loaderName{ font-weight:1000; font-size:18px; letter-spacing:.2px; }
-    .loaderSub{ color:var(--muted); font-weight:800; font-size:13px; margin-top:2px; }
-    .bar{
-      position:relative;
-      margin-top:14px;
-      height:12px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.25);
-      overflow:hidden;
-    }
-    .bar > div{
-      height:100%;
-      width:0%;
-      border-radius:999px;
-      background: linear-gradient(90deg, rgba(52,214,255,.95), rgba(91,124,255,.95), rgba(138,92,255,.95));
-      box-shadow: 0 0 24px rgba(91,124,255,.25);
-      transition: width .25s ease;
-    }
-    .loaderHint{
-      position:relative;
-      margin-top:10px;
-      color: rgba(238,242,255,.84);
-      font-weight:900;
-      display:flex; justify-content:space-between; align-items:center;
-      font-size:13px;
-    }
-    .spinner{
-      width:16px; height:16px; border-radius:50%;
-      border:2px solid rgba(255,255,255,.22);
-      border-top-color: rgba(52,214,255,.92);
-      animation: spin .9s linear infinite;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    /* Top bar */
-    .topbar{
-      position:sticky; top:0; z-index:80;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:14px 18px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background: rgba(3,4,20,.56);
-      backdrop-filter: blur(16px);
-    }
-    .brand{
-      display:flex; gap:12px; align-items:center;
-      text-decoration:none; color:var(--text);
-      min-width: 0;
-    }
-    .logo{
-      width:42px; height:42px; border-radius:14px;
-      box-shadow: 0 0 30px rgba(91,124,255,.18);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      flex: 0 0 auto;
-    }
-    .bname{font-weight:900; letter-spacing:.2px}
-    .btag{font-size:12px; color:var(--muted); margin-top:2px}
-
-    .nav{ display:flex; gap:16px; align-items:center; }
-    .nav a{
-      color:var(--muted);
-      text-decoration:none;
-      font-weight:800;
-      font-size:14px;
-      padding:10px 10px;
-      border-radius:12px;
-      transition:.18s ease;
-    }
-    .nav a:hover{ color:var(--text); background: rgba(255,255,255,.06); }
-
-    .actions{display:flex; gap:10px; align-items:center}
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:10px;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      color:var(--text);
-      background: rgba(255,255,255,.05);
-      text-decoration:none;
-      font-weight:900;
-      cursor:pointer;
-      transition: transform .14s ease, background .16s ease, border-color .16s ease, filter .16s ease;
-      box-shadow: 0 18px 50px rgba(0,0,0,.25);
-      user-select:none;
-      will-change: transform;
-    }
-    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07)}
-    .btn:active{transform: translateY(0px)}
-    .btn.primary{
-      background: linear-gradient(90deg, rgba(52,214,255,.75), rgba(91,124,255,.95), rgba(138,92,255,.75));
-      border-color: rgba(52,214,255,.25);
-      box-shadow: 0 24px 60px rgba(91,124,255,.18);
-    }
-    .btn.primary:hover{filter: brightness(1.05)}
-    .btn.ghost{background: rgba(255,255,255,.04)}
-    .iconbtn{ width:44px; height:44px; padding:0; border-radius:16px; }
-
-    .menuBtn{display:none}
-    @media (max-width: 920px){
-      .nav{display:none}
-      .menuBtn{display:inline-flex}
-    }
-
-    /* Mobile drawer */
-    .drawer{
-      position:fixed; inset:0; z-index:120;
-      background: rgba(0,0,0,.55);
-      display:none;
-    }
-    .drawer.open{display:block}
-    .drawerPanel{
-      position:absolute; right:14px; top:14px;
-      width:min(360px, calc(100vw - 28px));
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(10,12,28,.92);
-      backdrop-filter: blur(16px);
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: var(--shadow);
-      display:grid; gap:10px;
-    }
-    .drawerPanel a, .drawerPanel button{
-      text-decoration:none;
-      color:var(--muted);
-      font-weight:900;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.05);
-      cursor:pointer;
-    }
-    .drawerPanel a:hover, .drawerPanel button:hover{color:var(--text); background: rgba(255,255,255,.07)}
-    .closeX{justify-self:end}
-
-    /* ---------- GATE (renamed UI, internal IDs unchanged) ---------- */
-    .gate{
-      min-height: calc(100vh - 76px);
-      display:grid;
-      place-items:center;
-      padding: 34px 0 26px;
-    }
-    .gateCard{
-      width:min(1100px, calc(100vw - 40px));
+      width:min(520px, calc(100vw - 32px));
+      padding:22px;
       border-radius: 28px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.05);
       box-shadow: var(--shadow);
-      padding: 18px;
     }
+    .loaderTop{ display:flex; align-items:center; gap:12px; }
+    .loaderLogo{
+      width:44px; height:44px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      object-fit:cover;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .loaderTitle{ font-weight:1100; letter-spacing:.2px; }
+    .loaderSub{ color: var(--muted); margin-top:2px; font-size:13px; }
+    .bar{ height:10px; border-radius:999px; background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.10); overflow:hidden; margin-top:14px; }
+    #barFill{
+      height:100%; width:20%;
+      background: linear-gradient(90deg, rgba(156,90,255,1), rgba(0,212,255,1));
+      border-radius:999px;
+      animation: loadMove 1.05s ease-in-out infinite alternate;
+    }
+    @keyframes loadMove{ from{ width:18% } to{ width:95% } }
+
+    /* ===== Layout ===== */
+    .wrap{ width:min(1180px, calc(100vw - 32px)); margin:0 auto; padding:22px 0 80px; }
+    header{
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(6,7,17,.75), rgba(6,7,17,.35));
+      border-bottom:1px solid rgba(255,255,255,.07);
+      padding:14px 0;
+    }
+    .headerInner{ width:min(1180px, calc(100vw - 32px)); margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:14px; }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      text-decoration:none;
+      user-select:none;
+    }
+    .brand img{
+      width:42px; height:42px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      object-fit:cover;
+      box-shadow: 0 14px 50px rgba(0,0,0,.35);
+    }
+    .brand .b1{ font-weight:1100; letter-spacing:.2px; }
+    .brand .b2{ color: var(--muted); font-size:12.5px; margin-top:2px; }
+
+    .nav{ display:flex; gap:14px; align-items:center; }
+    .navLink{
+      color: var(--muted);
+      text-decoration:none;
+      font-weight:900;
+      font-size:13px;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid transparent;
+      transition: background .18s ease, border-color .18s ease, transform .18s ease;
+    }
+    .navLink:hover{
+      background: rgba(255,255,255,.05);
+      border-color: rgba(255,255,255,.10);
+      transform: translateY(-1px);
+      color: var(--text);
+    }
+
+    .actions{ display:flex; gap:10px; align-items:center; }
+    .btn{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding:10px 14px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight:1000;
+      text-decoration:none;
+      display:inline-flex; gap:10px; align-items:center; justify-content:center;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-2px); border-color: rgba(0,212,255,.35); }
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(156,90,255,.85), rgba(0,212,255,.65));
+      border-color: rgba(255,255,255,.12);
+      box-shadow: 0 18px 60px rgba(156,90,255,.18);
+    }
+    .btn.ghost{ background: rgba(255,255,255,.03); }
+    .iconbtn{ width:42px; padding:10px; }
+
+    /* ===== Hero ===== */
+    .hero{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:18px;
+      align-items:stretch;
+      margin-top:16px;
+    }
+    .card{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .cardGlow{
+      position:absolute; inset:-100px;
+      background: radial-gradient(500px 300px at 30% 20%, rgba(156,90,255,.22), transparent 60%),
+                  radial-gradient(500px 300px at 70% 60%, rgba(0,212,255,.16), transparent 60%);
+      filter: blur(0px);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .cardInner{ position:relative; padding:20px; }
+
+    h1{ margin:0; font-size:42px; line-height:1.05; letter-spacing:-.4px; }
+    .lead{ color: var(--muted); margin-top:10px; line-height:1.5; }
+
+    .heroBtns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
     .pill{
       display:inline-flex; align-items:center; gap:10px;
       padding:10px 12px;
@@ -280,1617 +185,597 @@
       color: var(--muted);
       font-weight:1000;
       font-size:13px;
-      width: fit-content;
-    }
-    .dot{
-      width:10px; height:10px; border-radius:50%;
-      background:#2cff7b;
-      box-shadow: 0 0 18px rgba(44,255,123,.35);
-    }
-    .grad{
-      background: linear-gradient(90deg, var(--cyan), var(--blue), var(--purple));
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-    }
-    .gateHead{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:14px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-    }
-    .gateTitle{
-      font-size: clamp(26px, 3.2vw, 44px);
-      line-height:1.06;
-      margin: 10px 0 6px;
-      font-weight: 1000;
-      letter-spacing:-.8px;
-    }
-    .gateDesc{
-      color: var(--muted);
-      font-weight:800;
-      line-height:1.6;
-      max-width: 85ch;
-      margin:0;
     }
 
-    .gateGrid{
+    /* ===== Premium section (your existing layout) ===== */
+    .premWrap{
+      margin-top:18px;
       display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 14px;
-    }
-    @media (max-width: 980px){ .gateGrid{grid-template-columns:1fr} }
-
-    .pick{
-      position:relative;
-      overflow:hidden;
-      border-radius: 26px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding: 16px;
-      cursor:pointer;
-      transition: transform .18s ease, background .18s ease, border-color .18s ease;
-      transform: translateZ(0);
-      will-change: transform;
-      min-width: 0;
-    }
-    .pick:hover{
-      transform: translateY(-2px);
-      background: rgba(255,255,255,.06);
-      border-color: rgba(52,214,255,.22);
-    }
-    .pickGlow{
-      position:absolute; inset:-140px;
-      background: radial-gradient(circle at 30% 30%, rgba(52,214,255,.20), transparent 52%),
-                  radial-gradient(circle at 70% 40%, rgba(91,124,255,.18), transparent 58%),
-                  radial-gradient(circle at 55% 75%, rgba(138,92,255,.16), transparent 58%);
-      filter: blur(38px);
-      opacity:.9;
-      transition: opacity .2s ease;
-      pointer-events:none;
-    }
-    .pick:hover .pickGlow{ opacity:1; }
-    .pickTop{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
-      position:relative;
-    }
-    .tag{
-      font-weight:1000;
-      padding:8px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      white-space:nowrap;
-      letter-spacing:.2px;
-    }
-    .tag.free{ border-color: rgba(52,214,255,.22); background: rgba(52,214,255,.10); }
-    .tag.prem{ border-color: rgba(138,92,255,.25); background: rgba(138,92,255,.10); }
-
-    .kbd{
-      font-size:12px; font-weight:1000;
-      color: rgba(238,242,255,.85);
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      white-space:nowrap;
-    }
-
-    .pickTitle{
-      font-weight:1000;
-      font-size: 18px;
-      margin-top: 12px;
-      position:relative;
-    }
-    .pickText{
-      color: var(--muted);
-      margin-top: 8px;
-      line-height: 1.6;
-      position:relative;
-      font-weight:800;
-    }
-    .pickBtns{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top: 14px;
-      position:relative;
-    }
-    .miniBtn{
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-      font-weight:900;
-      cursor:pointer;
-      transition: transform .14s ease, background .14s ease, border-color .14s ease;
-    }
-    .miniBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
-    .miniBtn.primary{
-      background: linear-gradient(90deg, rgba(52,214,255,.75), rgba(91,124,255,.95), rgba(138,92,255,.75));
-      border-color: rgba(52,214,255,.22);
-    }
-
-    /* app wrappers */
-    .view{ display:none; }
-    .view.show{ display:block; animation: popIn .45s ease both; }
-    @keyframes popIn{
-      from{ opacity:0; transform: translateY(10px) scale(.99); }
-      to{ opacity:1; transform: translateY(0) scale(1); }
-    }
-
-    /* Shared sections */
-    .section{padding: 26px 0}
-    .section h2{ margin:0 0 12px; font-size:28px; letter-spacing:-.4px; }
-    .muted{color:var(--muted)}
-
-    .card{
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow);
-    }
-
-    .reveal{
-      opacity:0;
-      transform: translateY(14px);
-      transition: opacity .6s ease, transform .6s ease;
-    }
-    .reveal.show{ opacity:1; transform: translateY(0px); }
-
-    .toast{
-      position:fixed;
-      left:50%; bottom:18px;
-      transform: translateX(-50%);
-      padding:12px 14px;
-      border-radius: 16px;
-      border:1px solid rgba(52,214,255,.22);
-      background: rgba(7,10,18,.88);
-      color: rgba(238,242,255,.92);
-      box-shadow: 0 18px 60px rgba(0,0,0,.55);
-      display:none;
-      font-weight:1000;
-      z-index:200;
-    }
-    .toast.show{display:block}
-
-    /* ---------- FREE VIEW ---------- */
-    .hero{
-      padding: 36px 0 18px;
-      display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap: 22px;
+      grid-template-columns: 1fr 420px;
+      gap:16px;
       align-items:start;
     }
-    @media (max-width: 920px){
-      .hero{grid-template-columns:1fr; padding-top:22px}
-    }
-    h1{
-      margin:16px 0 10px;
-      font-size: clamp(38px, 4.4vw, 64px);
-      line-height:1.03;
-      letter-spacing: -1px;
-    }
-    .lead{
-      margin:0 0 18px;
-      color: var(--muted);
-      font-size:16px;
-      line-height:1.65;
-      max-width: 62ch;
-      font-weight:800;
-    }
-    .cta{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px}
-
-    .stats{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:10px;
-      margin-top: 10px;
-    }
-    @media (max-width: 520px){ .stats{grid-template-columns:1fr} }
-    .stat{
-      padding:14px;
-      border-radius: var(--radius);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      box-shadow: 0 18px 50px rgba(0,0,0,.18);
-    }
-    .statTop{font-size:18px}
-    .statBig{font-weight:1000; margin-top:6px}
-    .statSub{color:var(--muted); font-size:13px; margin-top:4px; font-weight:800}
-
-    .preview{padding:18px}
-    .cardTop{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:10px; }
-    .badge{
-      font-weight:1000;
-      padding:8px 10px;
-      border-radius: 999px;
-      background: rgba(91,124,255,.16);
-      border:1px solid rgba(91,124,255,.28);
-      white-space:nowrap;
-    }
-    .chips{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
-    .chip{
-      font-size:12px;
-      font-weight:1000;
-      color: rgba(238,242,255,.92);
-      padding:7px 10px;
-      border-radius:999px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .panel{
-      padding:16px;
-      border-radius: 22px;
-      background: rgba(0,0,0,.22);
-      border: 1px solid rgba(255,255,255,.08);
-    }
-    .panelHead{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
-    .panelAvatar{
-      width:46px; height:46px; border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-    }
-    .panelTitle{font-weight:1000; font-size:16px}
-    .panelDesc{color:var(--muted); margin:6px 0 12px; line-height:1.55; font-weight:800}
-    .panelBtns{display:grid; grid-template-columns:1fr; gap:10px}
-
-    .panelBtn{
-      text-align:left;
-      padding:12px 14px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      color:var(--text);
-      font-weight:1000;
-      cursor:pointer;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
-    }
-    .panelBtn:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.08);
-      border-color: rgba(52,214,255,.24);
-    }
-    .panelBtn small{color:var(--muted); font-weight:900}
-    .smallNote{color:var(--muted); font-size:12px; margin-top:10px; font-weight:800}
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap:12px;
-    }
-    @media (max-width: 920px){ .grid{grid-template-columns: repeat(2, minmax(0,1fr))} }
-    @media (max-width: 520px){ .grid{grid-template-columns: 1fr} }
-
-    .feature{padding:16px}
-    .icon{font-size:22px}
-    .ftitle{font-weight:1000; margin-top:8px}
-    .ftext{color:var(--muted); margin-top:6px; line-height:1.55; font-weight:800}
-
-    .cmds .cmd{
-      padding:18px 16px;
-      text-align:left;
-      font-weight:1000;
-      font-size:16px;
-      cursor:pointer;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
-    }
-    .cmds .cmd:hover{
-      transform: translateY(-2px);
-      background: rgba(255,255,255,.07);
-      border-color: rgba(91,124,255,.22);
-    }
-
-    .faq details{padding:16px}
-    .faq summary{ cursor:pointer; font-weight:1000; list-style:none; }
-    .faq summary::-webkit-details-marker{display:none}
-    .faq p{color:var(--muted); margin:10px 0 0; line-height:1.65; font-weight:800}
-
-    .footer{
-      padding:22px 0 46px;
-      display:flex; justify-content:space-between; align-items:center;
-      gap:14px;
-      border-top:1px solid rgba(255,255,255,.08);
-      margin-top:12px;
-      flex-wrap:wrap;
-    }
-    .footLeft{display:flex; align-items:center; gap:12px}
-    .footRight{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
-    .footRight a{color:var(--muted); text-decoration:none; font-weight:1000}
-    .footRight a:hover{color:var(--text)}
-
-    /* ---------- PREMIUM VIEW (kept, but text made more "store-like") ---------- */
-    .premWrap{ padding: 28px 0 18px; }
-    .premGrid{
-      display:grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
-      gap: 14px;
-      align-items:start;
-    }
-    @media (max-width: 1100px){
-      .premGrid{ grid-template-columns: 1fr; }
-    }
-    .premLeft, .premRight{ min-width: 0; }
-
-    .premHero{
-      padding: 18px;
-      border-radius: 28px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-    }
-    .premHeroGlow{
-      position:absolute; inset:-160px;
-      background:
-        radial-gradient(circle at 25% 25%, rgba(52,214,255,.18), transparent 50%),
-        radial-gradient(circle at 80% 35%, rgba(91,124,255,.18), transparent 55%),
-        radial-gradient(circle at 55% 85%, rgba(138,92,255,.16), transparent 55%);
-      filter: blur(40px);
-      opacity:.9;
-      pointer-events:none;
-      animation: float 12s ease-in-out infinite;
-    }
-    .premTopPill{ position:relative; }
-    .premTitleBig{
-      position:relative;
-      margin: 10px 0 8px;
-      font-size: clamp(44px, 5vw, 78px);
-      letter-spacing:-1.3px;
-      line-height:1.02;
-      font-weight:1000;
-      word-break: break-word;
-    }
-    .premSub{
-      position:relative;
-      color: var(--muted);
-      font-weight:900;
-      line-height:1.6;
-      max-width: 75ch;
-      margin: 0 0 14px;
-    }
-    .premActions{
-      position:relative;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top: 8px;
-    }
-
-    .tabs{
-      position:relative;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top: 14px;
-    }
+    .premLeft .tabs{ display:flex; gap:10px; flex-wrap:wrap; }
     .tabBtn{
-      padding:10px 12px;
-      border-radius: 14px;
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-      font-weight:1000;
-      cursor:pointer;
-      transition: transform .14s ease, background .14s ease;
-    }
-    .tabBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
-    .tabBtn.active{
-      background: linear-gradient(90deg, rgba(52,214,255,.55), rgba(91,124,255,.70), rgba(138,92,255,.55));
-      border-color: rgba(52,214,255,.22);
-    }
-
-    .premPanel{
-      margin-top: 12px;
-      padding: 16px;
-      border-radius: 26px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      position:relative;
-      overflow:hidden;
-    }
-
-    .cmdList{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
-    @media (max-width: 820px){ .cmdList{ grid-template-columns: 1fr; } }
-
-    .cmdCard{
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.20);
-      padding: 12px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-      min-width: 0;
-    }
-    .cmdName{
-      font-weight:1000;
-      letter-spacing:.2px;
-      word-break: break-word;
-    }
-    .cmdHint{
+      background: rgba(255,255,255,.03);
       color: var(--muted);
-      font-weight:900;
-      font-size:12px;
-      margin-top: 3px;
-    }
-    .cmdCopy{
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-weight:1000;
-      padding: 10px 12px;
+      padding:10px 12px;
+      border-radius:999px;
       cursor:pointer;
-      transition: transform .14s ease, background .14s ease;
-      flex: 0 0 auto;
-    }
-    .cmdCopy:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
-
-    .premRightCard{
-      padding: 16px;
-      border-radius: 28px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-      min-width: 0;
-    }
-    .premRightCard h3{
-      margin: 0 0 10px;
-      font-size: 18px;
       font-weight:1000;
-      letter-spacing:-.2px;
-      position:relative;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease;
     }
-
-    .priceGrid{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px; margin-top: 12px; }
-    @media (max-width: 1100px){ .priceGrid{grid-template-columns: 1fr; } }
+    .tabBtn:hover{ transform: translateY(-2px); border-color: rgba(156,90,255,.35); }
+    .tabBtn.active{
+      background: rgba(156,90,255,.12);
+      border-color: rgba(156,90,255,.45);
+      color: var(--text);
+    }
+    .premPanel{ margin-top:12px; }
+    .divider{ height:1px; background: rgba(255,255,255,.10); margin:14px 0; }
 
     .priceCard{
       border-radius: 22px;
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      padding: 14px;
-      position:relative;
-      overflow:hidden;
-      transition: transform .16s ease, background .16s ease, border-color .16s ease;
-      min-width: 0;
+      background: rgba(255,255,255,.03);
+      padding:14px;
+      margin-bottom:12px;
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
     }
     .priceCard:hover{
-      transform: translateY(-2px);
-      background: rgba(0,0,0,.22);
-      border-color: rgba(52,214,255,.22);
+      transform: translateY(-3px);
+      border-color: rgba(0,212,255,.35);
+      box-shadow: 0 24px 70px rgba(0,0,0,.45);
     }
-    .priceTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .priceTop{ display:flex; justify-content:space-between; gap:10px; align-items:center; }
     .priceBadge{
-      font-weight:1000;
-      padding:7px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
       font-size:12px;
-    }
-    .priceBadge.best{
-      border-color: rgba(52,214,255,.28);
-      background: rgba(52,214,255,.12);
-    }
-    .priceName{ font-weight:1000; margin-top:10px; }
-    .priceMoney{ font-weight:1000; font-size:28px; margin-top:6px; letter-spacing:-.6px; }
-    .priceSub{ color:var(--muted); font-weight:900; margin-top:6px; line-height:1.55; }
-    .priceBtnRow{ margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap; }
-
-    .finePrint{
-      margin-top: 12px;
-      color: rgba(238,242,255,.72);
-      font-weight:900;
-      font-size:12px;
-      line-height:1.55;
-    }
-
-    /* ========== NEW CHECKOUT (matches screenshot vibe) ========== */
-    .checkoutModal{
-      position:fixed; inset:0; z-index:310;
-      display:none;
-      background: rgba(0,0,0,.68);
-      place-items:center;
-      padding: 18px;
-    }
-    .checkoutModal.show{display:grid}
-    .checkoutShell{
-      width:min(1120px, calc(100vw - 36px));
-      border-radius: 28px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(10,12,28,.92);
-      backdrop-filter: blur(18px);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-    }
-    .checkoutGlow{
-      position:absolute; inset:-220px;
-      background:
-        radial-gradient(circle at 22% 25%, rgba(52,214,255,.18), transparent 55%),
-        radial-gradient(circle at 70% 25%, rgba(91,124,255,.16), transparent 60%),
-        radial-gradient(circle at 55% 80%, rgba(138,92,255,.14), transparent 60%);
-      filter: blur(52px);
-      opacity:.9;
-      pointer-events:none;
-      animation: float 12s ease-in-out infinite;
-    }
-    .checkoutTop{
-      position:relative;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding: 14px 16px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.22);
-    }
-    .checkoutBrand{
-      display:flex; align-items:center; gap:12px; min-width:0;
-    }
-    .checkoutBrand img{
-      width:40px; height:40px; border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      flex:0 0 auto;
-    }
-    .checkoutBrand b{font-weight:1000}
-    .checkoutBrand span{display:block; color:var(--muted); font-weight:900; font-size:12px; margin-top:2px}
-    .checkoutClose{
-      width:44px; height:44px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      cursor:pointer;
-      font-weight:1000;
-      display:grid; place-items:center;
-      transition: transform .14s ease, background .14s ease;
-    }
-    .checkoutClose:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
-
-    .checkoutBody{
-      position:relative;
-      display:grid;
-      grid-template-columns: minmax(0,.95fr) minmax(0,1.05fr);
-      gap: 14px;
-      padding: 14px;
-    }
-    @media (max-width: 980px){
-      .checkoutBody{ grid-template-columns: 1fr; }
-    }
-
-    .checkoutCard{
-      border-radius: 22px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.20);
-      padding: 14px;
-      min-width:0;
-      overflow:hidden;
-    }
-
-    .stepper{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 10px;
-      padding: 14px;
-      border-radius: 22px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      margin-bottom: 12px;
-    }
-    .step{
-      padding: 12px 12px;
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      min-width:0;
-    }
-    .step small{
-      display:block;
-      color: rgba(238,242,255,.55);
-      font-weight:1000;
-      letter-spacing:.2px;
-    }
-    .step b{
-      display:block;
-      margin-top:4px;
-      font-weight:1000;
-      letter-spacing:-.2px;
-    }
-    .step.active{
-      border-color: rgba(138,92,255,.30);
-      background: rgba(138,92,255,.10);
-      box-shadow: 0 0 0 1px rgba(138,92,255,.10) inset;
-    }
-    .step.done{
-      border-color: rgba(44,255,123,.25);
-      background: rgba(44,255,123,.08);
-    }
-
-    .orderTitle{
-      font-weight:1000;
-      letter-spacing:-.2px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:10px;
-    }
-    .priceHuge{
-      font-size: clamp(34px, 4vw, 54px);
-      font-weight:1000;
-      letter-spacing:-1px;
-      margin: 6px 0 12px;
-    }
-    .orderItem{
-      display:flex; align-items:center; gap:12px;
-      padding: 12px;
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-    }
-    .orderItem img{
-      width:52px; height:52px; border-radius:16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-    }
-    .orderItem b{font-weight:1000}
-    .orderItem span{display:block; color:var(--muted); font-weight:900; font-size:12px; margin-top:3px}
-    .orderTotals{
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top:1px solid rgba(255,255,255,.08);
-      display:grid;
-      gap:8px;
-      color: rgba(238,242,255,.90);
-      font-weight:1000;
-    }
-    .rowLine{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
-    }
-    .rowLine small{color:var(--muted); font-weight:900}
-    .helpBox{
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-    }
-    .helpBox b{font-weight:1000}
-    .helpBox p{margin:8px 0 0; color:var(--muted); font-weight:900; line-height:1.55; font-size:13px}
-    .helpBox .miniBtn{margin-top:10px}
-
-    .formTitle{
-      font-weight:1000;
-      letter-spacing:-.2px;
-      margin-bottom:10px;
-    }
-
-    .fieldRow{
-      display:grid;
-      gap:8px;
-      margin-top: 12px;
-    }
-    .label{ font-weight:1000; font-size:12px; color: rgba(238,242,255,.86); }
-    .input{
-      width:100%;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.30);
-      color: var(--text);
-      padding: 12px 12px;
-      outline:none;
-      font-weight:900;
-    }
-    .input::placeholder{ color: rgba(238,242,255,.45); font-weight:800; }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-
-    .couponRow{
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap:10px;
-      align-items:end;
-    }
-    @media (max-width: 520px){ .couponRow{grid-template-columns:1fr} }
-    .applyBtn{
-      height:44px;
-      border-radius: 14px;
-      border:1px solid rgba(138,92,255,.25);
-      background: rgba(138,92,255,.14);
-      color: var(--text);
-      font-weight:1000;
-      padding: 0 14px;
-      cursor:pointer;
-      transition: transform .14s ease, background .14s ease;
-    }
-    .applyBtn:hover{ transform: translateY(-1px); background: rgba(138,92,255,.18); }
-
-    .payMethods{
-      margin-top: 12px;
-      display:grid;
-      gap:10px;
-    }
-    .payMethod{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding: 14px;
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      cursor:pointer;
-      transition: transform .14s ease, background .14s ease, border-color .14s ease;
-      user-select:none;
-    }
-    .payMethod:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.06);
-      border-color: rgba(52,214,255,.22);
-    }
-    .payMethod.active{
-      background: rgba(138,92,255,.12);
-      border-color: rgba(138,92,255,.28);
-      box-shadow: 0 0 0 1px rgba(138,92,255,.10) inset;
-    }
-    .payLeft{
-      display:flex; align-items:center; gap:12px; min-width:0;
-    }
-    .payIcon{
-      width:40px; height:40px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.28);
-      display:grid; place-items:center;
-      font-weight:1000;
-    }
-    .payTxt b{display:block; font-weight:1000; letter-spacing:-.2px}
-    .payTxt span{display:block; margin-top:3px; color:var(--muted); font-weight:900; font-size:12px}
-    .payRight{
-      color: rgba(238,242,255,.75);
-      font-weight:1000;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex:0 0 auto;
-    }
-    .tinyPill{
-      font-size:12px;
-      font-weight:1000;
+      font-weight:1100;
+      color: var(--muted);
       padding:6px 10px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
-      color: rgba(238,242,255,.85);
-      white-space:nowrap;
     }
-
-    .agreeRow{
-      margin-top: 12px;
-      display:grid;
-      gap:10px;
-      color: rgba(238,242,255,.84);
-      font-weight:900;
-      font-size:13px;
-    }
-    .checkLine{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-    }
-    .checkLine input{ margin-top:2px; }
-    .checkLine a{ color: rgba(52,214,255,.90); text-decoration:none; }
-    .checkLine a:hover{ text-decoration:underline; }
-
-    .checkoutActions{
-      margin-top: 14px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-    .note{
-      margin-top: 10px;
-      color: rgba(238,242,255,.70);
-      font-weight:900;
-      font-size:12px;
-      line-height:1.55;
-    }
-
-    /* Confirm screen */
-    .confirmBox{
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 18px;
-      border:1px solid rgba(138,92,255,.22);
-      background: rgba(138,92,255,.10);
-      color: rgba(238,242,255,.92);
-      font-weight:900;
-      line-height:1.55;
-    }
-    .copyRow{
-      margin-top: 12px;
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap:10px;
-      align-items:center;
-    }
-    @media (max-width: 520px){ .copyRow{grid-template-columns:1fr} }
-    .copyBtn{
-      height:44px;
-      border-radius: 14px;
+    .priceBadge.best{ color: rgba(230,220,255,.95); border-color: rgba(156,90,255,.35); background: rgba(156,90,255,.10); }
+    .priceName{ font-weight:1100; font-size:16px; margin-top:10px; }
+    .priceMoney{ font-weight:1200; font-size:30px; margin-top:6px; }
+    .priceSub{ color: var(--muted); margin-top:4px; font-size:13px; }
+    .priceBtnRow{ display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+    .miniBtn{
+      padding:10px 12px;
+      border-radius:14px;
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
+      background: rgba(255,255,255,.03);
       color: var(--text);
       font-weight:1000;
-      padding: 0 14px;
       cursor:pointer;
-      transition: transform .14s ease, background .14s ease;
+      transition: transform .16s ease, border-color .16s ease;
     }
-    .copyBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .miniBtn:hover{ transform: translateY(-2px); border-color: rgba(156,90,255,.35); }
+    .miniBtn.primary{
+      background: linear-gradient(90deg, rgba(156,90,255,.85), rgba(0,212,255,.55));
+    }
 
-    /* Modal (old) kept (DO NOT DELETE anything from your script) */
+    /* ===== Modal base ===== */
     .modal{
-      position:fixed; inset:0; z-index:300;
+      position:fixed; inset:0; z-index:200;
       display:none;
-      background: rgba(0,0,0,.66);
-      place-items:center;
-      padding: 18px;
+      align-items:center; justify-content:center;
+      padding:16px;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(12px);
     }
-    .modal.show{display:grid}
+    .modal.show{ display:flex; animation: fadeIn .16s ease both; }
+    @keyframes fadeIn{ from{opacity:0} to{opacity:1} }
     .modalCard{
-      width:min(640px, calc(100vw - 36px));
+      width: min(980px, calc(100vw - 32px));
       border-radius: 26px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(10,12,28,.94);
-      backdrop-filter: blur(18px);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(12,13,24,.88);
       box-shadow: var(--shadow);
-      padding: 16px;
-      overflow:hidden;
       position:relative;
+      padding:18px;
+      max-height: min(86vh, 820px);
+      overflow:auto;
     }
     .modalGlow{
-      position:absolute; inset:-180px;
-      background:
-        radial-gradient(circle at 25% 25%, rgba(52,214,255,.18), transparent 52%),
-        radial-gradient(circle at 80% 35%, rgba(91,124,255,.18), transparent 58%),
-        radial-gradient(circle at 55% 85%, rgba(138,92,255,.16), transparent 58%);
-      filter: blur(44px);
+      position:absolute; inset:-140px;
+      background: radial-gradient(600px 350px at 30% 20%, rgba(156,90,255,.22), transparent 60%),
+                  radial-gradient(600px 350px at 70% 60%, rgba(0,212,255,.18), transparent 60%);
       opacity:.85;
       pointer-events:none;
     }
     .modalTop{
       position:relative;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-bottom: 8px;
+      display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
     }
-    .modalTitle{ font-weight:1000; font-size:18px; }
-    .modalText{ position:relative; color:var(--muted); line-height:1.65; font-weight:900; margin: 8px 0 12px; }
-    .rowBtns{ position:relative; display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
-    .divider{
-      height:1px;
-      background: rgba(255,255,255,.08);
-      margin: 12px 0;
-      position:relative;
+    .modalTitle{ font-weight:1200; font-size:18px; }
+    .modalText{ color: var(--muted); margin-top:4px; font-size:13px; }
+
+    .fieldRow{ margin-top:12px; }
+    .label{ color: var(--muted); font-weight:1000; font-size:13px; margin-bottom:8px; }
+    .input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      outline:none;
     }
+    .input:focus{ border-color: rgba(0,212,255,.35); box-shadow: 0 0 0 3px rgba(0,212,255,.08); }
+
+    .rowBtns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+
+    /* ===== Toast ===== */
+    #toast{
+      position:fixed;
+      left:50%; bottom:18px;
+      transform: translateX(-50%);
+      z-index:999;
+      padding:12px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(12,13,24,.92);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      opacity:0; pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    #toast.show{ opacity:1; transform: translateX(-50%) translateY(-3px); }
 
     .toTop{
-      position:fixed;
-      right:18px; bottom:18px;
+      position:fixed; right:16px; bottom:16px;
+      z-index:40;
+      border-radius:999px;
       width:46px; height:46px;
-      border-radius: 16px;
+      display:grid; place-items:center;
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
       cursor:pointer;
-      display:none;
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-      z-index:140;
+      opacity:.0;
+      transition: opacity .2s ease, transform .2s ease;
     }
-    .toTop.show{display:inline-grid; place-items:center}
+    .toTop.show{ opacity:1; transform: translateY(-2px); }
+
+    @media (max-width: 960px){
+      .hero{ grid-template-columns: 1fr; }
+      .premWrap{ grid-template-columns: 1fr; }
+      .nav{ display:none; }
+    }
+
+    /* ===== Checkout (new buy modal style) ===== */
+.checkoutCard{ max-width:min(1120px, calc(100vw - 32px)); padding:18px; }
+.checkoutGrid{ display:grid; grid-template-columns: 380px 1fr; gap:16px; margin-top:14px; }
+.checkoutLeft{ position:sticky; top:0; align-self:start; }
+.sumCard{ border-radius:22px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.045); box-shadow: var(--shadow); padding:16px; overflow:hidden; }
+.sumHead{ display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+.sumBrand{ display:flex; align-items:center; gap:12px; }
+.sumLogo{ width:42px; height:42px; border-radius:12px; object-fit:cover; box-shadow: 0 10px 30px rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.06); }
+.sumName{ font-weight:1000; letter-spacing:.2px; }
+.sumSub{ color: var(--muted); font-size:12.5px; margin-top:2px; }
+.sumPrice{ text-align:right; }
+.sumPriceTop{ color: var(--muted); font-size:12.5px; }
+.sumPriceVal{ font-weight:1100; font-size:30px; line-height:1.1; margin-top:2px; background: linear-gradient(90deg, rgba(156, 90, 255, 1), rgba(0, 212, 255, 1)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.sumLine{ height:1px; background: rgba(255,255,255,.10); margin:14px 0; }
+.sumItem{ display:flex; justify-content:space-between; gap:12px; align-items:center; }
+.sumItemTitle{ font-weight:1000; }
+.sumItemMeta{ color: var(--muted); font-size:12.5px; margin-top:2px; }
+.sumItemRight{ font-weight:1000; }
+.sumHelp{ margin-top:12px; padding:14px; border-radius:18px; background: rgba(0,0,0,.18); border:1px solid rgba(255,255,255,.10); }
+.sumHelpTitle{ font-weight:1000; }
+.sumHelpText{ color: var(--muted); font-size:13px; margin-top:4px; margin-bottom:10px; }
+.sumHelpTip{ color: var(--muted); font-size:12.5px; margin-top:10px; opacity:.9; }
+
+.checkoutRight{ min-width:0; }
+.stepper{ display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; }
+.stepBtn{ text-align:left; padding:12px; border-radius:18px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.03); color: var(--text); cursor:pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+.stepBtn:hover{ transform: translateY(-2px); border-color: rgba(156,90,255,.45); }
+.stepBtn.active{ background: rgba(156,90,255,.12); border-color: rgba(156,90,255,.55); box-shadow: 0 18px 50px rgba(156,90,255,.12); }
+.stepNum{ display:block; color: rgba(156,90,255,1); font-weight:1000; font-size:12px; }
+.stepTitle{ display:block; font-weight:1000; margin-top:2px; }
+
+.stepPanel{ display:none; margin-top:12px; }
+.stepPanel.show{ display:block; animation: fadeUp .24s ease both; }
+@keyframes fadeUp{ from{ opacity:0; transform: translateY(10px);} to{opacity:1; transform: translateY(0);} }
+
+.formGrid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+.couponRow{ grid-column:1 / -1; }
+.couponFlex{ display:flex; gap:10px; align-items:center; }
+.couponFlex .input{ flex:1; }
+.hint{ color: var(--muted); font-size:12.5px; margin-top:6px; }
+
+.payMethods{ display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+.payCard{ display:flex; align-items:center; gap:12px; width:100%; text-decoration:none; padding:12px; border-radius:18px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.03); color: var(--text); cursor:pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+.payCard:hover{ transform: translateY(-2px); border-color: rgba(0,212,255,.35); }
+.payCard.active{ background: rgba(0,212,255,.10); border-color: rgba(0,212,255,.55); box-shadow: 0 18px 50px rgba(0,212,255,.08); }
+.payCard.link{ cursor:pointer; }
+.payIcon{ width:40px; height:40px; border-radius:14px; display:grid; place-items:center; font-weight:1200; background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); }
+.payText{ flex:1; min-width:0; }
+.payName{ font-weight:1000; }
+.paySub{ color: var(--muted); font-size:12.5px; margin-top:2px; }
+.payTag{ font-size:12px; font-weight:1000; color: var(--muted); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.16); }
+
+.checks{ margin-top:10px; display:flex; flex-direction:column; gap:8px; }
+.check{ display:flex; gap:10px; align-items:flex-start; font-size:13px; color: var(--muted); }
+.check input{ margin-top:2px; }
+
+.stepActions{ display:flex; justify-content:space-between; gap:10px; margin-top:14px; }
+.payNotice{ padding:12px 14px; border-radius:18px; border:1px solid rgba(156,90,255,.35); background: rgba(156,90,255,.10); color: rgba(230,220,255,.95); font-weight:900; }
+.payBox{ margin-top:12px; border-radius:22px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.03); padding:14px; }
+.payBoxRow{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.payBoxLabel{ font-weight:1000; }
+.addrRow, .amtRow{ display:flex; gap:10px; align-items:center; margin-top:10px; }
+.addrRow .input, .amtRow .input{ flex:1; }
+.payHint{ color: var(--muted); font-size:12.5px; margin-top:12px; }
+.successCard{ border-radius:22px; border:1px solid rgba(0,212,255,.35); background: rgba(0,212,255,.08); padding:14px; }
+.successTitle{ font-weight:1100; font-size:18px; }
+.successText{ color: var(--muted); margin-top:6px; line-height:1.45; }
+
+@media (max-width: 980px){
+  .checkoutGrid{ grid-template-columns: 1fr; }
+  .checkoutLeft{ position:relative; }
+  .stepper{ grid-template-columns: 1fr; }
+  .formGrid{ grid-template-columns: 1fr; }
+}
+
   </style>
 </head>
 
-<body id="top">
-  <div class="bg">
-    <div class="noise"></div>
-    <canvas id="stars"></canvas>
-  </div>
-
-  <!-- LOADER -->
-  <div class="loaderWrap" id="loader" aria-label="Loading">
+<body>
+  <!-- Loader -->
+  <div id="loader">
     <div class="loaderCard">
       <div class="loaderTop">
-        <img class="loaderLogo" src="assets/nozzarri.png" alt="Nozzarri Tickets" />
+        <img class="loaderLogo" src="assets/nozzarri.png" alt="Nozzarri" onerror="this.style.display='none'">
         <div>
-          <div class="loaderName">Nozzarri Tickets</div>
+          <div class="loaderTitle">Nozzarri Tickets</div>
           <div class="loaderSub">Loading the panel…</div>
         </div>
-        <div style="margin-left:auto" class="spinner" aria-hidden="true"></div>
       </div>
       <div class="bar"><div id="barFill"></div></div>
-      <div class="loaderHint">
-        <span id="loadText">Booting UI</span>
-        <span id="loadPct">0%</span>
-      </div>
     </div>
   </div>
 
-  <header class="topbar">
-    <a class="brand" href="#top" id="brandHome">
-      <img class="logo" src="assets/nozzarri.png" alt="Nozzarri Tickets" />
-      <div>
-        <div class="bname">Nozzarri Tickets</div>
-        <div class="btag">Tickets Bot</div>
+  <header>
+    <div class="headerInner">
+      <a class="brand" href="#top" id="brandHome">
+        <img src="assets/nozzarri.png" alt="Nozzarri" />
+        <div>
+          <div class="b1">Nozzarri Tickets</div>
+          <div class="b2">Discord ticket bot</div>
+        </div>
+      </a>
+
+      <nav class="nav">
+        <a href="#features" class="navLink">Features</a>
+        <a href="#commands" class="navLink">Commands</a>
+        <a href="#faq" class="navLink">FAQ</a>
+      </nav>
+
+      <div class="actions">
+        <a class="btn ghost" id="youtubeBtn" href="#" target="_blank" rel="noreferrer" title="YouTube">▶️ YouTube</a>
+        <button class="btn ghost iconbtn" id="copyInvite" type="button" title="Copy invite">📋</button>
+        <a class="btn primary" id="inviteBtn" href="#" target="_blank" rel="noreferrer">➕ Add Bot</a>
       </div>
-    </a>
-
-    <nav class="nav">
-      <a href="#features" class="navLink">Features</a>
-      <a href="#commands" class="navLink">Commands</a>
-      <a href="#faq" class="navLink">FAQ</a>
-    </nav>
-
-    <div class="actions">
-      <a class="btn ghost" id="discordBtn" href="#" target="_blank" rel="noreferrer" title="Discord">💬 Discord</a>
-      <a class="btn ghost" id="youtubeBtn" href="#" target="_blank" rel="noreferrer" title="YouTube">▶️ YouTube</a>
-      <button class="btn ghost iconbtn" id="copyInvite" type="button" title="Copy invite">📋</button>
-      <a class="btn primary" id="inviteBtn" href="#" target="_blank" rel="noreferrer">➕ Add Bot</a>
-      <button class="btn ghost iconbtn menuBtn" id="menuBtn" type="button" aria-label="Open menu">☰</button>
     </div>
   </header>
 
-  <!-- Mobile drawer -->
-  <div class="drawer" id="drawer" aria-hidden="true">
-    <div class="drawerPanel">
-      <button class="btn ghost iconbtn closeX" id="closeDrawer" type="button" aria-label="Close">✕</button>
-      <a href="#features" class="navLink">Features</a>
-      <a href="#commands" class="navLink">Commands</a>
-      <a href="#faq" class="navLink">FAQ</a>
-      <a class="btn primary" id="inviteBtn2" href="#" target="_blank" rel="noreferrer">➕ Add Bot</a>
-      <a class="btn ghost" id="discordBtn2" href="#" target="_blank" rel="noreferrer">💬 Discord</a>
-      <a class="btn ghost" id="youtubeBtn2" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
-      <button class="btn ghost" id="copyInvite2" type="button">📋 Copy invite</button>
-    </div>
-  </div>
-
-  <!-- GATE -->
-  <main class="container" id="gateRoot">
-    <section class="gate">
-      <div class="gateCard reveal">
-        <div class="gateHead">
-          <div>
-            <div class="pill"><span class="dot"></span> Online • Smooth • Modern</div>
-            <div class="gateTitle">Open your <span class="grad">Ticket Panel</span></div>
-            <p class="gateDesc">
-              Pick the panel you want. “Standard” is for normal servers. “Pro” is for servers that want extra commands + customization.
-              <span style="opacity:.85">(Inside Discord, you redeem using a code.)</span>
-            </p>
+  <div class="wrap" id="top">
+    <section class="hero">
+      <div class="card">
+        <div class="cardGlow"></div>
+        <div class="cardInner">
+          <div class="pill">⚡ Fast setup • 🧾 Clean panels • 🔒 Safe</div>
+          <h1 style="margin-top:12px;">A cleaner ticket system<br/>for your Discord.</h1>
+          <div class="lead">
+            Support + trade tickets, easy setup, clean UI, logs and more.
           </div>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <button class="btn ghost" id="copySite" type="button" title="Copy website link">🔗 Copy site</button>
+          <div class="heroBtns">
+            <a class="btn primary" id="inviteBtn2" href="#" target="_blank" rel="noreferrer">➕ Add Bot</a>
+            <button class="btn ghost" id="openCheckout" type="button">Open checkout</button>
+            <a class="btn ghost" id="youtubeBtn2" href="#" target="_blank" rel="noreferrer">▶️ Video</a>
           </div>
         </div>
+      </div>
 
-        <div class="gateGrid">
-          <!-- FREE (shown as Standard) -->
-          <div class="pick" id="pickFree" role="button" tabindex="0" aria-label="Select Standard">
-            <div class="pickGlow" aria-hidden="true"></div>
-            <div class="pickTop">
-              <div class="tag free">STANDARD</div>
-              <div class="kbd">instant access</div>
+      <div class="card">
+        <div class="cardGlow"></div>
+        <div class="cardInner">
+          <div class="pill">💎 Access Keys</div>
+          <div style="color:var(--muted); margin-top:10px; line-height:1.5">
+            Buy access and receive your code on Discord. No PayPal needed — crypto supported.
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Existing price cards updated (fixed mismatch) -->
+          <div class="priceCard" data-plan="15 DAYS" data-price="0.75">
+            <div class="priceTop">
+              <div class="priceBadge">15 DAYS</div>
+              <div class="priceBadge">€0.75</div>
             </div>
-            <div class="pickTitle">Nozzarri Tickets — Standard</div>
-            <div class="pickText">
-              Support + Trade tickets, clean UI, logs, safe permission checks. Perfect for public servers.
-            </div>
-            <div class="pickBtns">
-              <button class="miniBtn primary" id="freeOpen">Open</button>
-              <button class="miniBtn" id="freeInvite">Invite Bot</button>
+            <div class="priceName">Starter Key</div>
+            <div class="priceMoney">€0.75</div>
+            <div class="priceSub">Try access for 15 days.</div>
+            <div class="priceBtnRow">
+              <button class="miniBtn primary planBtn" type="button">Buy 15d</button>
+              <button class="miniBtn copyLtcBtn" type="button">Copy LTC</button>
             </div>
           </div>
 
-          <!-- PREMIUM (shown as Pro) -->
-          <div class="pick" id="pickPrem" role="button" tabindex="0" aria-label="Select Pro">
-            <div class="pickGlow" aria-hidden="true"></div>
-            <div class="pickTop">
-              <div class="tag prem">PRO</div>
-              <div class="kbd">keys + extra</div>
+          <div class="priceCard" data-plan="1 MONTH" data-price="1.50">
+            <div class="priceTop">
+              <div class="priceBadge best">1 MONTH • BEST</div>
+              <div class="priceBadge">€1.50</div>
             </div>
-            <div class="pickTitle">Nozzarri Tickets — Pro</div>
-            <div class="pickText">
-              Unlock extra commands + customization. Checkout looks like a real store panel (steps + payment methods).
+            <div class="priceName">Pro Key</div>
+            <div class="priceMoney">€1.50</div>
+            <div class="priceSub">Most popular plan.</div>
+            <div class="priceBtnRow">
+              <button class="miniBtn primary planBtn" type="button">Buy 1m</button>
+              <button class="miniBtn copyLtcBtn" type="button">Copy LTC</button>
             </div>
-            <div class="pickBtns">
-              <button class="miniBtn primary" id="premOpen">Open</button>
-              <a class="miniBtn" id="premYoutube" href="#" target="_blank" rel="noreferrer">Watch updates</a>
+          </div>
+
+          <div class="priceCard" data-plan="3 MONTHS" data-price="3.00">
+            <div class="priceTop">
+              <div class="priceBadge">3 MONTHS</div>
+              <div class="priceBadge">€3.00</div>
+            </div>
+            <div class="priceName">Extended Key</div>
+            <div class="priceMoney">€3.00</div>
+            <div class="priceSub">Longer access for power users.</div>
+            <div class="priceBtnRow">
+              <button class="miniBtn primary planBtn" type="button">Buy 3m</button>
+              <button class="miniBtn copyLtcBtn" type="button">Copy LTC</button>
             </div>
           </div>
         </div>
       </div>
     </section>
-  </main>
 
-  <!-- FREE VIEW -->
-  <div class="view" id="freeView">
-    <main class="container">
-      <section class="hero">
-        <div class="hero-left reveal">
-          <div class="pill"><span class="dot"></span> Standard Panel • Tickets • Logs</div>
+    <!-- Keep your sections -->
+    <section id="features" style="margin-top:22px;">
+      <div class="card"><div class="cardGlow"></div><div class="cardInner">
+        <h2 style="margin:0;">Features</h2>
+        <div class="lead">Clean panels, fast setup, logs, categories and more.</div>
+      </div></div>
+    </section>
 
-          <h1>Tickets with <span class="grad">clean</span> style</h1>
+    <section id="commands" style="margin-top:16px;">
+      <div class="card"><div class="cardGlow"></div><div class="cardInner">
+        <h2 style="margin:0;">Commands</h2>
+        <div class="lead">Setup + ticket commands in a simple way.</div>
+      </div></div>
+    </section>
 
-          <p class="lead">
-            Support Tickets + Trade Tickets, clean panels, setup, logs, and smart permission checks.
-            Built for public servers and smooth staff workflows.
-          </p>
-
-          <div class="cta">
-            <a class="btn primary" id="inviteBtn3" href="#" target="_blank" rel="noreferrer">➕ Add Bot</a>
-            <button class="btn ghost" id="copyInvite3" type="button">📋 Copy invite</button>
-            <a class="btn ghost" id="discordBtn3" href="#" target="_blank" rel="noreferrer">💬 Discord</a>
-            <a class="btn ghost" id="youtubeBtn3" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
-            <button class="btn ghost" id="backGate1" type="button">⬅ Back</button>
-          </div>
-
-          <div class="stats">
-            <div class="stat">
-              <div class="statTop">⚡</div>
-              <div class="statBig">Instant</div>
-              <div class="statSub">Ticket creation</div>
-            </div>
-            <div class="stat">
-              <div class="statTop">🧩</div>
-              <div class="statBig">Panels</div>
-              <div class="statSub">Buttons + menus</div>
-            </div>
-            <div class="stat">
-              <div class="statTop">🔒</div>
-              <div class="statBig">Safe</div>
-              <div class="statSub">No admin needed</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="hero-right">
-          <div class="card preview reveal">
-            <div class="cardTop">
-              <div class="badge">Ticket Panel</div>
-              <div class="chips">
-                <span class="chip">Support</span>
-                <span class="chip">Trade</span>
-                <span class="chip">Logs</span>
-              </div>
-            </div>
-
-            <div class="panel">
-              <div class="panelHead">
-                <img class="panelAvatar" src="assets/nozzarri.png" alt="bot" />
-                <div>
-                  <div class="panelTitle">Open a ticket</div>
-                  <div class="panelDesc">Choose what you need — the bot creates a private channel.</div>
-                </div>
-              </div>
-
-              <div class="panelBtns">
-                <button class="panelBtn" type="button" onclick="fakeClick('Support Ticket')">
-                  <span>🎟️ Support Ticket</span>
-                  <small>Fast help</small>
-                </button>
-                <button class="panelBtn" type="button" onclick="fakeClick('Trade Ticket')">
-                  <span>🤝 Trade Ticket</span>
-                  <small>Private deal</small>
-                </button>
-              </div>
-
-              <div class="smallNote">Tip: staff can use <b>?close</b> directly in ticket channels.</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="features" class="section">
-        <h2 class="reveal">Features</h2>
-        <div class="grid">
-          <div class="feature card reveal">
-            <div class="icon">🎛️</div>
-            <div class="ftitle">Setup panel</div>
-            <div class="ftext">Pick categories, roles, logs, then post panels.</div>
-          </div>
-          <div class="feature card reveal">
-            <div class="icon">🔐</div>
-            <div class="ftitle">Private tickets</div>
-            <div class="ftext">Only the user + staff can see the channel.</div>
-          </div>
-          <div class="feature card reveal">
-            <div class="icon">🧾</div>
-            <div class="ftitle">Logs</div>
-            <div class="ftext">Ticket create/close actions sent to your log channel.</div>
-          </div>
-          <div class="feature card reveal">
-            <div class="icon">✨</div>
-            <div class="ftitle">Clean UI</div>
-            <div class="ftext">Smooth animations, modern cards, premium feel.</div>
-          </div>
-        </div>
-      </section>
-
-      <section id="commands" class="section">
-        <h2 class="reveal">Commands</h2>
-        <p class="muted reveal">Click a command to copy it.</p>
-
-        <div class="grid cmds">
-          <button class="cmd card reveal" data-copy="?help"><span>?help</span> <span class="kbd">copy</span></button>
-          <button class="cmd card reveal" data-copy="?setup"><span>?setup (owner)</span> <span class="kbd">copy</span></button>
-          <button class="cmd card reveal" data-copy="?close"><span>?close</span> <span class="kbd">copy</span></button>
-          <button class="cmd card reveal" data-copy="?panel"><span>?panel (owner)</span> <span class="kbd">copy</span></button>
-        </div>
-      </section>
-
-      <section id="faq" class="section">
-        <h2 class="reveal">FAQ</h2>
-        <div class="faq">
-          <details class="card reveal">
-            <summary>Does the bot need Administrator?</summary>
-            <p>No. The invite uses only the permissions needed for tickets (no Administrator).</p>
-          </details>
-          <details class="card reveal">
-            <summary>Why does it say “Finish setup”?</summary>
-            <p>If setup isn’t completed (categories/roles/log channel), the bot blocks ticket creation until you finish setup.</p>
-          </details>
-        </div>
-      </section>
-
-      <footer class="footer">
-        <div class="footLeft">
-          <img class="logo" src="assets/nozzarri.png" alt="Nozzarri Tickets" style="width:36px;height:36px;border-radius:12px" />
-          <div>
-            <div class="bname">Nozzarri Tickets</div>
-            <div class="muted">© <span id="year"></span> • Tickets Bot</div>
-          </div>
-        </div>
-        <div class="footRight">
-          <a href="#" id="backGate2">Back</a>
-          <a href="#" id="footerDiscord">Discord</a>
-          <a href="#" id="footerYoutube">YouTube</a>
-          <a href="#top">Back to top</a>
-        </div>
-      </footer>
-    </main>
+    <section id="faq" style="margin-top:16px;">
+      <div class="card"><div class="cardGlow"></div><div class="cardInner">
+        <h2 style="margin:0;">FAQ</h2>
+        <div class="lead">Common questions & answers.</div>
+      </div></div>
+    </section>
   </div>
 
-  <!-- PREMIUM VIEW -->
-  <div class="view" id="premView">
-    <main class="container premWrap">
-      <div class="premGrid">
-        <div class="premLeft">
-          <div class="premHero reveal">
-            <div class="premHeroGlow" aria-hidden="true"></div>
-
-            <div class="premTopPill">
-              <div class="pill"><span class="dot"></span> Pro Access • Keys • Extra Commands</div>
-            </div>
-
-            <div class="premTitleBig">Nozzarri Tickets <span class="grad">Pro</span></div>
-
-            <p class="premSub">
-              Pro unlocks extra commands and customization for your server.
-              Checkout is built like a real store (steps + methods). After payment, you receive your code in Discord.
-            </p>
-
-            <div class="premActions">
-              <button class="btn primary" id="premBuyOpen" type="button">💎 Buy Pro</button>
-              <button class="btn ghost" id="premCmdsScroll" type="button">✨ Pro commands</button>
-              <button class="btn ghost" id="copyOwner" type="button">👤 Copy owner</button>
-              <button class="btn ghost" id="backGate3" type="button">⬅ Back</button>
-            </div>
-
-            <div class="tabs" style="margin-top:16px;">
-              <button class="tabBtn active" id="tabFeatures" type="button">Features</button>
-              <button class="tabBtn" id="tabCommands" type="button">Commands</button>
-              <button class="tabBtn" id="tabHow" type="button">How to buy</button>
-            </div>
-
-            <div class="premPanel" id="premPanel">
-              <!-- Filled by JS -->
-            </div>
-          </div>
-        </div>
-
-        <div class="premRight">
-          <div class="premRightCard reveal">
-            <h3>Pro Plans</h3>
-
-            <div class="priceGrid">
-              <div class="priceCard" data-plan="15 DAYS" data-price="1">
-                <div class="priceTop">
-                  <div class="priceBadge">15 DAYS</div>
-                  <div class="priceBadge">$1</div>
-                </div>
-                <div class="priceName">Starter Key</div>
-                <div class="priceMoney">$1</div>
-                <div class="priceSub">Try Pro for 15 days.</div>
-                <div class="priceBtnRow">
-                  <button class="miniBtn primary planBtn" type="button">Buy 15d</button>
-                  <button class="miniBtn copyLtcBtn" type="button">Copy LTC</button>
-                </div>
-              </div>
-
-              <div class="priceCard" data-plan="1 MONTH" data-price="2">
-                <div class="priceTop">
-                  <div class="priceBadge best">1 MONTH • BEST</div>
-                  <div class="priceBadge">$2</div>
-                </div>
-                <div class="priceName">Pro Key</div>
-                <div class="priceMoney">$2</div>
-                <div class="priceSub">Most popular plan.</div>
-                <div class="priceBtnRow">
-                  <button class="miniBtn primary planBtn" type="button">Buy 1m</button>
-                  <button class="miniBtn copyLtcBtn" type="button">Copy LTC</button>
-                </div>
-              </div>
-
-              <div class="priceCard" data-plan="3 MONTHS" data-price="4">
-                <div class="priceTop">
-                  <div class="priceBadge">3 MONTHS</div>
-                  <div class="priceBadge">$4</div>
-                </div>
-                <div class="priceName">Ultra Key</div>
-                <div class="priceMoney">$4</div>
-                <div class="priceSub">Best value (longer access).</div>
-                <div class="priceBtnRow">
-                  <button class="miniBtn primary planBtn" type="button">Buy 3m</button>
-                  <button class="miniBtn copyLtcBtn" type="button">Copy LTC</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="finePrint">
-              Payments are in LTC. Send the USD value in LTC (rate changes). Always double-check the address.
-              After sending, contact the owner with your Discord username so you can receive your redeem code.
-            </div>
-
-            <div class="rowBtns" style="margin-top:12px;">
-              <button class="btn primary" id="premBuyOpen2" type="button">💎 Buy Pro</button>
-              <button class="btn ghost" id="copyLTC" type="button">📋 Copy LTC</button>
-              <a class="btn ghost" id="discordBtn4" href="#" target="_blank" rel="noreferrer">💬 Discord</a>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="finePrint">
-              Owner contact: <b class="mono" id="ownerName">n_om_e</b>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- NEW CHECKOUT MODAL (store-style, no QR) -->
-  <div class="checkoutModal" id="checkoutModal" aria-hidden="true">
-    <div class="checkoutShell">
-      <div class="checkoutGlow" aria-hidden="true"></div>
-
-      <div class="checkoutTop">
-        <div class="checkoutBrand">
-          <img src="assets/nozzarri.png" alt="Nozzarri Tickets" />
-          <div style="min-width:0">
-            <b id="chkShopName">Nozzarri Tickets</b>
-            <span id="chkShopSub">Secure checkout</span>
-          </div>
-        </div>
-        <button class="checkoutClose" id="chkClose" type="button" aria-label="Close">✕</button>
-      </div>
-
-      <div class="checkoutBody">
-        <!-- LEFT: order summary -->
-        <div class="checkoutCard" id="chkLeft">
-          <div class="orderTitle">
-            <div>Pay <span id="chkBrandName" style="opacity:.9">Nozzarri Tickets</span></div>
-            <div class="tinyPill" id="chkLangPill">English</div>
-          </div>
-
-          <div class="priceHuge" id="chkTotal">€1.50</div>
-
-          <div class="orderItem">
-            <img src="assets/nozzarri.png" alt="item" />
-            <div style="min-width:0">
-              <b id="chkItemTitle">Pro Access</b>
-              <span id="chkItemDesc">1x • Key delivery on Discord</span>
-            </div>
-            <div style="margin-left:auto; font-weight:1000" id="chkItemPrice">€1.50</div>
-          </div>
-
-          <div class="orderTotals">
-            <div class="rowLine"><small>Subtotal</small><span id="chkSubtotal">€1.50</span></div>
-            <div class="rowLine"><small>Total</small><span id="chkTotal2">€1.50</span></div>
-          </div>
-
-          <div class="helpBox">
-            <b>Having issues with your order?</b>
-            <p>
-              Open a ticket in our Discord and we will help fast.
-            </p>
-            <a class="miniBtn primary" id="chkDiscordSupport" href="#" target="_blank" rel="noreferrer">Open a Support Ticket</a>
-          </div>
-
-          <div class="note">
-            Tip: if you sent payment, include your Discord username + selected plan. (Manual verify = safer)
-          </div>
-        </div>
-
-        <!-- RIGHT: steps -->
-        <div class="checkoutCard" id="chkRight">
-          <div class="stepper">
-            <div class="step active" id="step1">
-              <small>Step 1</small><b>Order Information</b>
-            </div>
-            <div class="step" id="step2">
-              <small>Step 2</small><b>Confirm & Pay</b>
-            </div>
-            <div class="step" id="step3">
-              <small>Step 3</small><b>Receive Your Items</b>
-            </div>
-          </div>
-
-          <!-- SCREEN 1 -->
-          <div id="chkScreen1">
-            <div class="formTitle">Order Information</div>
-
-            <div class="fieldRow">
-              <div class="label">E-mail Address *</div>
-              <input class="input" id="chkEmail" placeholder="The order confirmation will be sent to this e-mail address." />
-            </div>
-
-            <div class="fieldRow">
-              <div class="label">Coupon Code</div>
-              <div class="couponRow">
-                <input class="input" id="chkCoupon" placeholder="Have a coupon code? Enter it here." />
-                <button class="applyBtn" id="chkApplyCoupon" type="button">Apply →</button>
-              </div>
-            </div>
-
-            <div class="fieldRow">
-              <div class="label">Payment Method *</div>
-              <div class="payMethods" id="payMethods">
-                <div class="payMethod" data-method="paypal">
-                  <div class="payLeft">
-                    <div class="payIcon">P</div>
-                    <div class="payTxt">
-                      <b>PayPal (Friends & Family)</b>
-                      <span>Fast • manual verify</span>
-                    </div>
-                  </div>
-                  <div class="payRight">
-                    <span class="tinyPill">fee</span>
-                    <span>›</span>
-                  </div>
-                </div>
-
-                <div class="payMethod active" data-method="ltc">
-                  <div class="payLeft">
-                    <div class="payIcon">Ł</div>
-                    <div class="payTxt">
-                      <b>Litecoin</b>
-                      <span>Recommended • low fees</span>
-                    </div>
-                  </div>
-                  <div class="payRight">
-                    <span class="tinyPill">crypto</span>
-                    <span>›</span>
-                  </div>
-                </div>
-
-                <div class="payMethod" data-method="btc">
-                  <div class="payLeft">
-                    <div class="payIcon">₿</div>
-                    <div class="payTxt">
-                      <b>Bitcoin</b>
-                      <span>Alternative crypto</span>
-                    </div>
-                  </div>
-                  <div class="payRight">
-                    <span class="tinyPill">crypto</span>
-                    <span>›</span>
-                  </div>
-                </div>
-
-                <div class="payMethod" data-method="discord">
-                  <div class="payLeft">
-                    <div class="payIcon">💬</div>
-                    <div class="payTxt">
-                      <b>Discord (Support)</b>
-                      <span>Need help? Open a ticket</span>
-                    </div>
-                  </div>
-                  <div class="payRight">
-                    <span class="tinyPill">help</span>
-                    <span>›</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="agreeRow">
-              <label class="checkLine">
-                <input type="checkbox" id="chkTos" />
-                <span>I have read and agree to Nozzarri Tickets’s Terms of Service.</span>
-              </label>
-              <label class="checkLine">
-                <input type="checkbox" id="chkPromo" />
-                <span>I would like to receive updates and promotions.</span>
-              </label>
-            </div>
-
-            <div class="checkoutActions">
-              <button class="btn ghost" id="chkCancel1" type="button">Cancel</button>
-              <button class="btn primary" id="chkContinue1" type="button">Continue →</button>
-            </div>
-
-            <div class="note">
-              We don’t show QR codes here. You’ll just copy the address/steps in the next screen.
-            </div>
-          </div>
-
-          <!-- SCREEN 2 -->
-          <div id="chkScreen2" style="display:none">
-            <div class="formTitle">Confirm & Pay</div>
-
-            <div class="confirmBox" id="chkConfirmBox">
-              Your order will be automatically processed once the payment is received.
-            </div>
-
-            <div class="fieldRow">
-              <div class="label">Selected Plan</div>
-              <input class="input" id="chkPlan" readonly />
-            </div>
-
-            <div class="fieldRow">
-              <div class="label">Your Discord username (for delivery)</div>
-              <input class="input" id="chkDiscordUser" placeholder="example: nozzarri or nozzarri#0001" />
-            </div>
-
-            <div class="fieldRow">
-              <div class="label">Payment method</div>
-              <input class="input" id="chkMethod" readonly />
-            </div>
-
-            <div class="fieldRow" id="cryptoBlock">
-              <div class="label">Send payment to this address</div>
-              <div class="copyRow">
-                <input class="input mono" id="chkAddress" readonly />
-                <button class="copyBtn" id="chkCopyAddr" type="button">Copy</button>
-              </div>
-              <div class="note" id="chkCryptoNote">
-                Send the exact USD value in LTC (rate changes). After sending, open Discord and message the owner with your plan + username.
-              </div>
-            </div>
-
-            <div class="fieldRow" id="paypalBlock" style="display:none">
-              <div class="label">PayPal note</div>
-              <div class="confirmBox">
-                Use PayPal Friends & Family only. After payment, message the owner on Discord with your plan + username.
-              </div>
-            </div>
-
-            <div class="fieldRow" id="discordBlock" style="display:none">
-              <div class="label">Need help?</div>
-              <div class="confirmBox">
-                Open a support ticket in Discord and we’ll guide you through payment + delivery.
-              </div>
-              <div class="checkoutActions" style="justify-content:flex-start">
-                <a class="btn primary" id="chkOpenDiscord" href="#" target="_blank" rel="noreferrer">Open Discord</a>
-              </div>
-            </div>
-
-            <div class="checkoutActions">
-              <button class="btn ghost" id="chkBack2" type="button">← Back</button>
-              <button class="btn primary" id="chkContinue2" type="button">I sent payment →</button>
-            </div>
-
-            <div class="note">
-              Delivery is via Discord code. Keep your payment TX / screenshot if you want faster verification.
-            </div>
-          </div>
-
-          <!-- SCREEN 3 -->
-          <div id="chkScreen3" style="display:none">
-            <div class="formTitle">Receive Your Items</div>
-
-            <div class="confirmBox">
-              After payment is verified, you’ll receive your redeem code in Discord.
-              If you need help, open a ticket and paste your plan + username.
-            </div>
-
-            <div class="fieldRow">
-              <div class="label">Message to owner (copy & send)</div>
-              <div class="copyRow">
-                <input class="input" id="chkMsgOwner" readonly />
-                <button class="copyBtn" id="chkCopyMsg" type="button">Copy</button>
-              </div>
-            </div>
-
-            <div class="checkoutActions" style="justify-content:flex-start">
-              <a class="btn primary" id="chkGoDiscord2" href="#" target="_blank" rel="noreferrer">Open Discord</a>
-              <button class="btn ghost" id="chkDone" type="button">Done</button>
-            </div>
-
-            <div class="note">
-              This is manual verification (safer than auto systems).
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BUY MODAL (OLD, KEPT FOR COMPAT / NOT DELETED) -->
+  <!-- BUY MODAL -->
   <div class="modal" id="buyModal" aria-hidden="true">
-    <div class="modalCard">
+    <div class="modalCard checkoutCard">
       <div class="modalGlow" aria-hidden="true"></div>
+
       <div class="modalTop">
-        <div class="modalTitle" id="buyTitle">Buy Premium</div>
+        <div>
+          <div class="modalTitle" id="buyTitle">Checkout</div>
+          <div class="modalText" id="buyText">Choose a plan and payment method.</div>
+        </div>
         <button class="btn ghost iconbtn" id="closeBuy" type="button" aria-label="Close">✕</button>
       </div>
 
-      <div class="modalText" id="buyText">
-        Choose a plan to see the payment details.
-      </div>
+      <div class="checkoutGrid">
+        <!-- LEFT: Summary -->
+        <aside class="checkoutLeft">
+          <div class="sumCard">
+            <div class="sumHead">
+              <div class="sumBrand">
+                <img src="assets/nozzarri.png" class="sumLogo" alt="Nozzarri logo" onerror="this.style.display='none'"/>
+                <div>
+                  <div class="sumName">Nozzarri Tickets</div>
+                  <div class="sumSub">Code delivered on Discord</div>
+                </div>
+              </div>
+              <div class="sumPrice">
+                <div class="sumPriceTop">Total</div>
+                <div class="sumPriceVal" id="sumTotal">€0.00</div>
+              </div>
+            </div>
 
-      <div class="divider"></div>
+            <div class="sumLine"></div>
 
-      <div class="fieldRow">
-        <div class="label">Your Discord username (so owner can give you the code)</div>
-        <input class="input" id="buyerDiscord" placeholder="example: nozzarri#0001 or nozzarri" />
-      </div>
+            <div class="sumItem">
+              <div class="sumItemLeft">
+                <div class="sumItemTitle" id="sumPlan">Select a plan</div>
+                <div class="sumItemMeta" id="sumMeta">—</div>
+              </div>
+              <div class="sumItemRight" id="sumPlanPrice">€0.00</div>
+            </div>
 
-      <div class="fieldRow">
-        <div class="label">LTC address</div>
-        <input class="input mono" id="ltcAddr" readonly />
-      </div>
+            <div class="sumLine"></div>
 
-      <div class="fieldRow">
-        <div class="label">Message to owner (copy & send after you pay)</div>
-        <input class="input" id="msgOwner" readonly />
-      </div>
+            <div class="sumHelp">
+              <div class="sumHelpTitle">Having issues with your order?</div>
+              <div class="sumHelpText">Open a ticket in Discord and we will help fast.</div>
+              <a class="btn primary" id="supportDiscordBtn" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">Open a Support Ticket</a>
+              <div class="sumHelpTip">Tip: include your Discord username + selected plan in your message.</div>
+            </div>
+          </div>
+        </aside>
 
-      <div class="rowBtns">
-        <button class="btn primary" id="copyPayInfo" type="button">📋 Copy payment + message</button>
-        <button class="btn ghost" id="copyAddrOnly" type="button">📋 Copy LTC only</button>
-        <button class="btn ghost" id="copyOwnerOnly" type="button">👤 Copy owner</button>
-      </div>
+        <!-- RIGHT: Steps -->
+        <section class="checkoutRight">
+          <div class="stepper">
+            <button class="stepBtn active" type="button" data-step="1">
+              <span class="stepNum">Step 1</span>
+              <span class="stepTitle">Order Information</span>
+            </button>
+            <button class="stepBtn" type="button" data-step="2">
+              <span class="stepNum">Step 2</span>
+              <span class="stepTitle">Confirm & Pay</span>
+            </button>
+            <button class="stepBtn" type="button" data-step="3">
+              <span class="stepNum">Step 3</span>
+              <span class="stepTitle">Receive Your Items</span>
+            </button>
+          </div>
 
-      <div class="finePrint" style="position:relative; margin-top:10px;">
-        After you send payment, add/DM the owner on Discord: <b class="mono">n_om_e</b> and paste the message.
-        Manual verification avoids fake auto systems.
+          <!-- STEP 1 -->
+          <div class="stepPanel show" id="step1Panel">
+            <div class="formGrid">
+              <div class="fieldRow">
+                <div class="label">Discord username *</div>
+                <input class="input" id="buyerDiscord" placeholder="yourname or yourname#0000" />
+              </div>
+
+              <div class="fieldRow">
+                <div class="label">E-mail address (optional)</div>
+                <input class="input" id="buyerEmail" placeholder="name@gmail.com" />
+              </div>
+
+              <div class="fieldRow couponRow">
+                <div class="label">Coupon Code</div>
+                <div class="couponFlex">
+                  <input class="input" id="couponCode" placeholder="Enter code" />
+                  <button class="btn ghost" id="applyCoupon" type="button">Apply →</button>
+                </div>
+                <div class="hint" id="couponHint">Coupons are optional.</div>
+              </div>
+            </div>
+
+            <div class="label" style="margin-top:10px;">Payment Method *</div>
+            <div class="payMethods" role="list">
+              <button class="payCard active" type="button" data-method="ltc" role="listitem">
+                <div class="payIcon">Ł</div>
+                <div class="payText">
+                  <div class="payName">Litecoin</div>
+                  <div class="paySub">Recommended • low fees</div>
+                </div>
+                <div class="payTag">crypto</div>
+              </button>
+
+              <button class="payCard" type="button" data-method="btc" role="listitem">
+                <div class="payIcon">₿</div>
+                <div class="payText">
+                  <div class="payName">Bitcoin</div>
+                  <div class="paySub">Alternative crypto</div>
+                </div>
+                <div class="payTag">crypto</div>
+              </button>
+
+              <a class="payCard link" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer" role="listitem">
+                <div class="payIcon">💬</div>
+                <div class="payText">
+                  <div class="payName">Discord (Support)</div>
+                  <div class="paySub">Need help? Open a ticket</div>
+                </div>
+                <div class="payTag">help</div>
+              </a>
+            </div>
+
+            <div class="checks">
+              <label class="check"><input type="checkbox" id="tosCheck" /> <span>I have read and agree to Nozzarri Tickets's Terms of Service.</span></label>
+              <label class="check"><input type="checkbox" id="promoCheck" /> <span>I would like to receive updates and promotions.</span></label>
+            </div>
+
+            <div class="stepActions">
+              <button class="btn ghost" id="backToPlans" type="button">Back</button>
+              <button class="btn primary" id="goStep2" type="button">Continue</button>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="stepPanel" id="step2Panel">
+            <div class="payNotice">
+              Your order will be automatically processed once the payment is received.
+            </div>
+
+            <div class="payBox">
+              <div class="payBoxRow">
+                <div class="payBoxLabel">Send payment to this address</div>
+                <button class="btn ghost iconbtn" id="openWallet" type="button" title="Open wallet">↗</button>
+              </div>
+
+              <div class="addrRow">
+                <input class="input mono" id="payAddr" readonly />
+                <button class="btn ghost" id="copyAddrOnly" type="button">Copy</button>
+              </div>
+
+              <div class="payBoxRow" style="margin-top:12px;">
+                <div class="payBoxLabel">Send the exact amount</div>
+              </div>
+              <div class="amtRow">
+                <input class="input mono" id="payAmt" readonly />
+                <button class="btn ghost" id="copyAmtOnly" type="button">Copy</button>
+              </div>
+
+              <div class="payHint">
+                If your wallet asks for a note/message, you can use the message below.
+              </div>
+
+              <div class="fieldRow" style="margin-top:12px;">
+                <div class="label">Message to owner (copy & send after you pay)</div>
+                <input class="input" id="msgOwner" readonly />
+              </div>
+
+              <div class="rowBtns">
+                <button class="btn primary" id="copyPayInfo" type="button">Copy payment + message</button>
+                <button class="btn ghost" id="copyOwnerOnly" type="button">Copy owner</button>
+              </div>
+
+              <div class="fieldRow" style="margin-top:10px;">
+                <div class="label">Owner</div>
+                <input class="input mono" value="n_om_e" readonly />
+              </div>
+
+              <div class="modalText" style="margin-top:10px;">
+                After you send payment, DM the owner and paste the message.
+              </div>
+            </div>
+
+            <div class="stepActions">
+              <button class="btn ghost" id="backStep1" type="button">Back</button>
+              <button class="btn primary" id="goStep3" type="button">I paid</button>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="stepPanel" id="step3Panel">
+            <div class="successCard">
+              <div class="successTitle">Receive Your Items</div>
+              <div class="successText">
+                After payment confirms, you will receive your redeem code on Discord.
+                If you need help, open a support ticket.
+              </div>
+
+              <div class="rowBtns" style="margin-top:14px;">
+                <a class="btn primary" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">Open Support</a>
+                <button class="btn ghost" id="copyOwnerOnly2" type="button">Copy owner</button>
+              </div>
+            </div>
+
+            <div class="stepActions">
+              <button class="btn ghost" id="backStep2" type="button">Back</button>
+              <button class="btn primary" id="closeDone" type="button">Done</button>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   </div>
 
   <button id="toTop" class="toTop" type="button" aria-label="Back to top">⬆️</button>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="toast">Copied</div>
 
   <script>
     // ===== CONFIG =====
@@ -1909,26 +794,12 @@
 
     const YT_URL = "https://www.youtube.com/channel/UC8Ovc5xT-tXXIjxLnVe72dQ";
 
-    // NEW: Discord server invite button
-    const DISCORD_URL = "https://discord.gg/FHRSPyXw";
-
     // Your LTC address
     const LTC_ADDRESS = "LPxonLCBtrcHnYAompBSXsboTfJQ8Eyuz8";
-
-    // Optional: BTC address (you said you don't have it – keeping as placeholder)
-    const BTC_ADDRESS = "YOUR_BTC_ADDRESS_HERE";
-
-    // ===== LINKS =====
-    [inviteBtn, inviteBtn2, inviteBtn3].forEach(a => { if(a) a.href = INVITE_URL; });
-    [youtubeBtn, youtubeBtn2, youtubeBtn3, premYoutube, footerYoutube].forEach(a => { if(a) a.href = YT_URL; });
-
-    // Discord links
-    [discordBtn, discordBtn2, discordBtn3, discordBtn4, footerDiscord, chkDiscordSupport, chkOpenDiscord, chkGoDiscord2].forEach(a => {
-      if(a) a.href = DISCORD_URL;
-    });
-
-    document.getElementById("year").textContent = new Date().getFullYear();
-    document.getElementById("ownerName").textContent = OWNER_DISCORD;
+    // Your BTC address
+    const BTC_ADDRESS = "bc1qfnvu8lxgmx9nklfew3arguzhfdzzva6u92gzj6";
+    // Discord support invite
+    const SUPPORT_INVITE = "https://discord.gg/FHRSPyXw";
 
     // ===== TOAST + COPY =====
     const toast = document.getElementById("toast");
@@ -1946,536 +817,260 @@
         await navigator.clipboard.writeText(text);
         showToast("Copied ✅");
       }catch{
-        showToast("Copy failed ❌");
+        // fallback
+        const t = document.createElement("textarea");
+        t.value = text;
+        document.body.appendChild(t);
+        t.select();
+        document.execCommand("copy");
+        t.remove();
+        showToast("Copied ✅");
       }
     }
 
-    // copy buttons
+    // ===== Top links =====
+    const inviteBtn = document.getElementById("inviteBtn");
+    const inviteBtn2 = document.getElementById("inviteBtn2");
+    const youtubeBtn = document.getElementById("youtubeBtn");
+    const youtubeBtn2 = document.getElementById("youtubeBtn2");
+
+    [inviteBtn, inviteBtn2].forEach(a => { if(a) a.href = INVITE_URL; });
+    [youtubeBtn, youtubeBtn2].forEach(a => { if(a) a.href = YT_URL; });
+
     document.getElementById("copyInvite")?.addEventListener("click", ()=>copyText(INVITE_URL));
-    document.getElementById("copyInvite2")?.addEventListener("click", ()=>copyText(INVITE_URL));
-    document.getElementById("copyInvite3")?.addEventListener("click", ()=>copyText(INVITE_URL));
-    document.getElementById("copySite")?.addEventListener("click", ()=>copyText(location.href));
 
-    document.getElementById("copyOwner")?.addEventListener("click", ()=>copyText(OWNER_DISCORD));
-    document.getElementById("copyLTC")?.addEventListener("click", ()=>copyText(LTC_ADDRESS));
-    document.querySelectorAll(".copyLtcBtn").forEach(btn => btn.addEventListener("click", ()=>copyText(LTC_ADDRESS)));
+    // ===== Loader hide =====
+    const loader = document.getElementById("loader");
+    setTimeout(()=> loader.classList.add("hide"), 900);
 
-    document.querySelectorAll("[data-copy]").forEach(btn=>{
-      btn.addEventListener("click", ()=>copyText(btn.getAttribute("data-copy")));
-    });
-
-    // ===== FAKE PANEL CLICK =====
-    window.fakeClick = (name) => showToast(`${name} (demo)`);
-
-    // ===== TOP BUTTON =====
+    // ===== Back to top =====
     const toTop = document.getElementById("toTop");
     window.addEventListener("scroll", ()=>{
-      if(window.scrollY > 500) toTop.classList.add("show");
-      else toTop.classList.remove("show");
+      toTop.classList.toggle("show", window.scrollY > 450);
     }, {passive:true});
-    toTop.addEventListener("click", ()=>window.scrollTo({top:0, behavior:"smooth"}));
+    toTop.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
 
-    // ===== MOBILE DRAWER =====
-    const drawer = document.getElementById("drawer");
-    const menuBtn = document.getElementById("menuBtn");
-    const closeDrawer = document.getElementById("closeDrawer");
-
-    function setDrawer(open){
-      drawer.classList.toggle("open", open);
-      drawer.setAttribute("aria-hidden", String(!open));
-    }
-    menuBtn?.addEventListener("click", ()=>setDrawer(true));
-    closeDrawer?.addEventListener("click", ()=>setDrawer(false));
-    drawer?.addEventListener("click", (e)=>{ if(e.target === drawer) setDrawer(false); });
-    drawer?.querySelectorAll("a").forEach(a=>a.addEventListener("click", ()=>setDrawer(false)));
-
-    // ===== REVEAL ON SCROLL =====
-    const io = new IntersectionObserver((entries)=>{
-      for(const e of entries){
-        if(e.isIntersecting) e.target.classList.add("show");
-      }
-    }, {threshold: .15});
-    document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
-
-    // ===== STARS CANVAS =====
-    const canvas = document.getElementById("stars");
-    const ctx = canvas.getContext("2d");
-
-    function resize(){
-      canvas.width = Math.floor(innerWidth * devicePixelRatio);
-      canvas.height = Math.floor(innerHeight * devicePixelRatio);
-      canvas.style.width = innerWidth + "px";
-      canvas.style.height = innerHeight + "px";
-    }
-    addEventListener("resize", resize, {passive:true});
-    resize();
-
-    let stars = [];
-    function initStars(){
-      const count = Math.min(240, Math.floor(innerWidth / 6));
-      stars = Array.from({length: count}, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: (Math.random()*1.6 + .2) * devicePixelRatio,
-        a: Math.random()*.6 + .12,
-        s: (Math.random()*.35 + .05) * devicePixelRatio
-      }));
-    }
-    initStars();
-
-    function draw(){
-      ctx.clearRect(0,0,canvas.width, canvas.height);
-      for(const st of stars){
-        st.y += st.s;
-        if(st.y > canvas.height + 10){
-          st.y = -10;
-          st.x = Math.random() * canvas.width;
-        }
-        ctx.globalAlpha = st.a;
-        ctx.beginPath();
-        ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
-        ctx.fillStyle = "#ffffff";
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-      requestAnimationFrame(draw);
-    }
-    draw();
-
-    // ===== LOADER =====
-    const loader = document.getElementById("loader");
-    const barFill = document.getElementById("barFill");
-    const loadPct = document.getElementById("loadPct");
-    const loadText = document.getElementById("loadText");
-
-    const steps = [
-      ["Booting UI", 16],
-      ["Loading assets", 42],
-      ["Initializing animations", 70],
-      ["Finalizing", 92],
-      ["Ready", 100],
-    ];
-
-    (function runLoader(){
-      let i = 0;
-      function step(){
-        const [t, p] = steps[i];
-        loadText.textContent = t;
-        barFill.style.width = p + "%";
-        loadPct.textContent = p + "%";
-        i++;
-        if(i < steps.length){
-          setTimeout(step, 220 + Math.random()*220);
-        }else{
-          setTimeout(() => loader.classList.add("hide"), 420);
-        }
-      }
-      setTimeout(step, 260);
-    })();
-
-    // ===== VIEW SWITCH =====
-    const gateRoot = document.getElementById("gateRoot");
-    const freeView = document.getElementById("freeView");
-    const premView = document.getElementById("premView");
-
-    function showGate(){
-      gateRoot.style.display = "block";
-      freeView.classList.remove("show");
-      premView.classList.remove("show");
-      freeView.style.display = "none";
-      premView.style.display = "none";
-      window.scrollTo({top:0, behavior:"smooth"});
-    }
-
-    function showFree(){
-      gateRoot.style.display = "none";
-      premView.classList.remove("show");
-      premView.style.display = "none";
-      freeView.style.display = "block";
-      freeView.classList.add("show");
-      window.scrollTo({top:0, behavior:"smooth"});
-      showToast("Opened ✅");
-    }
-
-    function showPrem(){
-      gateRoot.style.display = "none";
-      freeView.classList.remove("show");
-      freeView.style.display = "none";
-      premView.style.display = "block";
-      premView.classList.add("show");
-      window.scrollTo({top:0, behavior:"smooth"});
-      showToast("Pro opened 💎");
-    }
-
-    // Gate buttons
-    document.getElementById("pickFree").addEventListener("click", (e)=>{ if(e.target.closest("button")) return; showFree(); });
-    document.getElementById("freeOpen").addEventListener("click", showFree);
-    document.getElementById("freeInvite").addEventListener("click", ()=> window.open(INVITE_URL, "_blank"));
-
-    document.getElementById("pickPrem").addEventListener("click", (e)=>{ if(e.target.closest("a,button")) return; showPrem(); });
-    document.getElementById("premOpen").addEventListener("click", showPrem);
-
-    // Back buttons
-    document.getElementById("backGate1")?.addEventListener("click", showGate);
-    document.getElementById("backGate2")?.addEventListener("click", (e)=>{ e.preventDefault(); showGate(); });
-    document.getElementById("backGate3")?.addEventListener("click", showGate);
-
-    // Nav links: if user clicks Features etc while on gate -> open free
-    document.querySelectorAll(".navLink").forEach(a=>{
-      a.addEventListener("click", ()=>{
-        if(gateRoot.style.display !== "none"){
-          showFree();
-        }
-      });
+    // ===== Open checkout button =====
+    document.getElementById("openCheckout")?.addEventListener("click", ()=>{
+      // open with default plan (BEST)
+      openBuy("1 MONTH", "1.50");
     });
 
-    // ===== PREMIUM TABS CONTENT =====
-    const premPanel = document.getElementById("premPanel");
-    const tabFeatures = document.getElementById("tabFeatures");
-    const tabCommands = document.getElementById("tabCommands");
-    const tabHow = document.getElementById("tabHow");
-
-    const premiumCommands = [
-      { cmd: "?premium-help", desc: "Shows all pro commands you can use." },
-      { cmd: "?pfx set $", desc: "Change the server command prefix (example: $)." },
-      { cmd: "?pfx reset", desc: "Reset prefix back to ?." },
-      { cmd: "?pticketname set Trade Deal", desc: "Custom ticket channel name template." },
-      { cmd: "?pticketname reset", desc: "Reset ticket naming to default." },
-      { cmd: "?prole set Premium", desc: "Set a pro staff/priority role." },
-      { cmd: "?prole clear", desc: "Remove pro role settings." },
-      { cmd: "?pautoclose 24h", desc: "Auto-close inactive tickets after time." },
-      { cmd: "?pautoclose off", desc: "Disable auto-close." },
-      { cmd: "?ptheme neon", desc: "Set theme (example: neon)." },
-      { cmd: "?ptheme classic", desc: "Set theme (classic)." },
-      { cmd: "?pstatus", desc: "Check status + expiry." },
-    ];
-
-    function setActiveTab(active){
-      [tabFeatures, tabCommands, tabHow].forEach(b=>b.classList.remove("active"));
-      active.classList.add("active");
-    }
-
-    function renderFeatures(){
-      premPanel.innerHTML = `
-        <div style="font-weight:1000;font-size:16px;">Pro features</div>
-        <div class="muted" style="margin-top:8px;font-weight:900;line-height:1.6;">
-          • Custom prefix for commands (keep your bot private) <br>
-          • Custom ticket channel naming (Trade/Support branding) <br>
-          • Theme styles (neon/classic) <br>
-          • Priority role settings (staff tools) <br>
-          • Auto-close inactive tickets (clean server) <br>
-          • Status & expiry checking
-        </div>
-        <div class="finePrint" style="margin-top:10px;">
-          Pro commands only work if your server has a valid key activated.
-        </div>
-      `;
-    }
-
-    function renderCommands(){
-      const cards = premiumCommands.map(x=>`
-        <div class="cmdCard">
-          <div style="min-width:0;">
-            <div class="cmdName mono">${x.cmd}</div>
-            <div class="cmdHint">${x.desc}</div>
-          </div>
-          <button class="cmdCopy" type="button" data-copy="${x.cmd}">copy</button>
-        </div>
-      `).join("");
-
-      premPanel.innerHTML = `
-        <div style="font-weight:1000;font-size:16px;">Pro commands</div>
-        <div class="muted" style="margin-top:6px;font-weight:900;">Click copy and paste in Discord.</div>
-        <div class="cmdList">${cards}</div>
-      `;
-
-      premPanel.querySelectorAll("[data-copy]").forEach(btn=>{
-        btn.addEventListener("click", ()=>copyText(btn.getAttribute("data-copy")));
-      });
-    }
-
-    function renderHow(){
-      premPanel.innerHTML = `
-        <div style="font-weight:1000;font-size:16px;">How to buy & receive your key</div>
-        <div class="muted" style="margin-top:8px;font-weight:900;line-height:1.65;">
-          1) Click a plan on the right (15d / 1m / 3m). <br>
-          2) Complete checkout (Step 1 → Step 2). <br>
-          3) Send payment (LTC recommended). <br>
-          4) Open Discord and message the owner <b class="mono">${OWNER_DISCORD}</b> with plan + your username. <br>
-          5) Owner verifies payment and sends your redeem code. <br><br>
-          Manual verification avoids fake “auto” scam systems.
-        </div>
-      `;
-    }
-
-    // default
-    renderFeatures();
-
-    tabFeatures.addEventListener("click", ()=>{ setActiveTab(tabFeatures); renderFeatures(); });
-    tabCommands.addEventListener("click", ()=>{ setActiveTab(tabCommands); renderCommands(); });
-    tabHow.addEventListener("click", ()=>{ setActiveTab(tabHow); renderHow(); });
-
-    document.getElementById("premCmdsScroll").addEventListener("click", ()=>{
-      setActiveTab(tabCommands);
-      renderCommands();
-      premPanel.scrollIntoView({behavior:"smooth", block:"start"});
-    });
-
-    // ===== NEW CHECKOUT LOGIC =====
-    const checkoutModal = document.getElementById("checkoutModal");
-    const chkClose = document.getElementById("chkClose");
-
-    const step1 = document.getElementById("step1");
-    const step2 = document.getElementById("step2");
-    const step3 = document.getElementById("step3");
-
-    const chkScreen1 = document.getElementById("chkScreen1");
-    const chkScreen2 = document.getElementById("chkScreen2");
-    const chkScreen3 = document.getElementById("chkScreen3");
-
-    const chkTotal = document.getElementById("chkTotal");
-    const chkTotal2 = document.getElementById("chkTotal2");
-    const chkSubtotal = document.getElementById("chkSubtotal");
-    const chkItemTitle = document.getElementById("chkItemTitle");
-    const chkItemDesc = document.getElementById("chkItemDesc");
-    const chkItemPrice = document.getElementById("chkItemPrice");
-
-    const chkPlan = document.getElementById("chkPlan");
-    const chkMethod = document.getElementById("chkMethod");
-    const chkAddress = document.getElementById("chkAddress");
-    const chkCopyAddr = document.getElementById("chkCopyAddr");
-    const chkDiscordUser = document.getElementById("chkDiscordUser");
-    const chkMsgOwner = document.getElementById("chkMsgOwner");
-    const chkCopyMsg = document.getElementById("chkCopyMsg");
-
-    const paypalBlock = document.getElementById("paypalBlock");
-    const cryptoBlock = document.getElementById("cryptoBlock");
-    const discordBlock = document.getElementById("discordBlock");
-
-    const chkContinue1 = document.getElementById("chkContinue1");
-    const chkCancel1 = document.getElementById("chkCancel1");
-    const chkBack2 = document.getElementById("chkBack2");
-    const chkContinue2 = document.getElementById("chkContinue2");
-    const chkDone = document.getElementById("chkDone");
-
-    const chkEmail = document.getElementById("chkEmail");
-    const chkTos = document.getElementById("chkTos");
-    const chkCoupon = document.getElementById("chkCoupon");
-    const chkApplyCoupon = document.getElementById("chkApplyCoupon");
-
-    let selectedPlan = { plan:"1 MONTH", price:"2" };
-    let selectedMethod = "ltc";
-
-    function euroFromUsd(usd){
-      // Just visual like screenshot; not real conversion
-      const n = Number(usd || 0);
-      const eur = Math.max(0.5, n * 0.75); // makes $2 -> €1.50 vibe
-      return eur.toFixed(2);
-    }
-
-    function setStepState(s){
-      // s = 1,2,3
-      step1.classList.toggle("active", s === 1);
-      step2.classList.toggle("active", s === 2);
-      step3.classList.toggle("active", s === 3);
-
-      step1.classList.toggle("done", s > 1);
-      step2.classList.toggle("done", s > 2);
-    }
-
-    function showScreen(n){
-      chkScreen1.style.display = (n===1) ? "block" : "none";
-      chkScreen2.style.display = (n===2) ? "block" : "none";
-      chkScreen3.style.display = (n===3) ? "block" : "none";
-      setStepState(n);
-    }
-
-    function setMethod(m){
-      selectedMethod = m;
-
-      // highlight
-      document.querySelectorAll(".payMethod").forEach(el=>{
-        el.classList.toggle("active", el.dataset.method === m);
-      });
-
-      // update Step2 blocks
-      paypalBlock.style.display = (m === "paypal") ? "block" : "none";
-      discordBlock.style.display = (m === "discord") ? "block" : "none";
-      cryptoBlock.style.display = (m === "ltc" || m === "btc") ? "block" : "none";
-
-      if(m === "ltc"){
-        chkMethod.value = "Litecoin";
-        chkAddress.value = LTC_ADDRESS;
-      }else if(m === "btc"){
-        chkMethod.value = "Bitcoin";
-        chkAddress.value = BTC_ADDRESS;
-      }else if(m === "paypal"){
-        chkMethod.value = "PayPal (Friends & Family)";
-        chkAddress.value = "";
-      }else if(m === "discord"){
-        chkMethod.value = "Discord (Support)";
-        chkAddress.value = "";
-      }
-    }
-
-    function openCheckout(plan, price){
-      selectedPlan = { plan, price };
-
-      // Left summary mimic screenshot
-      const eur = euroFromUsd(price);
-      chkTotal.textContent = `€${eur}`;
-      chkSubtotal.textContent = `€${eur}`;
-      chkTotal2.textContent = `€${eur}`;
-      chkItemPrice.textContent = `€${eur}`;
-
-      chkItemTitle.textContent = `Pro Access — ${plan}`;
-      chkItemDesc.textContent = `1x • Code delivered on Discord`;
-      chkPlan.value = `${plan} ($${price})`;
-
-      // default method
-      setMethod(selectedMethod || "ltc");
-
-      // reset screens
-      showScreen(1);
-
-      // show modal
-      checkoutModal.classList.add("show");
-      checkoutModal.setAttribute("aria-hidden","false");
-    }
-
-    function closeCheckout(){
-      checkoutModal.classList.remove("show");
-      checkoutModal.setAttribute("aria-hidden","true");
-    }
-
-    chkClose.addEventListener("click", closeCheckout);
-    checkoutModal.addEventListener("click", (e)=>{ if(e.target === checkoutModal) closeCheckout(); });
-
-    // payment method selection
-    document.getElementById("payMethods").addEventListener("click", (e)=>{
-      const item = e.target.closest(".payMethod");
-      if(!item) return;
-      const m = item.dataset.method;
-
-      if(m === "discord"){
-        // quick open discord
-        window.open(DISCORD_URL, "_blank");
-        setMethod("discord");
-      }else{
-        setMethod(m);
-      }
-    });
-
-    chkApplyCoupon.addEventListener("click", ()=>{
-      const c = chkCoupon.value.trim();
-      if(!c) return showToast("Enter coupon first");
-      // UI-only (no real discounts)
-      showToast("Coupon applied (demo) ✅");
-    });
-
-    chkCancel1.addEventListener("click", closeCheckout);
-
-    chkContinue1.addEventListener("click", ()=>{
-      if(!chkEmail.value.trim()){
-        showToast("Email required ❌");
-        chkEmail.focus();
-        return;
-      }
-      if(!chkTos.checked){
-        showToast("Accept Terms ❌");
-        return;
-      }
-      // go step 2
-      showScreen(2);
-
-      // fill message template (later)
-      const duser = chkDiscordUser.value.trim() || "(your discord username)";
-      chkMsgOwner.value = `Hi! I bought Nozzarri Tickets Pro (${selectedPlan.plan} / $${selectedPlan.price}). My Discord: ${duser}. Please verify and send my redeem code.`;
-    });
-
-    chkBack2.addEventListener("click", ()=>showScreen(1));
-
-    chkCopyAddr.addEventListener("click", ()=>{
-      if(!chkAddress.value) return showToast("No address selected");
-      copyText(chkAddress.value);
-    });
-
-    chkContinue2.addEventListener("click", ()=>{
-      const duser = chkDiscordUser.value.trim() || "(your discord username)";
-      chkMsgOwner.value = `Hi! I bought Nozzarri Tickets Pro (${selectedPlan.plan} / $${selectedPlan.price}). My Discord: ${duser}. Payment method: ${chkMethod.value}. Please verify and send my redeem code.`;
-      showScreen(3);
-    });
-
-    chkCopyMsg.addEventListener("click", ()=>{
-      if(!chkMsgOwner.value) return;
-      copyText(chkMsgOwner.value);
-    });
-
-    chkDone.addEventListener("click", closeCheckout);
-
-    // open checkout from existing buttons
-    document.getElementById("premBuyOpen").addEventListener("click", ()=>openCheckout("1 MONTH", "2"));
-    document.getElementById("premBuyOpen2").addEventListener("click", ()=>openCheckout("1 MONTH", "2"));
-
-    // plan cards click -> open new checkout
-    document.querySelectorAll(".priceCard").forEach(card=>{
-      card.querySelector(".planBtn").addEventListener("click", ()=>{
-        openCheckout(card.dataset.plan, card.dataset.price);
-      });
-    });
-
-    // keep old modal logic (NOT deleted) — but we won't show it by default anymore
+    // ===== BUY MODAL LOGIC =====
     const buyModal = document.getElementById("buyModal");
     const closeBuy = document.getElementById("closeBuy");
     const buyTitle = document.getElementById("buyTitle");
     const buyText = document.getElementById("buyText");
+
+    // Step elements
+    const stepBtns = Array.from(document.querySelectorAll(".stepBtn"));
+    const step1Panel = document.getElementById("step1Panel");
+    const step2Panel = document.getElementById("step2Panel");
+    const step3Panel = document.getElementById("step3Panel");
+
+    // Fields
     const buyerDiscord = document.getElementById("buyerDiscord");
-    const ltcAddr = document.getElementById("ltcAddr");
+    const buyerEmail = document.getElementById("buyerEmail");
+    const couponCode = document.getElementById("couponCode");
+    const couponHint = document.getElementById("couponHint");
+    const tosCheck = document.getElementById("tosCheck");
+    const promoCheck = document.getElementById("promoCheck");
+
+    // Payment UI
+    const payAddr = document.getElementById("payAddr");
+    const payAmt = document.getElementById("payAmt");
     const msgOwner = document.getElementById("msgOwner");
 
-    function openBuy(plan, price){
-      buyTitle.textContent = `Buy Premium — ${plan}`;
-      buyText.textContent = `Send ~$${price} worth of LTC to the address below. After payment, DM the owner to receive your redeem code.`;
-      ltcAddr.value = LTC_ADDRESS;
+    // Summary UI
+    const sumTotal = document.getElementById("sumTotal");
+    const sumPlan = document.getElementById("sumPlan");
+    const sumMeta = document.getElementById("sumMeta");
+    const sumPlanPrice = document.getElementById("sumPlanPrice");
+
+    // Buttons
+    const goStep2 = document.getElementById("goStep2");
+    const goStep3 = document.getElementById("goStep3");
+    const backStep1 = document.getElementById("backStep1");
+    const backStep2 = document.getElementById("backStep2");
+    const closeDone = document.getElementById("closeDone");
+    const copyPayInfo = document.getElementById("copyPayInfo");
+    const copyAddrOnly = document.getElementById("copyAddrOnly");
+    const copyAmtOnly = document.getElementById("copyAmtOnly");
+    const copyOwnerOnly = document.getElementById("copyOwnerOnly");
+    const copyOwnerOnly2 = document.getElementById("copyOwnerOnly2");
+    const openWalletBtn = document.getElementById("openWallet");
+
+    // Set support links
+    document.getElementById("supportDiscordBtn")?.setAttribute("href", SUPPORT_INVITE);
+
+    let selectedPlan = { plan:"", price:"0.00" };
+    let selectedMethod = "ltc"; // ltc | btc
+
+    function moneyFmt(val){
+      const n = Number(val);
+      if (Number.isNaN(n)) return `€${val}`;
+      return `€${n.toFixed(2)}`;
+    }
+
+    function setStep(step){
+      stepBtns.forEach(b => b.classList.toggle("active", b.dataset.step === String(step)));
+      step1Panel.classList.toggle("show", step === 1);
+      step2Panel.classList.toggle("show", step === 2);
+      step3Panel.classList.toggle("show", step === 3);
+    }
+
+    function updateSummary(){
+      sumPlan.textContent = selectedPlan.plan ? `Pro Access — ${selectedPlan.plan}` : "Select a plan";
+      sumMeta.textContent = selectedPlan.plan ? "1x • Code delivered on Discord" : "—";
+      sumPlanPrice.textContent = moneyFmt(selectedPlan.price || "0.00");
+      sumTotal.textContent = moneyFmt(selectedPlan.price || "0.00");
+    }
+
+    function updatePayBox(){
+      const addr = (selectedMethod === "btc") ? BTC_ADDRESS : LTC_ADDRESS;
+      payAddr.value = addr;
+      payAmt.value = moneyFmt(selectedPlan.price || "0.00");
+
       const duser = buyerDiscord.value?.trim() || "(your discord username)";
-      msgOwner.value = `Hi! I bought Nozzarri Tickets Premium (${plan} / $${price}). My Discord: ${duser}. Please verify and send my redeem code.`;
+      const email = buyerEmail?.value?.trim();
+      const coupon = couponCode?.value?.trim();
+
+      const extra = [
+        email ? `Email: ${email}` : null,
+        coupon ? `Coupon: ${coupon}` : null,
+      ].filter(Boolean).join(" • ");
+
+      msgOwner.value =
+        `Hi! I paid for Nozzarri Tickets. Plan: ${selectedPlan.plan}. Discord: ${duser}${extra ? ` • ${extra}` : ""}.`;
+
+      const scheme = (selectedMethod === "btc") ? "bitcoin:" : "litecoin:";
+      openWalletBtn?.setAttribute("data-link", `${scheme}${addr}`);
+    }
+
+    function openBuy(plan, price){
+      selectedPlan = { plan, price };
+      selectedMethod = "ltc";
+
+      buyTitle.textContent = "Checkout";
+      buyText.textContent = "Complete your order in a few steps.";
+      updateSummary();
+
+      document.querySelectorAll(".payCard").forEach(el => {
+        if(el.classList.contains("link")) return;
+        el.classList.toggle("active", el.dataset.method === selectedMethod);
+      });
+
+      setStep(1);
+      updatePayBox();
+
       buyModal.classList.add("show");
       buyModal.setAttribute("aria-hidden","false");
+      document.body.style.overflow = "hidden";
     }
+
     function closeBuyModal(){
       buyModal.classList.remove("show");
       buyModal.setAttribute("aria-hidden","true");
+      document.body.style.overflow = "";
+      setStep(1);
     }
-    closeBuy.addEventListener("click", closeBuyModal);
-    buyModal.addEventListener("click", (e)=>{ if(e.target === buyModal) closeBuyModal(); });
 
-    buyerDiscord.addEventListener("input", ()=>{
-      const duser = buyerDiscord.value?.trim() || "(your discord username)";
-      msgOwner.value = `Hi! I bought Nozzarri Tickets Premium (${selectedPlan.plan || "PLAN"} / $${selectedPlan.price || "PRICE"}). My Discord: ${duser}. Please verify and send my redeem code.`;
+    // Step button clicking
+    stepBtns.forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const step = Number(b.dataset.step || 1);
+        if(step > 1 && !selectedPlan.plan) return;
+        setStep(step);
+      });
     });
 
-    document.getElementById("copyPayInfo").addEventListener("click", ()=>{
-      const duser = buyerDiscord.value?.trim() || "(your discord username)";
+    // Payment method choose
+    document.querySelectorAll(".payCard").forEach(card=>{
+      if(card.classList.contains("link")) return;
+      card.addEventListener("click", ()=>{
+        selectedMethod = card.dataset.method || "ltc";
+        document.querySelectorAll(".payCard").forEach(el => {
+          if(el.classList.contains("link")) return;
+          el.classList.toggle("active", el.dataset.method === selectedMethod);
+        });
+        updatePayBox();
+      });
+    });
+
+    goStep2?.addEventListener("click", ()=>{
+      if(!selectedPlan.plan){
+        showToast("Pick a plan first.");
+        return;
+      }
+      const duser = buyerDiscord.value?.trim();
+      if(!duser){
+        showToast("Type your Discord username.");
+        return;
+      }
+      if(!tosCheck?.checked){
+        showToast("Accept the Terms of Service.");
+        return;
+      }
+      setStep(2);
+      updatePayBox();
+    });
+
+    backStep1?.addEventListener("click", ()=> setStep(1));
+    backStep2?.addEventListener("click", ()=> setStep(2));
+    goStep3?.addEventListener("click", ()=> setStep(3));
+    closeDone?.addEventListener("click", closeBuyModal);
+
+    document.getElementById("applyCoupon")?.addEventListener("click", ()=>{
+      const c = couponCode?.value?.trim();
+      if(!c){
+        couponHint.textContent = "Enter a coupon code first.";
+        return;
+      }
+      couponHint.textContent = "Coupon noted (manual verification).";
+      showToast("Coupon saved");
+      updatePayBox();
+    });
+
+    openWalletBtn?.addEventListener("click", ()=>{
+      const link = openWalletBtn.getAttribute("data-link");
+      if(link) window.open(link, "_blank");
+    });
+
+    copyAddrOnly?.addEventListener("click", ()=> copyText(payAddr.value));
+    copyAmtOnly?.addEventListener("click", ()=> copyText(payAmt.value));
+    copyOwnerOnly?.addEventListener("click", ()=> copyText(OWNER_DISCORD));
+    copyOwnerOnly2?.addEventListener("click", ()=> copyText(OWNER_DISCORD));
+
+    copyPayInfo?.addEventListener("click", ()=>{
+      const addr = payAddr.value || "";
+      const amt = payAmt.value || "";
+      const methodName = (selectedMethod === "btc") ? "Bitcoin" : "Litecoin";
+
       const text =
-`Nozzarri Tickets Premium
-Plan: ${selectedPlan.plan || "N/A"} ($${selectedPlan.price || "N/A"})
-LTC Address: ${LTC_ADDRESS}
+`Nozzarri Tickets Order
+Plan: ${selectedPlan.plan || "N/A"} (${moneyFmt(selectedPlan.price || "0")})
+Payment: ${methodName}
+Address: ${addr}
+Amount: ${amt}
 Owner: ${OWNER_DISCORD}
-Message to owner: ${msgOwner.value || `Hi! I bought Nozzarri Tickets Premium. My Discord: ${duser}.`}`;
+Message: ${msgOwner.value || ""}`;
+
       copyText(text);
     });
 
-    document.getElementById("copyAddrOnly").addEventListener("click", ()=>copyText(LTC_ADDRESS));
-    document.getElementById("copyOwnerOnly").addEventListener("click", ()=>copyText(OWNER_DISCORD));
+    closeBuy?.addEventListener("click", closeBuyModal);
+    buyModal?.addEventListener("click", (e)=>{ if(e.target === buyModal) closeBuyModal(); });
 
-    // ===== Brand click =====
-    document.getElementById("brandHome").addEventListener("click", (e)=>{
-      // If inside a view, just scroll to top instead of jumping
-      if(gateRoot.style.display === "none"){
-        e.preventDefault();
-        window.scrollTo({top:0, behavior:"smooth"});
-      }
+    // plan cards click
+    document.querySelectorAll(".priceCard").forEach(card=>{
+      card.querySelector(".planBtn")?.addEventListener("click", ()=>{
+        openBuy(card.dataset.plan, card.dataset.price);
+      });
+      card.querySelector(".copyLtcBtn")?.addEventListener("click", ()=>copyText(LTC_ADDRESS));
     });
+
+    // Back button inside modal
+    document.getElementById("backToPlans")?.addEventListener("click", closeBuyModal);
   </script>
 </body>
 </html>

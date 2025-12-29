@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Nozzarri Tickets | Discord Tickets</title>
-  <meta name="description" content="Nozzarri Tickets — ticket bot for Discord. Support & Trade tickets, clean panels, logs, and more." />
+  <title>Nozzarri Tickets</title>
+  <meta name="description" content="Ticket bot — Support & Trade tickets, fast setup, clean panels, logs, and more." />
 
   <!-- Social preview -->
-  <meta property="og:title" content="Nozzarri Tickets | Discord Tickets" />
+  <meta property="og:title" content="Nozzarri Tickets" />
   <meta property="og:description" content="Ticket bot — Support & Trade tickets, setup panel, logs, clean UI." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/nozzarri.png" />
@@ -15,1190 +15,858 @@
   <link rel="icon" type="image/png" href="assets/nozzarri.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900;1000&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg0:#030414;
-      --bg1:#07082a;
-
-      --card: rgba(16,18,40,.62);
-      --card2: rgba(18,20,46,.72);
-      --border: rgba(255,255,255,.10);
-
-      --text: #eef2ff;
-      --muted: rgba(238,242,255,.72);
-
-      --cyan: #34d6ff;
-      --blue: #5b7cff;
-      --purple: #8a5cff;
-
-      --shadow: 0 22px 70px rgba(0,0,0,.62);
-      --radius: 18px;
+      --bg:#070A12;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.12);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --muted2: rgba(255,255,255,.52);
+      --shadow: 0 25px 60px rgba(0,0,0,.55);
+      --shadow2: 0 16px 35px rgba(0,0,0,.45);
+      --radius: 22px;
       --radius2: 26px;
-      --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-
-      --mx: 50vw;
-      --my: 35vh;
-      --spot: .9;
+      --glow: 0 0 55px rgba(122, 92, 255, .35);
+      --glow2: 0 0 90px rgba(0, 255, 214, .16);
+      --accent: #7A5CFF;
+      --accent2: #00FFD6;
+      --danger: #ff4d6d;
+      --ok:#4dff88;
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family:var(--font);
-      color:var(--text);
-      background:
-        radial-gradient(1100px 700px at 18% 18%, rgba(91,124,255,.20), transparent 55%),
-        radial-gradient(900px 700px at 85% 25%, rgba(138,92,255,.18), transparent 55%),
-        radial-gradient(900px 700px at 60% 85%, rgba(52,214,255,.12), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(122,92,255,.18), transparent 60%),
+                  radial-gradient(900px 500px at 90% 10%, rgba(0,255,214,.12), transparent 55%),
+                  radial-gradient(900px 700px at 60% 90%, rgba(255,77,109,.08), transparent 60%),
+                  var(--bg);
+      color: var(--text);
       overflow-x:hidden;
     }
 
-    /* Cursor glow */
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1120px; margin:0 auto; padding:22px 16px 80px}
+
+    /* Subtle moving noise / blobs */
+    .bgfx{
+      position:fixed; inset:-20%;
       pointer-events:none;
-      z-index:1;
+      filter: blur(20px);
+      opacity:.8;
+      z-index:-1;
       background:
-        radial-gradient(480px 420px at var(--mx) var(--my),
-        rgba(52,214,255,.10),
-        rgba(91,124,255,.08) 35%,
-        rgba(138,92,255,.06) 55%,
-        transparent 70%);
-      opacity: var(--spot);
-      transition: opacity .25s ease;
-      mix-blend-mode: screen;
+        radial-gradient(450px 300px at 15% 20%, rgba(122,92,255,.24), transparent 60%),
+        radial-gradient(520px 340px at 85% 25%, rgba(0,255,214,.18), transparent 60%),
+        radial-gradient(480px 330px at 55% 85%, rgba(255,77,109,.10), transparent 65%);
+      animation: floaty 14s ease-in-out infinite alternate;
     }
-    @media (max-width: 720px){
-      body::before{ opacity:.55; }
+    @keyframes floaty{
+      0%{transform: translate3d(-1.5%, -1.2%, 0) scale(1.01)}
+      100%{transform: translate3d(1.6%, 1.4%, 0) scale(1.03)}
     }
 
-    /* Animated BG */
-    .bg{ position:fixed; inset:0; z-index:-2; pointer-events:none; }
-    .noise{
-      position:absolute; inset:-220px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(91,124,255,.22), transparent 46%),
-        radial-gradient(circle at 80% 35%, rgba(138,92,255,.20), transparent 48%),
-        radial-gradient(circle at 55% 85%, rgba(52,214,255,.13), transparent 50%);
-      filter: blur(46px);
-      opacity:.95;
-      animation: float 11s ease-in-out infinite;
-      transform: translateZ(0);
-    }
-    @keyframes float{
-      0%,100%{ transform: translate3d(0,0,0) scale(1); }
-      50%{ transform: translate3d(26px,-16px,0) scale(1.02); }
-    }
-    canvas#stars{ position:absolute; inset:0; width:100%; height:100%; opacity:.35; }
-
-    .container{max-width:1180px; margin:0 auto; padding:0 20px}
-
-    /* Loader */
-    .loaderWrap{
-      position:fixed; inset:0; z-index:999;
-      display:grid; place-items:center;
-      background:
-        radial-gradient(1000px 800px at 20% 20%, rgba(91,124,255,.20), transparent 50%),
-        radial-gradient(1000px 800px at 80% 35%, rgba(138,92,255,.20), transparent 50%),
-        linear-gradient(180deg, #020314, #07082a);
-      transition: opacity .55s ease, transform .55s ease;
-    }
-    .loaderWrap.hide{ opacity:0; pointer-events:none; transform: scale(1.02); }
-
-    .loaderCard{
-      width:min(560px, calc(100vw - 40px));
-      border-radius: 26px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(14,16,36,.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      overflow:hidden;
-      isolation:isolate;
-    }
-    .loaderTop{ display:flex; align-items:center; gap:12px; }
-    .loaderLogo{
-      width:54px; height:54px; border-radius:18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      box-shadow: 0 0 34px rgba(91,124,255,.18);
-      object-fit: cover;
-    }
-    .loaderName{ font-weight:1000; font-size:18px; letter-spacing:.2px; }
-    .loaderSub{ color:var(--muted); font-weight:800; font-size:13px; margin-top:2px; }
-    .bar{
-      margin-top:14px;
-      height:12px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.25);
-      overflow:hidden;
-    }
-    .bar > div{
-      height:100%;
-      width:0%;
-      border-radius:999px;
-      background: linear-gradient(90deg, rgba(52,214,255,.95), rgba(91,124,255,.95), rgba(138,92,255,.95));
-      box-shadow: 0 0 24px rgba(91,124,255,.25);
-      transition: width .25s ease;
-    }
-    .loaderHint{
-      margin-top:10px;
-      color: rgba(238,242,255,.84);
-      font-weight:900;
-      display:flex; justify-content:space-between; align-items:center;
-      font-size:13px;
-    }
-    .spinner{
-      width:16px; height:16px; border-radius:50%;
-      border:2px solid rgba(255,255,255,.22);
-      border-top-color: rgba(52,214,255,.92);
-      animation: spin .9s linear infinite;
-    }
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    /* Topbar */
+    /* Top Nav */
     .topbar{
-      position:sticky; top:0; z-index:80;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:14px 18px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background: rgba(3,4,20,.62);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 14px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border-radius: 999px;
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(14px);
+      position:sticky;
+      top:14px;
+      z-index:50;
     }
     .brand{
-      display:flex; gap:12px; align-items:center;
-      text-decoration:none; color:var(--text);
-      min-width: 0;
-    }
-    .logo{
-      width:42px; height:42px; border-radius:14px;
-      box-shadow: 0 0 30px rgba(91,124,255,.18);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      object-fit: cover;
-      flex: 0 0 auto;
-    }
-    .bname{font-weight:900; letter-spacing:.2px}
-    .btag{font-size:12px; color:var(--muted); margin-top:2px}
-
-    .nav{ display:flex; gap:16px; align-items:center; }
-    .nav a{
-      color:var(--muted);
-      text-decoration:none;
-      font-weight:800;
-      font-size:14px;
-      padding:10px 10px;
-      border-radius:12px;
-      transition:.18s ease;
-    }
-    .nav a:hover{ color:var(--text); background: rgba(255,255,255,.06); }
-
-    .actions{display:flex; gap:10px; align-items:center}
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
+      display:flex;
+      align-items:center;
       gap:10px;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      color:var(--text);
-      background: rgba(255,255,255,.05);
-      text-decoration:none;
-      font-weight:900;
-      cursor:pointer;
-      transition: transform .14s ease, background .16s ease, border-color .16s ease, filter .16s ease;
-      box-shadow: 0 18px 50px rgba(0,0,0,.25);
+      font-weight:1000;
+      letter-spacing:.2px;
       user-select:none;
-      will-change: transform;
-      transform: translateZ(0);
     }
-    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07)}
-    .btn:active{transform: translateY(0px)}
-    .btn.primary{
-      background: linear-gradient(90deg, rgba(52,214,255,.75), rgba(91,124,255,.95), rgba(138,92,255,.75));
-      border-color: rgba(52,214,255,.25);
-      box-shadow: 0 24px 60px rgba(91,124,255,.18);
+    .brand img{
+      width:34px; height:34px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow: 0 10px 22px rgba(0,0,0,.45), var(--glow);
+      object-fit:cover;
+      background: rgba(255,255,255,.06);
     }
-    .btn.primary:hover{filter: brightness(1.05)}
-    .btn.ghost{background: rgba(255,255,255,.04)}
-    .iconbtn{ width:44px; height:44px; padding:0; border-radius:16px; }
-
-    .menuBtn{display:none}
-    @media (max-width: 920px){
-      .nav{display:none}
-      .menuBtn{display:inline-flex}
-    }
-
-    /* Drawer */
-    .drawer{
-      position:fixed; inset:0; z-index:120;
-      background: rgba(0,0,0,.55);
-      display:none;
-    }
-    .drawer.open{display:block}
-    .drawerPanel{
-      position:absolute; right:14px; top:14px;
-      width:min(360px, calc(100vw - 28px));
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(10,12,28,.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: var(--shadow);
-      display:grid; gap:10px;
-      overflow:hidden;
-      isolation:isolate;
-    }
-    .drawerPanel a{
-      text-decoration:none;
-      color:var(--muted);
-      font-weight:900;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.05);
-    }
-    .drawerPanel a:hover{color:var(--text); background: rgba(255,255,255,.07)}
-    .closeX{justify-self:end}
-
-    /* Views */
-    .view{ display:none; }
-    .view.show{ display:block; animation: popIn .45s ease both; }
-    @keyframes popIn{
-      from{ opacity:0; transform: translateY(10px) scale(.99); }
-      to{ opacity:1; transform: translateY(0) scale(1); }
-    }
-
-    /* Gate */
-    .gate{
-      min-height: calc(100vh - 76px);
-      display:grid;
-      place-items:center;
-      padding: 34px 0 26px;
-    }
-    .gateCard{
-      width:min(1100px, calc(100vw - 40px));
-      border-radius: 28px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(14,16,38,.62);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      overflow:hidden;
-      isolation:isolate;
+    .brand span{font-size:15px}
+    .nav{
+      display:flex; align-items:center; gap:8px;
     }
     .pill{
-      display:inline-flex; align-items:center; gap:10px;
-      padding:10px 12px;
-      border-radius:999px;
-      background: rgba(255,255,255,.05);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius: 999px;
       border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
       color: var(--muted);
-      font-weight:1000;
+      font-weight:900;
       font-size:13px;
-      width: fit-content;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease, color .15s ease;
+      cursor:pointer;
+      user-select:none;
     }
-    .dot{
-      width:10px; height:10px; border-radius:50%;
-      background:#2cff7b;
-      box-shadow: 0 0 18px rgba(44,255,123,.35);
+    .pill:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.07);
+      border-color: rgba(255,255,255,.14);
+      color: rgba(255,255,255,.86);
+    }
+    .pill.active{
+      background: rgba(122,92,255,.18);
+      border-color: rgba(122,92,255,.35);
+      color: rgba(255,255,255,.92);
+      box-shadow: var(--glow);
+    }
+
+    .rightTools{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .btn{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      color: rgba(255,255,255,.90);
+      font-weight:1000;
+      border-radius: 999px;
+      padding:10px 14px;
+      cursor:pointer;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease, filter .15s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.07);
+      border-color: rgba(255,255,255,.14);
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(122,92,255,.95), rgba(0,255,214,.55));
+      border-color: rgba(255,255,255,.14);
+      box-shadow: 0 14px 30px rgba(0,0,0,.45), var(--glow);
+    }
+    .btn.primary:hover{filter: brightness(1.05)}
+    .btn.ghost{background: rgba(0,0,0,.0)}
+    .btn.iconbtn{padding:10px 12px}
+
+    /* hero */
+    .hero{
+      padding: 54px 6px 18px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 18px;
+      align-items:center;
+    }
+    .hTitle{
+      font-size: clamp(34px, 4vw, 54px);
+      line-height: 1.02;
+      margin:0;
+      font-weight:1000;
+      letter-spacing:-.8px;
     }
     .grad{
-      background: linear-gradient(90deg, var(--cyan), var(--blue), var(--purple));
+      background: linear-gradient(90deg, rgba(122,92,255,1), rgba(0,255,214,1));
       -webkit-background-clip:text;
       background-clip:text;
       color:transparent;
+      text-shadow: 0 0 30px rgba(122,92,255,.18);
     }
-    .gateHead{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:14px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-    }
-    .gateTitle{
-      font-size: clamp(26px, 3.2vw, 44px);
-      line-height:1.06;
-      margin: 10px 0 6px;
-      font-weight: 1000;
-      letter-spacing:-.8px;
-    }
-    .gateDesc{
+    .hSub{
+      margin: 14px 0 0;
       color: var(--muted);
+      line-height:1.55;
       font-weight:800;
-      line-height:1.6;
-      max-width: 80ch;
-      margin:0;
+      font-size: 14px;
+      max-width: 58ch;
+    }
+    .ctaRow{
+      margin-top: 18px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
     }
 
-    .gateGrid{
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(16px);
+    }
+
+    .heroCard{
+      padding: 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .heroCard::before{
+      content:"";
+      position:absolute;
+      inset:-120px -120px auto auto;
+      width:280px; height:280px;
+      background: radial-gradient(circle at 30% 30%, rgba(122,92,255,.45), transparent 55%);
+      filter: blur(18px);
+      opacity:.75;
+      transform: rotate(15deg);
+      pointer-events:none;
+    }
+    .heroStat{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 14px 14px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      margin-top: 10px;
+    }
+    .heroStat b{font-weight:1000}
+    .heroStat span{color: var(--muted); font-weight:900}
+    .statRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .statBox{
+      padding: 14px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+    }
+    .statBox .big{
+      font-weight:1000;
+      font-size: 18px;
+    }
+    .statBox .small{
+      margin-top:6px;
+      color: var(--muted);
+      font-weight:900;
+      font-size: 13px;
+      line-height:1.4;
+    }
+
+    /* sections */
+    .section{
+      margin-top: 16px;
+      padding: 18px;
+    }
+    .section h2{
+      margin:0;
+      font-size: 18px;
+      font-weight:1000;
+      letter-spacing:-.2px;
+    }
+    .muted{color: var(--muted); font-weight:800}
+    .grid{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+    }
+    .feature{
+      grid-column: span 4;
+      padding: 16px;
+      border-radius: 20px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      position:relative;
+      overflow:hidden;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .feature:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.16);
+      background: rgba(0,0,0,.22);
+    }
+    .ftitle{
+      font-weight:1000;
+      margin: 6px 0 8px;
+      letter-spacing:-.2px;
+    }
+    .ftext{
+      color: var(--muted);
+      font-weight:800;
+      font-size: 13px;
+      line-height:1.45;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      font-weight:1000;
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      color: rgba(255,255,255,.85);
+    }
+
+    /* Premium view */
+    .premWrap{
+      position:relative;
+      overflow:hidden;
+    }
+    .premHeroGlow{
+      position:absolute;
+      inset:-200px -140px auto auto;
+      width:520px;
+      height:520px;
+      background: radial-gradient(circle at 30% 30%, rgba(0,255,214,.18), transparent 60%),
+                  radial-gradient(circle at 60% 60%, rgba(122,92,255,.22), transparent 60%);
+      filter: blur(30px);
+      opacity:.75;
+      pointer-events:none;
+    }
+    .premGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-top: 14px;
-    }
-    @media (max-width: 980px){ .gateGrid{grid-template-columns:1fr} }
-
-    .pick{
-      position:relative;
-      overflow:hidden;
-      border-radius: 26px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(14,16,38,.56);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      padding: 16px;
-      cursor:pointer;
-      transition: transform .18s ease, background .18s ease, border-color .18s ease;
-      transform: translateZ(0);
-      will-change: transform;
-      min-width: 0;
-      isolation:isolate;
-    }
-    .pick:hover{
-      transform: translateY(-2px);
-      background: rgba(14,16,38,.64);
-      border-color: rgba(52,214,255,.22);
-    }
-    .pickGlow{
-      position:absolute; inset:-140px;
-      background: radial-gradient(circle at 30% 30%, rgba(52,214,255,.20), transparent 52%),
-                radial-gradient(circle at 70% 40%, rgba(91,124,255,.18), transparent 58%),
-                radial-gradient(circle at 55% 75%, rgba(138,92,255,.16), transparent 58%);
-      filter: blur(38px);
-      opacity:.9;
-      transition: opacity .2s ease;
-      pointer-events:none;
-      transform: translateZ(0);
-    }
-    .pick:hover .pickGlow{ opacity:1; }
-    .pickTop{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
-      position:relative;
-    }
-    .tag{
-      font-weight:1000;
-      padding:8px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      white-space:nowrap;
-    }
-    .tag.free{ border-color: rgba(52,214,255,.22); background: rgba(52,214,255,.10); }
-    .tag.prem{ border-color: rgba(138,92,255,.25); background: rgba(138,92,255,.10); }
-
-    .kbd{
-      font-size:12px; font-weight:1000;
-      color: rgba(238,242,255,.85);
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      white-space:nowrap;
-    }
-
-    .pickTitle{ font-weight:1000; font-size: 18px; margin-top: 12px; position:relative; }
-    .pickText{ color: var(--muted); margin-top: 8px; line-height: 1.6; position:relative; font-weight:800; }
-    .pickBtns{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; position:relative; }
-    .miniBtn{
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-      font-weight:900;
-      cursor:pointer;
-      transition: transform .14s ease, background .14s ease, border-color .14s ease;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      transform: translateZ(0);
-    }
-    .miniBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
-    .miniBtn.primary{
-      background: linear-gradient(90deg, rgba(52,214,255,.75), rgba(91,124,255,.95), rgba(138,92,255,.75));
-      border-color: rgba(52,214,255,.22);
-    }
-
-    /* Sections */
-    .section{padding: 26px 0}
-    .section h2{ margin:0 0 12px; font-size:28px; letter-spacing:-.4px; }
-    .muted{color:var(--muted)}
-    .card{
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(14,16,38,.62);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      isolation:isolate;
-      transform: translateZ(0);
-    }
-    .reveal{
-      opacity:0;
-      transform: translateY(14px);
-      transition: opacity .6s ease, transform .6s ease;
-    }
-    .reveal.show{ opacity:1; transform: translateY(0px); }
-
-    .toast{
-      position:fixed;
-      left:50%; bottom:18px;
-      transform: translateX(-50%);
-      padding:12px 14px;
-      border-radius: 16px;
-      border:1px solid rgba(52,214,255,.22);
-      background: rgba(7,10,18,.88);
-      color: rgba(238,242,255,.92);
-      box-shadow: 0 18px 60px rgba(0,0,0,.55);
-      display:none;
-      font-weight:1000;
-      z-index:200;
-    }
-    .toast.show{display:block}
-
-    /* Free view */
-    .hero{
-      padding: 36px 0 18px;
-      display:grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap: 22px;
+      margin-top: 12px;
       align-items:start;
     }
-    @media (max-width: 920px){
-      .hero{grid-template-columns:1fr; padding-top:22px}
+    .premLeft{
+      padding: 18px;
     }
-    h1{
-      margin:16px 0 10px;
-      font-size: clamp(38px, 4.4vw, 64px);
-      line-height:1.03;
-      letter-spacing: -1px;
+    .premLeft h2{
+      font-size: 22px;
+      margin: 0;
+      font-weight:1000;
+      letter-spacing:-.4px;
     }
-    .lead{
-      margin:0 0 18px;
+    .premLeft p{
+      margin: 10px 0 0;
       color: var(--muted);
-      font-size:16px;
-      line-height:1.65;
-      max-width: 62ch;
+      line-height:1.55;
       font-weight:800;
     }
-    .cta{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px}
-
-    .stats{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:10px;
-      margin-top: 10px;
-    }
-    @media (max-width: 520px){ .stats{grid-template-columns:1fr} }
-    .stat{
-      padding:14px;
-      border-radius: var(--radius);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(14,16,38,.56);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 18px 50px rgba(0,0,0,.18);
-      overflow:hidden;
-      isolation:isolate;
-    }
-    .statTop{font-size:18px}
-    .statBig{font-weight:1000; margin-top:6px}
-    .statSub{color:var(--muted); font-size:13px; margin-top:4px; font-weight:800}
-
-    .preview{padding:18px}
-    .cardTop{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; gap:10px; }
-    .badge{
-      font-weight:1000;
-      padding:8px 10px;
-      border-radius: 999px;
-      background: rgba(91,124,255,.16);
-      border:1px solid rgba(91,124,255,.28);
-      white-space:nowrap;
-    }
-    .chips{display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end}
-    .chip{
-      font-size:12px;
-      font-weight:1000;
-      color: rgba(238,242,255,.92);
-      padding:7px 10px;
-      border-radius:999px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .panel{
-      padding:16px;
-      border-radius: 22px;
-      background: rgba(0,0,0,.22);
-      border: 1px solid rgba(255,255,255,.08);
-      overflow:hidden;
-    }
-    .panelHead{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
-    .panelAvatar{
-      width:46px; height:46px; border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      object-fit: cover;
-    }
-    .panelTitle{font-weight:1000; font-size:16px}
-    .panelDesc{color:var(--muted); margin:6px 0 12px; line-height:1.55; font-weight:800}
-    .panelBtns{display:grid; grid-template-columns:1fr; gap:10px}
-    .panelBtn{
-      text-align:left;
-      padding:12px 14px;
-      border-radius: 16px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      color:var(--text);
-      font-weight:1000;
-      cursor:pointer;
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
-      transform: translateZ(0);
-    }
-    .panelBtn:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.08);
-      border-color: rgba(52,214,255,.24);
-    }
-    .panelBtn small{color:var(--muted); font-weight:900}
-    .smallNote{color:var(--muted); font-size:12px; margin-top:10px; font-weight:800}
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(4, minmax(0,1fr));
-      gap:12px;
-    }
-    @media (max-width: 920px){ .grid{grid-template-columns: repeat(2, minmax(0,1fr))} }
-    @media (max-width: 520px){ .grid{grid-template-columns: 1fr} }
-    .feature{padding:16px}
-    .icon{font-size:22px}
-    .ftitle{font-weight:1000; margin-top:8px}
-    .ftext{color:var(--muted); margin-top:6px; line-height:1.55; font-weight:800}
-
-    /* Premium view */
-    .premWrap{ padding: 28px 0 18px; }
-    .premGrid{
-      display:grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
-      gap: 14px;
-      align-items:start;
-    }
-    @media (max-width: 1100px){
-      .premGrid{ grid-template-columns: 1fr; }
-    }
-    .premLeft, .premRight{ min-width: 0; }
-    @media (min-width: 1101px){
-      .premRightCard{ position: sticky; top: 92px; }
-    }
-
-    .premHero{
-      padding: 18px;
-      border-radius: 28px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(14,16,38,.60);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-      isolation:isolate;
-    }
-    .premHeroGlow{
-      position:absolute; inset:-160px;
-      background:
-        radial-gradient(circle at 25% 25%, rgba(52,214,255,.18), transparent 50%),
-        radial-gradient(circle at 80% 35%, rgba(91,124,255,.18), transparent 55%),
-        radial-gradient(circle at 55% 85%, rgba(138,92,255,.16), transparent 55%);
-      filter: blur(40px);
-      opacity:.9;
-      pointer-events:none;
-      animation: float 12s ease-in-out infinite;
-      transform: translateZ(0);
-    }
-    .premTitleBig{
-      position:relative;
-      margin: 10px 0 8px;
-      font-size: clamp(44px, 5vw, 78px);
-      letter-spacing:-1.3px;
-      line-height:1.02;
-      font-weight:1000;
-      word-break: break-word;
-    }
-    .premSub{
-      position:relative;
-      color: var(--muted);
-      font-weight:900;
-      line-height:1.6;
-      max-width: 75ch;
-      margin: 0 0 14px;
-    }
-    .premActions{
-      position:relative;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top: 8px;
-    }
-
     .tabs{
-      position:relative;
+      margin-top: 12px;
       display:flex;
-      gap:10px;
+      gap:8px;
       flex-wrap:wrap;
-      margin-top: 14px;
     }
     .tabBtn{
-      padding:10px 12px;
-      border-radius: 14px;
+      appearance:none;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.05);
-      color: var(--text);
+      color: rgba(255,255,255,.86);
       font-weight:1000;
+      border-radius: 999px;
+      padding: 10px 14px;
       cursor:pointer;
-      transition: transform .14s ease, background .14s ease;
-      transform: translateZ(0);
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
     }
-    .tabBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
+    .tabBtn:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.07);
+      border-color: rgba(255,255,255,.14);
+    }
     .tabBtn.active{
-      background: linear-gradient(90deg, rgba(52,214,255,.55), rgba(91,124,255,.70), rgba(138,92,255,.55));
-      border-color: rgba(52,214,255,.22);
+      background: rgba(122,92,255,.18);
+      border-color: rgba(122,92,255,.35);
+      box-shadow: var(--glow);
     }
 
     .premPanel{
       margin-top: 12px;
       padding: 16px;
-      border-radius: 26px;
+      border-radius: 22px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
-      position:relative;
-      overflow:hidden;
-      min-width:0;
     }
 
-    /* Buy / Checkout layout (like your screenshots) */
+    .noteBar{
+      margin-top: 12px;
+      padding: 12px 12px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.84);
+      font-weight:900;
+      font-size: 13px;
+    }
+
+    /* Checkout */
     .checkout{
       display:grid;
-      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
-      gap: 14px;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 12px;
+      margin-top: 12px;
       align-items:start;
-    }
-    @media (max-width: 1050px){
-      .checkout{ grid-template-columns: 1fr; }
     }
 
     .sidePay{
       padding: 18px;
     }
-    .payBrand{display:flex; align-items:center; gap:10px; font-weight:1000}
-    .payBrand img{width:32px; height:32px; border-radius:12px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.06); object-fit:cover;}
-    .payAmount{font-size:44px; font-weight:1000; margin:10px 0 0;}
-    .line{height:1px; background: rgba(255,255,255,.08); margin:14px 0;}
-    .itemRow{display:flex; align-items:center; justify-content:space-between; gap:10px;}
-    .itemLeft{display:flex; gap:12px; align-items:center;}
-    .itemLeft img{width:44px; height:44px; border-radius:14px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.06); object-fit:cover;}
-    .itemName{font-weight:1000}
-    .itemSub{color:var(--muted); font-weight:800; font-size:12px; margin-top:2px}
-    .helpBox{ margin-top: 18px; padding: 14px; border-radius: 22px; border:1px solid rgba(255,255,255,.10); background: rgba(0,0,0,.18); }
-    .helpBox h4{ margin:0 0 6px; font-weight:1000 }
-    .helpBox p{ margin:0 0 12px; color: var(--muted); font-weight:800; line-height:1.6; font-size:13px; }
-    .termsRow{ margin-top:12px; color: var(--muted); font-weight:900; font-size:13px; display:flex; align-items:center; justify-content:space-between; }
-
-    .stepsCard{ padding: 18px; }
-    .stepsTop{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    @media (max-width: 720px){
-      .stepsTop{ grid-template-columns: 1fr; }
-    }
-    .stepHead{
-      border-top: 2px solid rgba(255,255,255,.08);
-      padding-top: 12px;
-      color: rgba(238,242,255,.55);
-      font-weight:900;
-    }
-    .stepHead.active{
-      border-top-color: rgba(138,92,255,.85);
-      color: rgba(238,242,255,.90);
-    }
-    .stepHead .st{ font-size:12px; }
-    .stepHead .ttl{ font-size:18px; font-weight:1000; margin-top:2px; color: rgba(238,242,255,.92); }
-
-    .formGrid{ display:grid; gap:12px; margin-top: 12px; }
-    .label{ font-weight:1000; font-size:13px; color: rgba(238,242,255,.88); }
-    .input{
-      width:100%;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: rgba(238,242,255,.95);
-      outline:none;
-      font-weight:900;
-    }
-    .input:focus{ border-color: rgba(52,214,255,.22); box-shadow: 0 0 0 4px rgba(52,214,255,.08); }
-    .row2{ display:grid; grid-template-columns: 1fr auto; gap: 10px; align-items:center; }
-    @media (max-width: 520px){ .row2{ grid-template-columns: 1fr; } }
-
-    .payMethods{ display:grid; gap:10px; margin-top: 10px; }
-    .pmBtn{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      cursor:pointer;
-      transition:.15s ease;
-      font-weight:1000;
-    }
-    .pmBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); border-color: rgba(138,92,255,.22); }
-    .pmBtn.active{ border-color: rgba(138,92,255,.38); background: rgba(138,92,255,.10); }
-    .pmRight{ display:flex; align-items:center; gap:10px; color: rgba(238,242,255,.70); font-weight:1000; }
-    .pillMini{
-      font-size:12px; font-weight:1000;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      color: rgba(238,242,255,.85);
-    }
-
-    .checkRow{ display:flex; gap:10px; align-items:flex-start; color: var(--muted); font-weight:900; font-size:13px; }
-    .checkRow input{ transform: translateY(2px); }
-
-    .noteBar{
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 20px;
-      border:1px solid rgba(138,92,255,.35);
-      background: rgba(138,92,255,.10);
-      color: rgba(238,242,255,.92);
-      font-weight:1000;
-    }
-
-    .payDetails{
-      margin-top: 14px;
-      padding: 14px;
-      border-radius: 22px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      display:none;
-    }
-    .payDetails.show{ display:block; animation: popIn .35s ease both; }
-    .copyRow{ display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:center; margin-top: 8px; }
-    @media (max-width: 520px){ .copyRow{ grid-template-columns: 1fr; } }
-    .copyBtn{
-      padding: 12px 14px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: rgba(238,242,255,.95);
-      font-weight:1000;
-      cursor:pointer;
-      transition:.15s ease;
-    }
-    .copyBtn:hover{ background: rgba(255,255,255,.07); transform: translateY(-1px); }
-
-    /* Modal (Login/Register) */
-    .modal{
-      position:fixed; inset:0; z-index:300;
-      display:none;
-      background: rgba(0,0,0,.55);
-      padding: 20px;
-    }
-    .modal.show{ display:grid; place-items:center; }
-    .modalCard{
-      width:min(520px, calc(100vw - 40px));
-      border-radius: 26px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(14,16,38,.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      box-shadow: var(--shadow);
-      padding: 16px;
-      overflow:hidden;
-      isolation:isolate;
-    }
-    .modalTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
-    .modalTop h3{ margin:0; font-weight:1000; }
-    .xBtn{
-      width:44px; height:44px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      color: rgba(238,242,255,.92);
-      cursor:pointer;
-      font-weight:1000;
-      transition:.15s ease;
-    }
-    .xBtn:hover{ background: rgba(255,255,255,.07); transform: translateY(-1px); }
-    .modalBody{ margin-top: 12px; display:grid; gap:12px; }
-    .hint{ color: var(--muted); font-weight:900; font-size:13px; line-height:1.6; }
-    .split{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    @media (max-width: 520px){ .split{ grid-template-columns: 1fr; } }
-
-    .userPill{
-      display:none;
+    .payBrand{
+      display:flex;
       align-items:center;
       gap:10px;
-      padding:10px 12px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
       font-weight:1000;
-      color: rgba(238,242,255,.92);
-      max-width: 320px;
+    }
+    .payBrand img{
+      width:34px; height:34px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.16);
+      object-fit:cover;
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 12px 22px rgba(0,0,0,.40), var(--glow);
+    }
+    .payAmount{
+      margin-top: 10px;
+      font-size: 36px;
+      font-weight:1000;
+      letter-spacing:-.8px;
+    }
+    .line{
+      height:1px;
+      width:100%;
+      background: rgba(255,255,255,.10);
+      margin: 14px 0;
+    }
+    .itemRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .itemLeft{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width: 0;
+    }
+    .itemLeft img{
+      width:42px; height:42px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      object-fit:cover;
+      background: rgba(255,255,255,.05);
+    }
+    .itemName{font-weight:1000}
+    .itemMeta{color: var(--muted); font-weight:900; font-size: 12px}
+    .itemPrice{
+      font-weight:1000;
+      white-space:nowrap;
+    }
+    .miniBtn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight:1000;
+      font-size: 13px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.90);
+      cursor:pointer;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .miniBtn:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.14);
+    }
+    .miniBtn.primary{
+      background: linear-gradient(135deg, rgba(122,92,255,.95), rgba(0,255,214,.55));
+      border-color: rgba(255,255,255,.14);
+      box-shadow: 0 14px 30px rgba(0,0,0,.45), var(--glow);
+    }
+    .stepsCard{
+      padding: 18px;
+    }
+    .stepsTop{
+      display:flex;
+      gap:10px;
+      align-items:stretch;
+      flex-wrap:wrap;
+    }
+    .stepHead{
+      flex:1;
+      min-width: 180px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+      padding: 12px;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    .stepHead.active{
+      background: rgba(122,92,255,.16);
+      border-color: rgba(122,92,255,.35);
+      box-shadow: var(--glow);
+    }
+    .st{color: var(--muted); font-weight:1000; font-size:12px}
+    .ttl{font-weight:1000; margin-top:4px}
+
+    .form{
+      margin-top: 12px;
+      display:grid;
+      gap: 10px;
+    }
+    .inp{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      color: rgba(255,255,255,.90);
+      font-weight:900;
+      outline:none;
+    }
+    .inp::placeholder{color: rgba(255,255,255,.40)}
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .hint{
+      color: var(--muted);
+      font-weight:900;
+      font-size: 12px;
+      line-height:1.45;
+    }
+    .payRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top: 10px;
+    }
+
+    /* Drawer menu for mobile */
+    .drawer{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(6px);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+      z-index:80;
+    }
+    .drawer.open{opacity:1; pointer-events:auto}
+    .drawerPanel{
+      position:absolute;
+      right:14px;
+      top:14px;
+      width:min(360px, calc(100vw - 28px));
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      box-shadow: var(--shadow);
+      padding: 12px;
+      transform: translateY(-6px);
+      opacity:0;
+      transition: transform .18s ease, opacity .18s ease;
+    }
+    .drawer.open .drawerPanel{
+      transform: translateY(0);
+      opacity:1;
+    }
+    .drawerPanel .pill{width:100%; justify-content:center}
+
+    .userPill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      margin-bottom: 10px;
+    }
+    .userPill img{
+      width:32px; height:32px; border-radius: 12px;
+      border:1px solid rgba(255,255,255,.14);
+      object-fit:cover;
+      background: rgba(255,255,255,.06);
+    }
+    .userPill span{
+      font-weight:1000;
+      font-size: 13px;
+      color: rgba(255,255,255,.92);
       overflow:hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .userPill img{ width:26px; height:26px; border-radius:10px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.06); object-fit:cover; }
-    .logoutBtn{ display:none; }
 
-    /* Footer */
-    .footer{
-      padding:22px 0 46px;
-      display:flex; justify-content:space-between; align-items:center;
-      gap:14px;
-      border-top:1px solid rgba(255,255,255,.08);
-      margin-top:12px;
-      flex-wrap:wrap;
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(0,0,0,.66);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.92);
+      padding: 12px 14px;
+      border-radius: 999px;
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(12px);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      font-weight:1000;
+      z-index:120;
     }
-    .footLeft{display:flex; align-items:center; gap:12px}
-    .footRight{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
-    .footRight a{color:var(--muted); text-decoration:none; font-weight:1000}
-    .footRight a:hover{color:var(--text)}
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(0)}
+
+    /* Modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(8px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index:110;
+    }
+    .modal.open{display:flex}
+    .modalCard{
+      width:min(520px, 100%);
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      box-shadow: var(--shadow);
+      padding: 16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .modalCard::before{
+      content:"";
+      position:absolute;
+      inset:-160px -140px auto auto;
+      width:360px;
+      height:360px;
+      background: radial-gradient(circle at 30% 30%, rgba(122,92,255,.28), transparent 60%),
+                  radial-gradient(circle at 60% 60%, rgba(0,255,214,.16), transparent 60%);
+      filter: blur(26px);
+      opacity:.85;
+      pointer-events:none;
+    }
+    .modalTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      position:relative;
+      z-index:2;
+    }
+    .modalTop b{font-weight:1000}
+    .xBtn{
+      border:none;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.90);
+      width:38px; height:38px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight:1000;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+    .xBtn:hover{transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.14)}
+    .modalBody{
+      margin-top: 12px;
+      position:relative;
+      z-index:2;
+    }
+
+    /* responsive */
+    .menuBtn{display:none}
+    @media (max-width: 920px){
+      .hero{grid-template-columns: 1fr; padding-top: 34px}
+      .menuBtn{display:inline-flex}
+      .nav{display:none}
+      .premGrid{grid-template-columns: 1fr}
+      .checkout{grid-template-columns: 1fr}
+      .feature{grid-column: span 6;}
+    }
+    @media (max-width: 560px){
+      .feature{grid-column: span 12}
+      .row2{grid-template-columns: 1fr}
+    }
+
+    /* Auth UI disabled (kept in file, hidden) */
+    .userPill, #loginBtn, #registerBtn, #logoutBtn, #authModal { display:none !important; }
   </style>
 </head>
 
 <body>
-  <div class="bg">
-    <div class="noise"></div>
-    <canvas id="stars"></canvas>
-  </div>
+  <div class="bgfx"></div>
 
-  <!-- LOADER -->
-  <div class="loaderWrap" id="loader">
-    <div class="loaderCard">
-      <div class="loaderTop">
-        <img class="loaderLogo" src="assets/nozzarri.png" alt="Nozzarri">
-        <div style="min-width:0">
-          <div class="loaderName">Nozzarri Tickets</div>
-          <div class="loaderSub">Loading clean UI…</div>
-        </div>
-        <div style="margin-left:auto" class="spinner"></div>
-      </div>
-      <div class="bar"><div id="barFill"></div></div>
-      <div class="loaderHint">
-        <span id="loaderText">Preparing interface</span>
-        <span id="loaderPct">0%</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <a class="brand" href="#" onclick="scrollToTop(); return false;">
-      <img class="logo" src="assets/nozzarri.png" alt="Nozzarri">
-      <div style="min-width:0">
-        <div class="bname">Nozzarri Tickets</div>
-        <div class="btag">Premium Discord ticket bot</div>
-      </div>
-    </a>
-
-    <nav class="nav">
-      <a href="#features" onclick="softScroll(event,'features')">Features</a>
-      <a href="#faq" onclick="softScroll(event,'faq')">FAQ</a>
-      <a href="#premium" onclick="openPremium(); return false;">Premium</a>
-    </nav>
-
-    <div class="actions">
-      <a class="btn ghost" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener">💬 Join Discord</a>
-
-      <div class="userPill" id="userPill" title="">
-        <img src="assets/nozzarri.png" alt="u">
-        <span id="userEmail">user@email.com</span>
+  <div class="wrap">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="brand" onclick="scrollToTop()">
+        <img src="assets/nozzarri.png" alt="Nozzarri">
+        <span>Nozzarri Tickets</span>
       </div>
 
-      <button class="btn ghost" id="loginBtn" onclick="openAuth('login')">Login</button>
-      <button class="btn primary" id="registerBtn" onclick="openAuth('register')">Register</button>
-      <button class="btn ghost logoutBtn" id="logoutBtn" onclick="logout()">Logout</button>
+      <nav class="nav">
+        <div class="pill active" id="navHome" onclick="setView('home')">🏠 Home</div>
+        <div class="pill" id="navPremium" onclick="setView('premium')">✨ Premium</div>
+        <div class="pill" id="navFAQ" onclick="setView('faq')">❓ FAQ</div>
+      </nav>
 
-      <button class="btn iconbtn menuBtn" aria-label="menu" onclick="toggleDrawer(true)">☰</button>
-    </div>
-  </header>
+      <div class="rightTools">
+        <button class="btn primary" onclick="openInvite()">➕ Invite Bot</button>
 
-  <!-- Drawer -->
-  <div class="drawer" id="drawer" onclick="toggleDrawer(false)">
-    <div class="drawerPanel" onclick="event.stopPropagation()">
-      <button class="xBtn closeX" onclick="toggleDrawer(false)">✕</button>
-      <a href="#features" onclick="toggleDrawer(false); softScroll(event,'features')">Features</a>
-      <a href="#faq" onclick="toggleDrawer(false); softScroll(event,'faq')">FAQ</a>
-      <a href="#premium" onclick="toggleDrawer(false); openPremium(); return false;">Premium</a>
-      <a href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener">💬 Join Discord</a>
-      <button class="btn ghost" onclick="toggleDrawer(false); openAuth('login')">Login</button>
-      <button class="btn primary" onclick="toggleDrawer(false); openAuth('register')">Register</button>
-    </div>
-  </div>
+        <!-- kept (hidden by CSS) -->
+        <div class="userPill" id="userPill">
+          <img src="assets/nozzarri.png" alt="u">
+          <span id="userEmail">user@email.com</span>
+        </div>
+        <button class="btn ghost" id="loginBtn" onclick="openAuth('login')">Login</button>
+        <button class="btn primary" id="registerBtn" onclick="openAuth('register')">Register</button>
+        <button class="btn ghost logoutBtn" id="logoutBtn" onclick="logout()">Logout</button>
 
-  <!-- AUTH MODAL -->
-  <div class="modal" id="authModal" onclick="closeAuth()">
-    <div class="modalCard" onclick="event.stopPropagation()">
-      <div class="modalTop">
-        <h3 id="authTitle">Login</h3>
-        <button class="xBtn" onclick="closeAuth()">✕</button>
+        <button class="btn iconbtn menuBtn" aria-label="menu" onclick="toggleDrawer(true)">☰</button>
       </div>
+    </header>
 
-      <div class="modalBody">
-        <div class="hint" id="authHint">
-          Use your email. We’ll send a verification code.
-        </div>
-
-        <div class="split">
-          <div>
-            <div class="label">Email *</div>
-            <input class="input" id="authEmail" placeholder="name@gmail.com" autocomplete="email">
-          </div>
-          <div>
-            <div class="label">Password *</div>
-            <input class="input" id="authPass" placeholder="••••••••" type="password" autocomplete="current-password">
-          </div>
-        </div>
-
-        <button class="btn primary" id="sendCodeBtn" onclick="sendAuthCode()">Send Code</button>
-
-        <div id="codeBlock" style="display:none">
-          <div class="label">Verification Code *</div>
-          <input class="input" id="authCode" placeholder="123456" inputmode="numeric">
-          <button class="btn primary" onclick="verifyAuthCode()">Verify & Continue</button>
-          <div class="hint">Didn’t receive? Check spam or click “Send Code” again.</div>
-        </div>
-
-        <div class="hint" style="margin-top:4px">
-          <span id="switchText">No account?</span>
-          <a href="#" onclick="switchAuth(); return false;" style="color: rgba(52,214,255,.95); font-weight:1000; text-decoration:none;">Switch</a>
-        </div>
+    <!-- Drawer -->
+    <div class="drawer" id="drawer" onclick="toggleDrawer(false)">
+      <div class="drawerPanel" onclick="event.stopPropagation()">
+        <div class="pill active" onclick="setView('home'); toggleDrawer(false)">🏠 Home</div>
+        <div class="pill" onclick="setView('premium'); toggleDrawer(false)">✨ Premium</div>
+        <div class="pill" onclick="setView('faq'); toggleDrawer(false)">❓ FAQ</div>
+        <div style="height:10px"></div>
+        <a class="pill" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener">💬 Discord</a>
       </div>
     </div>
-  </div>
 
-  <!-- MAIN -->
-  <main class="container">
-    <!-- GATE / HOME -->
-    <section class="gate view show" id="gateView">
-      <div class="gateCard reveal">
-        <div class="gateHead">
-          <div>
-            <div class="pill"><span class="dot"></span> Online • Fast setup</div>
-            <div class="gateTitle">
-              Clean <span class="grad">tickets</span> for your Discord — no drama, no bugs.
-            </div>
-            <p class="gateDesc">
-              Nozzarri Tickets gives you a modern ticket system, logs, panels, and a smooth support flow.
-            </p>
-          </div>
-
-          <div class="kbd">Tip: press Premium to see checkout</div>
-        </div>
-
-        <div class="gateGrid">
-          <div class="pick" onclick="openFree();">
-            <div class="pickGlow"></div>
-            <div class="pickTop">
-              <div class="tag free">FREE</div>
-              <div class="kbd">Start here</div>
-            </div>
-            <div class="pickTitle">Explore the UI</div>
-            <div class="pickText">See how the bot looks, features, and basic flow.</div>
-            <div class="pickBtns">
-              <button class="miniBtn primary" onclick="openFree(); event.stopPropagation();">Open Free</button>
-              <a class="miniBtn" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener" onclick="event.stopPropagation();">Join Discord</a>
-            </div>
-          </div>
-
-          <div class="pick" onclick="openPremium();">
-            <div class="pickGlow"></div>
-            <div class="pickTop">
-              <div class="tag prem">PREMIUM</div>
-              <div class="kbd">Checkout</div>
-            </div>
-            <div class="pickTitle">Buy Premium</div>
-            <div class="pickText">Professional checkout + payment options + smooth steps.</div>
-            <div class="pickBtns">
-              <button class="miniBtn primary" onclick="openPremium(); event.stopPropagation();">Open Premium</button>
-              <button class="miniBtn" onclick="openAuth('register'); event.stopPropagation();">Register</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FREE VIEW -->
-    <section class="view" id="freeView">
-      <div class="hero reveal">
+    <!-- HOME -->
+    <main id="viewHome">
+      <section class="hero">
         <div>
-          <div class="pill"><span class="dot"></span> Stable • Smooth • Modern</div>
-          <h1>Nozzarri <span class="grad">Tickets</span></h1>
-          <p class="lead">
-            A clean ticket system with panels, logs, categories and fast support flow — designed to look premium.
+          <h1 class="hTitle">Clean, fast <span class="grad">Tickets</span> for your Discord</h1>
+          <p class="hSub">
+            Nozzarri Tickets gives your server a premium support flow: easy setup, clean UI panels, logs, and smooth user experience.
           </p>
-          <div class="cta">
-            <a class="btn primary" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener">💬 Join Discord</a>
-            <button class="btn ghost" onclick="openPremium()">⭐ View Premium</button>
-          </div>
 
-          <div class="stats">
-            <div class="stat">
-              <div class="statTop">⚡</div>
-              <div class="statBig">Fast setup</div>
-              <div class="statSub">Clean panels + roles</div>
-            </div>
-            <div class="stat">
-              <div class="statTop">🧾</div>
-              <div class="statBig">Logs</div>
-              <div class="statSub">Everything tracked</div>
-            </div>
-            <div class="stat">
-              <div class="statTop">🛡️</div>
-              <div class="statBig">Stable</div>
-              <div class="statSub">No random bugs</div>
-            </div>
+          <div class="ctaRow">
+            <button class="btn primary" onclick="setView('premium')">✨ View Premium</button>
+            <button class="btn" onclick="openInvite()">➕ Invite</button>
+            <a class="btn ghost" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener">💬 Discord</a>
           </div>
         </div>
 
-        <div class="card preview">
-          <div class="cardTop">
-            <div class="badge">Preview Panel</div>
-            <div class="chips">
-              <div class="chip">Support</div>
-              <div class="chip">Trade</div>
-              <div class="chip">Logs</div>
+        <div class="card heroCard">
+          <div class="heroStat">
+            <span>Current build</span>
+            <b>v1.0</b>
+          </div>
+          <div class="statRow">
+            <div class="statBox">
+              <div class="big">⚡ Fast Setup</div>
+              <div class="small">Deploy and configure in minutes with a modern dashboard feel.</div>
+            </div>
+            <div class="statBox">
+              <div class="big">🧾 Logs</div>
+              <div class="small">Keep everything tracked: actions, staff, and ticket history.</div>
             </div>
           </div>
-
-          <div class="panel">
-            <div class="panelHead">
-              <img class="panelAvatar" src="assets/nozzarri.png" alt="Nozzarri">
-              <div style="min-width:0">
-                <div class="panelTitle">Create a Ticket</div>
-                <div class="panelDesc">Choose a category and we’ll open a private support channel.</div>
-              </div>
-            </div>
-            <div class="panelBtns">
-              <button class="panelBtn" onclick="toast('Opened: Support Ticket (demo)')">
-                🎫 Support Ticket <small>Fast help</small>
-              </button>
-              <button class="panelBtn" onclick="toast('Opened: Trade Ticket (demo)')">
-                🔁 Trade Ticket <small>Secure flow</small>
-              </button>
-              <button class="panelBtn" onclick="toast('Opened: Report Ticket (demo)')">
-                🚨 Report <small>Staff review</small>
-              </button>
-            </div>
-            <div class="smallNote">This is a website preview UI. Real tickets are in Discord.</div>
+          <div class="heroStat">
+            <span>Status</span>
+            <b style="color: var(--ok)">Online</b>
           </div>
         </div>
-      </div>
+      </section>
 
-      <section class="section" id="features">
-        <h2 class="reveal">Features</h2>
+      <section class="card section">
+        <h2>Features</h2>
+        <div class="muted" style="margin-top:6px">Modern UI, smooth animations, and mobile-friendly layout.</div>
+
         <div class="grid">
-          <div class="card feature reveal">
-            <div class="icon">🎨</div>
+          <div class="feature">
+            <div class="tag">🎟️ Tickets</div>
+            <div class="ftitle">Support & Trade categories</div>
+            <div class="ftext">Organize your server tickets cleanly with custom flows.</div>
+          </div>
+
+          <div class="feature">
+            <div class="tag">🧠 Smart</div>
             <div class="ftitle">Clean panels</div>
-            <div class="ftext">Professional UI that looks premium.</div>
+            <div class="ftext">Users understand what to do instantly. Less confusion.</div>
           </div>
-          <div class="card feature reveal">
-            <div class="icon">📁</div>
-            <div class="ftitle">Categories</div>
-            <div class="ftext">Support / trade / custom categories.</div>
+
+          <div class="feature">
+            <div class="tag">🛡️ Secure</div>
+            <div class="ftitle">Roles & permissions</div>
+            <div class="ftext">Control staff access and protect sensitive tickets.</div>
           </div>
-          <div class="card feature reveal">
-            <div class="icon">🧾</div>
-            <div class="ftitle">Logs</div>
-            <div class="ftext">Ticket actions tracked and saved.</div>
+
+          <div class="feature">
+            <div class="tag">🧾</div>
+            <div class="ftitle">Logs system</div>
+            <div class="ftext">Track actions for moderation, staff audits, and proof.</div>
           </div>
-          <div class="card feature reveal">
-            <div class="icon">⚡</div>
-            <div class="ftitle">Fast</div>
-            <div class="ftext">Lightweight and smooth experience.</div>
+
+          <div class="feature">
+            <div class="tag">🎨</div>
+            <div class="ftitle">Nice design</div>
+            <div class="ftext">Smooth fade-ins and no “black weird boxes” on PC.</div>
+          </div>
+
+          <div class="feature">
+            <div class="tag">📱</div>
+            <div class="ftitle">Responsive</div>
+            <div class="ftext">Looks good on PC and phone without menus breaking.</div>
           </div>
         </div>
       </section>
+    </main>
 
-      <section class="section" id="faq">
-        <h2 class="reveal">FAQ</h2>
-        <div class="card reveal" style="padding:6px">
-          <div style="padding:16px">
-            <details>
-              <summary>Is it hard to setup?</summary>
-              <p>Not at all. You can setup categories, roles, and logs quickly.</p>
-            </details>
-            <div class="line"></div>
-            <details>
-              <summary>Do I need premium?</summary>
-              <p>Premium unlocks the full pro flow and extra features.</p>
-            </details>
-            <div class="line"></div>
-            <details>
-              <summary>Where do I get support?</summary>
-              <p>Join our Discord and open a ticket.</p>
-            </details>
-          </div>
-        </div>
-      </section>
+    <!-- PREMIUM -->
+    <main id="viewPremium" style="display:none">
+      <section class="card section premWrap">
+        <div class="premHeroGlow"></div>
 
-      <footer class="footer">
-        <div class="footLeft">
-          <img class="logo" src="assets/nozzarri.png" alt="Nozzarri">
-          <div>
-            <div class="bname">Nozzarri Tickets</div>
-            <div class="btag">© <span id="year"></span> • All rights reserved</div>
-          </div>
-        </div>
-        <div class="footRight">
-          <a href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener">Discord</a>
-          <a href="#" onclick="openPremium(); return false;">Premium</a>
-          <a href="#" onclick="scrollToTop(); return false;">Back to top</a>
-        </div>
-      </footer>
-    </section>
-
-    <!-- PREMIUM VIEW -->
-    <section class="view" id="premiumView">
-      <div class="premWrap">
         <div class="premGrid">
           <div class="premLeft">
-            <div class="premHero reveal" id="premium">
-              <div class="premHeroGlow"></div>
-              <div class="pill" style="position:relative"><span class="dot"></span> Premium Checkout</div>
-              <div class="premTitleBig">Buy <span class="grad">Premium</span></div>
-              <div class="premSub">
-                Clean steps, no buggy layout on PC. Select plan → fill email → choose payment → receive.
-              </div>
+            <h2>✨ Premium</h2>
+            <p>
+              Pick a plan, checkout, and get access. Prices are set as $1 / $2 / $4 exactly like you wanted.
+            </p>
 
-              <div class="premActions">
-                <button class="btn primary" onclick="scrollIntoCheckout()">🛒 Open Checkout</button>
-                <a class="btn ghost" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener">💬 Discord</a>
+            <div class="ctaRow" style="margin-top:14px">
+              <button class="btn primary" onclick="setPremTab('plans')">View Plans</button>
+              <a class="btn ghost" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener">💬 Discord</a>
+            </div>
+          </div>
+
+          <div class="premLeft">
+            <div class="card" style="padding:16px">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px">
+                <div style="font-weight:1000; font-size:18px">Premium Panel</div>
+                <div class="pill" style="cursor:default">Nozzarri Tickets</div>
               </div>
 
               <div class="tabs">
@@ -1235,7 +903,7 @@
                 </div>
 
                 <div class="noteBar" style="margin-top:14px">
-                  Tip: Login/Register is on top-right.
+                  Tip: Select a plan, then go to Checkout.
                 </div>
               </div>
 
@@ -1259,31 +927,16 @@
                         <img src="assets/nozzarri.png" alt="item">
                         <div>
                           <div class="itemName" id="sumPlanName">Starter</div>
-                          <div class="itemSub">Premium Access</div>
+                          <div class="itemMeta">Premium plan</div>
                         </div>
                       </div>
-                      <div style="font-weight:1000">$<span id="sumAmount2">1</span>.00</div>
+                      <div class="itemPrice">$<span id="sumAmount2">1</span>.00</div>
                     </div>
 
                     <div class="line"></div>
 
-                    <div class="itemRow" style="color:var(--muted); font-weight:900">
-                      <div>Subtotal</div>
-                      <div>$<span id="sumAmount3">1</span>.00</div>
-                    </div>
-                    <div class="itemRow" style="margin-top:6px; font-weight:1000">
-                      <div>Total</div>
-                      <div>$<span id="sumAmount4">1</span>.00</div>
-                    </div>
-
-                    <div class="helpBox">
-                      <h4>Having issues with your order?</h4>
-                      <p>Open a support ticket on Discord and we’ll help you fast.</p>
-                      <a class="btn primary" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener" style="width:100%; justify-content:center">Open a Support Ticket</a>
-                      <div class="termsRow">
-                        <span>Terms of Service</span>
-                        <span>🛡️</span>
-                      </div>
+                    <div class="hint">
+                      This is a front-end UI mock. Hook your real payment / license system in JS when ready.
                     </div>
                   </div>
 
@@ -1298,567 +951,191 @@
                         <div class="st">Step 2</div>
                         <div class="ttl">Confirm & Pay</div>
                       </div>
-                      <div class="stepHead" id="s3">
-                        <div class="st">Step 3</div>
-                        <div class="ttl">Receive</div>
-                      </div>
                     </div>
 
-                    <div class="formGrid">
-                      <div>
-                        <div class="label">E-mail Address *</div>
-                        <input class="input" id="orderEmail" placeholder="name@gmail.com">
-                        <div class="hint">Order confirmation goes to this email.</div>
-                      </div>
-
+                    <div class="form" id="step1Form">
+                      <input class="inp" id="buyEmail" placeholder="Your email (for delivery / receipt)" />
                       <div class="row2">
-                        <div>
-                          <div class="label">Coupon Code</div>
-                          <input class="input" id="coupon" placeholder="Enter coupon (optional)">
-                        </div>
-                        <button class="btn ghost" onclick="applyCoupon()">Apply →</button>
+                        <input class="inp" id="discordUser" placeholder="Discord username (optional)" />
+                        <input class="inp" id="serverName" placeholder="Server name (optional)" />
                       </div>
-
-                      <div>
-                        <div class="label">Payment Method *</div>
-                        <div class="payMethods">
-                          <div class="pmBtn active" data-method="ltc" onclick="pickMethod('ltc')">
-                            <div>Litecoin</div>
-                            <div class="pmRight"><span class="pillMini">LTC</span> Ⓛ</div>
-                          </div>
-                          <div class="pmBtn" data-method="paypal" onclick="pickMethod('paypal')">
-                            <div>Paypal <span style="color:var(--muted); font-weight:900">(Friends & Family)</span></div>
-                            <div class="pmRight"><span class="pillMini">10% fee</span> P</div>
-                          </div>
-                          <div class="pmBtn" data-method="btc" onclick="pickMethod('btc')">
-                            <div>Bitcoin</div>
-                            <div class="pmRight"><span class="pillMini">BTC</span> ₿</div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <label class="checkRow">
-                        <input type="checkbox" id="agreeTos">
-                        <span>I have read and agree to the Terms of Service.</span>
-                      </label>
-
-                      <label class="checkRow">
-                        <input type="checkbox" id="news">
-                        <span>I would like to receive updates and promotions.</span>
-                      </label>
-
-                      <button class="btn primary" id="confirmBtn" onclick="goToPay()">Confirm & Pay</button>
-
-                      <div class="noteBar" id="payNote" style="display:none">
-                        Your order will be processed once payment is received.
-                      </div>
-
-                      <div class="payDetails" id="payDetails">
-                        <div style="display:flex; align-items:center; gap:10px; font-weight:1000">
-                          <span class="pillMini" id="methodLabel">LTC</span>
-                          <span>Send the exact amount</span>
-                        </div>
-                        <div class="hint" style="margin-top:8px" id="payHint">
-                          Copy the address and amount below.
-                        </div>
-
-                        <div class="copyRow">
-                          <input class="input" id="payAddress" readonly value="YOUR_LTC_ADDRESS_HERE">
-                          <button class="copyBtn" onclick="copyText('payAddress')">Copy</button>
-                        </div>
-
-                        <div class="copyRow">
-                          <input class="input" id="payAmount" readonly value="1.00 USD">
-                          <button class="copyBtn" onclick="copyText('payAmount')">Copy</button>
-                        </div>
-
-                        <div class="hint" style="margin-top:10px">
-                          After payment: open a ticket on Discord and send proof.
-                        </div>
-
-                        <a class="btn primary" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener" style="width:100%; justify-content:center; margin-top:10px">Open Support Ticket</a>
-                      </div>
-
-                      <div class="card" style="padding:14px; background: rgba(0,0,0,.18); border-radius: 22px;">
-                        <div style="font-weight:1000">Transaction History</div>
-                        <div class="muted" style="font-weight:900; margin-top:6px">No transactions yet…</div>
+                      <div class="hint">Fill these so you can be contacted if needed.</div>
+                      <div class="payRow">
+                        <button class="miniBtn primary" onclick="goStep(2)">Continue</button>
+                        <button class="miniBtn" onclick="setPremTab('plans')">Change plan</button>
                       </div>
                     </div>
+
+                    <div class="form" id="step2Form" style="display:none">
+                      <div class="hint">Confirm your order and click “Pay”. (Replace with real payment later.)</div>
+                      <div class="payRow">
+                        <button class="miniBtn primary" onclick="fakePay()">Pay $<span id="payBtnAmount">1</span></button>
+                        <button class="miniBtn" onclick="goStep(1)">Back</button>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>
 
               <div class="premPanel" id="premSupport" style="display:none">
-                <div style="font-weight:1000; font-size:18px">Support</div>
-                <div class="muted" style="font-weight:900; margin-top:6px">
-                  Need help? Join Discord and open a ticket.
-                </div>
-                <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap">
+                <div style="font-weight:1000; font-size:18px">Need help?</div>
+                <div class="muted" style="margin-top:6px">Join Discord and open a ticket for premium support.</div>
+                <div class="ctaRow" style="margin-top:14px">
                   <a class="btn primary" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener">💬 Join Discord</a>
-                  <button class="btn ghost" onclick="openFree()">← Back</button>
+                  <button class="btn" onclick="openInvite()">➕ Invite Bot</button>
                 </div>
               </div>
 
-            </div>
-          </div>
-
-          <div class="premRight">
-            <div class="card premRightCard reveal" style="padding:16px">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px">
-                <div style="font-weight:1000">Quick Actions</div>
-                <div class="pillMini">Pro UI</div>
-              </div>
-
-              <div class="line"></div>
-
-              <button class="panelBtn" onclick="openAuth('login')">
-                🔐 Login <small>verify by code</small>
-              </button>
-              <button class="panelBtn" onclick="openAuth('register')">
-                ✨ Register <small>create account</small>
-              </button>
-              <button class="panelBtn" onclick="setPremTab('checkout'); scrollIntoCheckout()">
-                🛒 Checkout <small>clean steps</small>
-              </button>
-              <a class="panelBtn" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener" style="text-decoration:none">
-                💬 Discord <small>support fast</small>
-              </a>
-
-              <div class="smallNote">You can change prices + addresses in the JS.</div>
             </div>
           </div>
         </div>
+      </section>
+    </main>
 
-        <footer class="footer">
-          <div class="footLeft">
-            <img class="logo" src="assets/nozzarri.png" alt="Nozzarri">
-            <div>
-              <div class="bname">Nozzarri Tickets</div>
-              <div class="btag">© <span class="year2"></span> • All rights reserved</div>
-            </div>
+    <!-- FAQ -->
+    <main id="viewFAQ" style="display:none">
+      <section class="card section">
+        <h2>FAQ</h2>
+        <div class="muted" style="margin-top:6px">Quick answers.</div>
+
+        <div class="grid" style="margin-top:12px">
+          <div class="feature" style="grid-column: span 6;">
+            <div class="ftitle">How do I invite the bot?</div>
+            <div class="ftext">Click “Invite Bot” and authorize it in your server.</div>
           </div>
-          <div class="footRight">
-            <a href="https://discord.gg/FHRSPyXw" target="_blank" rel="noopener">Discord</a>
-            <a href="#" onclick="openFree(); return false;">Free</a>
-            <a href="#" onclick="scrollToTop(); return false;">Back to top</a>
+          <div class="feature" style="grid-column: span 6;">
+            <div class="ftitle">How do I buy premium?</div>
+            <div class="ftext">Go to Premium → Select a plan → Checkout.</div>
           </div>
-        </footer>
+          <div class="feature" style="grid-column: span 6;">
+            <div class="ftitle">Where is support?</div>
+            <div class="ftext">Join the Discord and open a ticket.</div>
+          </div>
+          <div class="feature" style="grid-column: span 6;">
+            <div class="ftitle">Can I change prices?</div>
+            <div class="ftext">Yes — edit the `plans` array in the script.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- AUTH MODAL (kept, but hidden/disabled) -->
+  <div class="modal" id="authModal">
+    <div class="modalCard">
+      <div class="modalTop">
+        <b id="authTitle">Auth</b>
+        <button class="xBtn" onclick="closeAuth()">✕</button>
       </div>
-    </section>
-  </main>
+      <div class="modalBody" id="authBody"></div>
+    </div>
+  </div>
 
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast">Saved</div>
 
   <script>
-    /* ---------------------------
-       CONFIG (edit here)
-    ---------------------------- */
-    const DISCORD_INVITE = "https://discord.gg/FHRSPyXw";
+  // ===== Auth toggle =====
+  const AUTH_ENABLED = false; // set true if you want to enable Login/Register again
 
-    // Payment addresses (replace)
-    const PAY = {
-      ltc: { label:"LTC", address:"YOUR_LTC_ADDRESS_HERE" },
-      btc: { label:"BTC", address:"YOUR_BTC_ADDRESS_HERE" },
-      paypal: { label:"PAYPAL", address:"paypal@email.com (F&F)" }
-    };
+  // Helpers
+  const $ = (id)=>document.getElementById(id);
+  const views = { home: $("viewHome"), premium: $("viewPremium"), faq: $("viewFAQ") };
 
-    // Plans (edit)
-    const plans = [
-      { name:"Starter", price:1 },
-      { name:"Plus", price:2 },
-      { name:"Pro", price:4 }
-    ];
+  function scrollToTop(){ window.scrollTo({top:0, behavior:"smooth"}); }
 
-    // Backend endpoints (optional)
-    // If you don't have backend, it will run in DEMO mode and show code in a toast.
-    const API = {
-      sendCode: "/api/auth/send-code",
-      verifyCode: "/api/auth/verify-code"
-    };
+  function setView(name){
+    for(const k in views) views[k].style.display = (k===name) ? "block" : "none";
+    $("navHome").classList.toggle("active", name==="home");
+    $("navPremium").classList.toggle("active", name==="premium");
+    $("navFAQ").classList.toggle("active", name==="faq");
+    scrollToTop();
+  }
 
-    /* ---------------------------
-       SMALL UTILS
-    ---------------------------- */
-    const $ = (id) => document.getElementById(id);
-    const toastEl = $("toast");
-    function toast(msg){
-      toastEl.textContent = msg;
-      toastEl.classList.add("show");
-      clearTimeout(window.__t);
-      window.__t = setTimeout(()=>toastEl.classList.remove("show"), 2400);
+  function toggleDrawer(open){
+    $("drawer").classList.toggle("open", !!open);
+  }
+
+  // Toast
+  let toastTimer=null;
+  function toast(msg){
+    const t=$("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>t.classList.remove("show"), 1700);
+  }
+
+  // Invite link (your real bot invite)
+  function openInvite(){
+    // Replace with your bot invite link if needed:
+    window.open("https://discord.com/oauth2/authorize?client_id=1442592762108186675", "_blank", "noopener");
+  }
+
+  // Premium tabs
+  function setPremTab(tab){
+    $("tabPlans").classList.toggle("active", tab==="plans");
+    $("tabCheckout").classList.toggle("active", tab==="checkout");
+    $("tabSupport").classList.toggle("active", tab==="support");
+
+    $("premPlans").style.display = tab==="plans" ? "block" : "none";
+    $("premCheckout").style.display = tab==="checkout" ? "block" : "none";
+    $("premSupport").style.display = tab==="support" ? "block" : "none";
+  }
+
+  // Plans
+  const plans = [
+    { name:"Starter", price:1 },
+    { name:"Plus", price:2 },
+    { name:"Pro", price:4 },
+  ];
+
+  let selectedPlan = plans[0];
+
+  function selectPlan(name, price){
+    selectedPlan = { name, price };
+    $("sumPlanName").textContent = selectedPlan.name;
+    $("sumAmount").textContent = selectedPlan.price;
+    $("sumAmount2").textContent = selectedPlan.price;
+    $("payBtnAmount").textContent = selectedPlan.price;
+    toast(`Selected: ${selectedPlan.name} ($${selectedPlan.price})`);
+    setPremTab("checkout");
+    goStep(1);
+    $("checkoutAnchor").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  // Checkout steps
+  function goStep(n){
+    $("s1").classList.toggle("active", n===1);
+    $("s2").classList.toggle("active", n===2);
+    $("step1Form").style.display = n===1 ? "grid" : "none";
+    $("step2Form").style.display = n===2 ? "grid" : "none";
+  }
+
+  function fakePay(){
+    const email = ($("buyEmail").value || "").trim();
+    if(!email){
+      toast("Enter your email first.");
+      return;
     }
-    function scrollToTop(){ window.scrollTo({top:0, behavior:"smooth"}); }
-    function softScroll(e,id){
-      e.preventDefault();
-      const el = document.getElementById(id);
-      if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
-    }
+    toast("Payment UI demo ✓ (connect real payment later)");
+  }
 
-    // Cursor glow
-    window.addEventListener("mousemove", (e)=>{
-      document.documentElement.style.setProperty("--mx", e.clientX + "px");
-      document.documentElement.style.setProperty("--my", e.clientY + "px");
-    }, {passive:true});
-
-    // Year
-    $("year").textContent = new Date().getFullYear();
-    document.querySelectorAll(".year2").forEach(x => x.textContent = new Date().getFullYear());
-
-    // Drawer
-    function toggleDrawer(open){
-      $("drawer").classList.toggle("open", !!open);
-    }
-
-    /* ---------------------------
-       LOADER
-    ---------------------------- */
-    (function runLoader(){
-      const fill = $("barFill");
-      const pct = $("loaderPct");
-      const txt = $("loaderText");
-      const steps = ["Preparing interface", "Loading UI", "Finishing…"];
-      let p = 0, s = 0;
-      const t = setInterval(()=>{
-        p += Math.floor(Math.random()*8)+5;
-        if(p>100) p=100;
-        fill.style.width = p+"%";
-        pct.textContent = p+"%";
-        if(p> (s+1)*33 && s<steps.length-1){ s++; txt.textContent = steps[s]; }
-        if(p===100){
-          clearInterval(t);
-          setTimeout(()=>{
-            $("loader").classList.add("hide");
-            revealOnScroll();
-          }, 350);
-        }
-      }, 140);
-    })();
-
-    /* ---------------------------
-       STARS CANVAS
-    ---------------------------- */
-    (function stars(){
-      const c = $("stars");
-      const ctx = c.getContext("2d");
-      function resize(){
-        c.width = window.innerWidth * devicePixelRatio;
-        c.height = window.innerHeight * devicePixelRatio;
-      }
-      resize();
-      window.addEventListener("resize", resize);
-
-      const count = 120;
-      const pts = Array.from({length:count},()=>({
-        x: Math.random()*c.width,
-        y: Math.random()*c.height,
-        r: (Math.random()*1.3+0.2) * devicePixelRatio,
-        v: (Math.random()*0.35+0.05) * devicePixelRatio
-      }));
-
-      function draw(){
-        ctx.clearRect(0,0,c.width,c.height);
-        for(const p of pts){
-          p.y += p.v;
-          if(p.y > c.height) { p.y = -10; p.x = Math.random()*c.width; }
-          ctx.beginPath();
-          ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-          ctx.fillStyle = "rgba(255,255,255,0.75)";
-          ctx.fill();
-        }
-        requestAnimationFrame(draw);
-      }
-      draw();
-    })();
-
-    /* ---------------------------
-       REVEAL ON SCROLL
-    ---------------------------- */
-    function revealOnScroll(){
-      const els = document.querySelectorAll(".reveal");
-      const io = new IntersectionObserver((entries)=>{
-        entries.forEach(en=>{
-          if(en.isIntersecting) en.target.classList.add("show");
-        });
-      }, {threshold: 0.15});
-      els.forEach(el=>io.observe(el));
-    }
-
-    /* ---------------------------
-       VIEW SWITCH
-    ---------------------------- */
-    function showView(id){
-      document.querySelectorAll(".view").forEach(v=>v.classList.remove("show"));
-      $(id).classList.add("show");
-      setTimeout(revealOnScroll, 50);
-    }
-    function openFree(){ showView("freeView"); }
-    function openPremium(){ showView("premiumView"); setPremTab("plans"); }
-    window.openFree = openFree;
-    window.openPremium = openPremium;
-
-    /* Premium tabs */
-    function setPremTab(tab){
-      $("tabPlans").classList.toggle("active", tab==="plans");
-      $("tabCheckout").classList.toggle("active", tab==="checkout");
-      $("tabSupport").classList.toggle("active", tab==="support");
-      $("premPlans").style.display = tab==="plans" ? "block" : "none";
-      $("premCheckout").style.display = tab==="checkout" ? "block" : "none";
-      $("premSupport").style.display = tab==="support" ? "block" : "none";
-    }
-    window.setPremTab = setPremTab;
-
-    function scrollIntoCheckout(){
-      setPremTab("checkout");
-      setTimeout(()=>{
-        const el = $("checkoutAnchor");
-        if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
-      }, 50);
-    }
-    window.scrollIntoCheckout = scrollIntoCheckout;
-
-    /* ---------------------------
-       PLAN SELECTION
-    ---------------------------- */
-    let selectedPlan = { name:"Starter", price:1 };
-    function syncSummary(){
-      $("sumPlanName").textContent = selectedPlan.name;
-      $("sumAmount").textContent = selectedPlan.price;
-      $("sumAmount2").textContent = selectedPlan.price;
-      $("sumAmount3").textContent = selectedPlan.price;
-      $("sumAmount4").textContent = selectedPlan.price;
-      $("payAmount").value = selectedPlan.price.toFixed(2) + " USD";
-    }
-    function selectPlan(name, price){
-      selectedPlan = {name, price};
-      syncSummary();
-      toast("Selected plan: " + name + " ($" + price + ")");
-      setPremTab("checkout");
-      scrollIntoCheckout();
-    }
-    window.selectPlan = selectPlan;
-    syncSummary();
-
-    /* ---------------------------
-       COUPON (simple demo)
-    ---------------------------- */
-    function applyCoupon(){
-      const c = $("coupon").value.trim().toUpperCase();
-      if(!c){ toast("No coupon."); return; }
-      if(c === "NOZZARRI10"){
-        const old = selectedPlan.price;
-        selectedPlan.price = Math.max(1, Math.round(old*0.9*100)/100);
-        syncSummary();
-        toast("Coupon applied (10% off)");
-      }else{
-        toast("Invalid coupon");
-      }
-    }
-    window.applyCoupon = applyCoupon;
-
-    /* ---------------------------
-       PAYMENT METHOD
-    ---------------------------- */
-    let method = "ltc";
-    function pickMethod(m){
-      method = m;
-      document.querySelectorAll(".pmBtn").forEach(x=>{
-        x.classList.toggle("active", x.dataset.method === m);
-      });
-      const info = PAY[m] || PAY.ltc;
-      $("methodLabel").textContent = info.label;
-      $("payAddress").value = info.address;
-      toast("Payment: " + info.label);
-    }
-    window.pickMethod = pickMethod;
-    pickMethod("ltc");
-
-    function goToPay(){
-      const email = $("orderEmail").value.trim();
-      const tos = $("agreeTos").checked;
-      if(!email || !email.includes("@")) { toast("Enter a valid email."); return; }
-      if(!tos){ toast("You must agree to Terms."); return; }
-
-      $("s1").classList.remove("active");
-      $("s2").classList.add("active");
-      $("s3").classList.remove("active");
-
-      $("payNote").style.display = "block";
-      $("payDetails").classList.add("show");
-      toast("Step 2: Pay now");
-    }
-    window.goToPay = goToPay;
-
-    /* ---------------------------
-       COPY
-    ---------------------------- */
-    function copyText(id){
-      const el = $(id);
-      if(!el) return;
-      el.select?.();
-      el.setSelectionRange?.(0, 99999);
-      navigator.clipboard.writeText(el.value).then(()=>{
-        toast("Copied ✅");
-      }).catch(()=>{
-        try{
-          document.execCommand("copy");
-          toast("Copied ✅");
-        }catch{ toast("Copy failed"); }
-      });
-    }
-    window.copyText = copyText;
-
-    /* ---------------------------
-       AUTH (Login/Register with code)
-       - DEMO fallback shows code in toast
-       - Backend optional: /api/auth/send-code, /api/auth/verify-code
-    ---------------------------- */
-    let authMode = "login";
-    let pendingEmail = "";
-    function openAuth(mode){
-      authMode = mode;
-      $("authTitle").textContent = mode === "login" ? "Login" : "Register";
-      $("authHint").textContent = mode === "login"
-        ? "Login with your email. We’ll send a verification code."
-        : "Create account with email + password. We’ll send a verification code.";
-      $("switchText").textContent = mode === "login" ? "No account?" : "Already have an account?";
-      $("codeBlock").style.display = "none";
-      $("authCode").value = "";
-      $("authEmail").value = "";
-      $("authPass").value = "";
-      $("authModal").classList.add("show");
-    }
-    window.openAuth = openAuth;
-
-    function closeAuth(){ $("authModal").classList.remove("show"); }
-    window.closeAuth = closeAuth;
-
-    function switchAuth(){
-      openAuth(authMode === "login" ? "register" : "login");
-    }
-    window.switchAuth = switchAuth;
-
-    function getUsers(){
-      try{ return JSON.parse(localStorage.getItem("nozz_users")||"{}"); }catch{ return {}; }
-    }
-    function setUsers(u){
-      localStorage.setItem("nozz_users", JSON.stringify(u));
-    }
-
-    async function sendAuthCode(){
-      const email = $("authEmail").value.trim().toLowerCase();
-      const pass = $("authPass").value.trim();
-      if(!email || !email.includes("@")){ toast("Enter a valid email."); return; }
-      if(!pass || pass.length < 4){ toast("Password too short."); return; }
-
-      // local account logic
-      const users = getUsers();
-      if(authMode === "register"){
-        if(users[email]){ toast("Account already exists."); return; }
-        users[email] = { passHash: btoa(pass), verified:false };
-        setUsers(users);
-      }else{
-        if(!users[email]){ toast("No account. Register first."); return; }
-        if(users[email].passHash !== btoa(pass)){ toast("Wrong password."); return; }
-      }
-
-      pendingEmail = email;
-
-      // try backend send-code, fallback demo
-      const code = String(Math.floor(100000 + Math.random()*900000));
-      localStorage.setItem("nozz_pending_code_"+email, code);
-      const payload = { email, mode: authMode };
-
-      try{
-        const r = await fetch(API.sendCode, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify(payload)
-        });
-        if(!r.ok) throw new Error("no backend");
-        toast("Code sent to email ✅");
-      }catch{
-        // DEMO mode
-        toast("DEMO code: " + code);
-      }
-
-      $("codeBlock").style.display = "block";
-      toast("Enter the code");
-    }
-    window.sendAuthCode = sendAuthCode;
-
-    async function verifyAuthCode(){
-      const code = $("authCode").value.trim();
-      if(!pendingEmail){ toast("Send code first."); return; }
-      if(!code){ toast("Enter the code."); return; }
-
-      // try backend verify, fallback local
-      let ok = false;
-      try{
-        const r = await fetch(API.verifyCode, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ email: pendingEmail, code })
-        });
-        if(!r.ok) throw new Error("no backend");
-        ok = true;
-      }catch{
-        const saved = localStorage.getItem("nozz_pending_code_"+pendingEmail);
-        ok = (saved && saved === code);
-      }
-
-      if(!ok){ toast("Invalid code."); return; }
-
-      // mark verified + login
-      const users = getUsers();
-      if(users[pendingEmail]){ users[pendingEmail].verified = true; setUsers(users); }
-
-      localStorage.setItem("nozz_session", JSON.stringify({ email: pendingEmail, ts: Date.now() }));
-      setLoggedInUI(pendingEmail);
-      closeAuth();
-      toast("Logged in ✅");
-    }
-    window.verifyAuthCode = verifyAuthCode;
-
-    function setLoggedInUI(email){
-      $("loginBtn").style.display = "none";
-      $("registerBtn").style.display = "none";
-      $("logoutBtn").style.display = "inline-flex";
-
-      $("userPill").style.display = "inline-flex";
-      $("userEmail").textContent = email;
-      $("userPill").title = email;
-
-      // Autofill order email
-      $("orderEmail").value = email;
-    }
-
-    function logout(){
-      localStorage.removeItem("nozz_session");
-      $("loginBtn").style.display = "inline-flex";
-      $("registerBtn").style.display = "inline-flex";
-      $("logoutBtn").style.display = "none";
-      $("userPill").style.display = "none";
-      toast("Logged out");
-    }
-    window.logout = logout;
-
-    // Restore session
-    (function restore(){
-      try{
-        const s = JSON.parse(localStorage.getItem("nozz_session")||"null");
-        if(s && s.email) setLoggedInUI(s.email);
-      }catch{}
-    })();
-
-    // Start on Gate but keep free view easy
-    function openGate(){
-      showView("gateView");
-    }
-    window.openGate = openGate;
-
-    // On load show gate
-    openGate();
-
+  // ===== AUTH (kept but disabled) =====
+  function openAuth(mode){
+    if(!AUTH_ENABLED){ toast("Login/Register is disabled."); return; }
+    $("authModal").classList.add("open");
+  }
+  function closeAuth(){
+    $("authModal").classList.remove("open");
+  }
+  function logout(){
+    if(!AUTH_ENABLED){ toast("Auth disabled."); return; }
+  }
+  function initAuth(){
+    if(!AUTH_ENABLED) return;
+  }
+  if(AUTH_ENABLED) initAuth();
   </script>
 </body>
 </html>

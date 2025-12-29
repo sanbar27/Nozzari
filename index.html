@@ -201,6 +201,41 @@
       .nav{display:none}
       .menuBtn{display:inline-flex}
     }
+    /* ===== PHONE TOPBAR FIX (NO OVERLAP) ===== */
+@media (max-width: 520px){
+  .topbar{
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .brand{
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .bname, .btag{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+
+  .actions{
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  /* hide buttons that cause collision */
+  #youtubeBtn,
+  #botBtn,
+  #copyInvite{
+    display: none;
+  }
+
+  .menuBtn{
+    display: inline-flex;
+  }
+}
 
     /* Mobile drawer */
     .drawer{
@@ -1763,3 +1798,4 @@
   </script>
 </body>
 </html>
+

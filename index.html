@@ -3,1183 +3,1051 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Nozzarri Tickets | Discord Ticket Bot</title>
-  <meta name="description" content="Nozzarri Tickets — ticket bot for Discord. Support & Trade tickets, clean panels, logs, and more." />
+  <title>Nozzarri Tickets — Premium Discord Ticket Bot</title>
+  <meta name="description" content="Nozzarri Tickets — premium Discord ticket bot. Clean panels, fast setup, logs, automation, and more." />
 
   <!-- Social preview -->
-  <meta property="og:title" content="Nozzarri Tickets | Discord Ticket Bot" />
-  <meta property="og:description" content="Ticket bot — Support & Trade tickets, setup panel, logs, clean UI." />
-  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Nozzarri Tickets" />
+  <meta property="og:description" content="Premium Discord ticket bot — support & trade tickets, clean UI, logs, automation." />
   <meta property="og:image" content="assets/nozzarri.png" />
-
-  <link rel="icon" type="image/png" href="assets/nozzarri.png" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#0b0b12" />
 
   <style>
     :root{
-      --bg0:#05060f;
-      --bg1:#070824;
+      --bg0:#07070c;
+      --bg1:#0b0b12;
       --card: rgba(255,255,255,.06);
-      --card2: rgba(255,255,255,.09);
-      --border: rgba(255,255,255,.12);
-
-      --text:#eef2ff;
-      --muted: rgba(238,242,255,.72);
-
-      --a:#7c3aed;
-      --b:#38bdf8;
-      --c:#22c55e;
-      --d:#fbbf24;
-
-      --shadow: 0 26px 90px rgba(0,0,0,.62);
-      --radius: 18px;
-      --radius2: 26px;
-
-      --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-
+      --card2: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --muted2: rgba(255,255,255,.50);
+      --gold:#f5c84c;
+      --gold2:#ffdd7a;
+      --pink:#ff3b8d;
+      --blue:#4da3ff;
+      --shadow: 0 22px 80px rgba(0,0,0,.55);
+      --shadow2: 0 12px 40px rgba(0,0,0,.45);
+      --r: 18px;
+      --r2: 26px;
       --ease: cubic-bezier(.2,.8,.2,1);
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
-      font-family:var(--font);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
       color:var(--text);
       background:
-        radial-gradient(1200px 700px at 20% 15%, rgba(124,58,237,.18), transparent 55%),
-        radial-gradient(900px 600px at 80% 18%, rgba(56,189,248,.14), transparent 55%),
-        radial-gradient(1100px 750px at 60% 92%, rgba(34,197,94,.10), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
+        radial-gradient(1200px 800px at 20% -10%, rgba(245,200,76,.20), transparent 55%),
+        radial-gradient(900px 700px at 90% 10%, rgba(77,163,255,.14), transparent 58%),
+        radial-gradient(800px 650px at 70% 90%, rgba(255,59,141,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 55%, #070711);
       overflow-x:hidden;
     }
 
-    /* Background layers */
-    .bg{
-      position:fixed; inset:0; z-index:-2; pointer-events:none;
+    a{ color:inherit; text-decoration:none; }
+    button{ font-family:inherit; }
+    .container{ width:min(1180px, calc(100% - 44px)); margin:0 auto; }
+
+    /* ====== Ambient animated “aurora” ====== */
+    .aurora{
+      position:fixed; inset:-30vh -30vw;
+      pointer-events:none; z-index:-2;
+      filter: blur(26px) saturate(120%);
+      opacity:.8;
+      transform: translateZ(0);
     }
-    canvas#stars{
-      position:absolute; inset:0; width:100%; height:100%;
-      opacity:.26;
-      filter: blur(.0px);
+    .blob{
+      position:absolute; width:520px; height:520px; border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, rgba(245,200,76,.38), rgba(245,200,76,0) 60%);
+      animation: float1 9s var(--ease) infinite;
     }
-    .glow{
-      position:absolute; inset:-200px;
-      background:
-        radial-gradient(circle at 22% 22%, rgba(124,58,237,.22), transparent 52%),
-        radial-gradient(circle at 82% 25%, rgba(56,189,248,.16), transparent 52%),
-        radial-gradient(circle at 60% 88%, rgba(34,197,94,.12), transparent 52%);
-      filter: blur(50px);
-      opacity:.9;
-      animation: float 12s var(--ease) infinite;
+    .blob.b2{
+      width:620px; height:620px;
+      background: radial-gradient(circle at 30% 30%, rgba(77,163,255,.26), rgba(77,163,255,0) 62%);
+      left:55%; top:8%;
+      animation: float2 11s var(--ease) infinite;
     }
-    @keyframes float{
-      0%,100%{ transform: translate3d(0,0,0) scale(1); }
-      50%{ transform: translate3d(28px,-16px,0) scale(1.02); }
+    .blob.b3{
+      width:720px; height:720px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,59,141,.20), rgba(255,59,141,0) 62%);
+      left:18%; top:55%;
+      animation: float3 13s var(--ease) infinite;
+    }
+    @keyframes float1{
+      0%,100%{ transform: translate(6%,10%) scale(1); }
+      50%{ transform: translate(12%,2%) scale(1.06); }
+    }
+    @keyframes float2{
+      0%,100%{ transform: translate(-6%,6%) scale(1); }
+      50%{ transform: translate(-12%,-2%) scale(1.05); }
+    }
+    @keyframes float3{
+      0%,100%{ transform: translate(3%,-6%) scale(1); }
+      50%{ transform: translate(-3%,-10%) scale(1.05); }
     }
 
-    /* Layout */
-    .container{max-width:1200px; margin:0 auto; padding:0 20px}
-    .row{display:flex; align-items:center; justify-content:space-between; gap:14px}
-    .grid{display:grid; gap:14px}
-
-    /* Top Nav */
+    /* ====== Top nav ====== */
     .nav{
-      position:sticky; top:0; z-index:60;
-      backdrop-filter: blur(12px);
-      background: linear-gradient(180deg, rgba(5,6,15,.80), rgba(5,6,15,.45));
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(180deg, rgba(5,5,10,.88), rgba(5,5,10,.55));
+      border-bottom:1px solid rgba(255,255,255,.08);
     }
     .navInner{
-      height:72px;
-      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
     }
     .brand{
-      display:flex; align-items:center; gap:12px;
-      text-decoration:none; color:var(--text);
-      user-select:none;
+      display:flex; gap:12px; align-items:center;
+      min-width: 240px;
     }
     .logo{
       width:42px; height:42px; border-radius:14px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(245,200,76,.22), rgba(245,200,76,.06));
+      border:1px solid rgba(245,200,76,.25);
+      box-shadow: 0 10px 30px rgba(245,200,76,.10);
       display:grid; place-items:center;
-      box-shadow: 0 0 34px rgba(124,58,237,.18);
       overflow:hidden;
     }
-    .logo img{width:100%; height:100%; object-fit:cover}
-    .brandName{
-      font-weight:1000; letter-spacing:.2px; line-height:1;
+    .logo img{ width:100%; height:100%; object-fit:cover; transform: scale(1.04); }
+    .brandText .t1{
+      font-weight:800; letter-spacing:.2px; line-height:1.1;
     }
-    .brandSub{
-      color:var(--muted); font-weight:800; font-size:12px; margin-top:2px;
+    .brandText .t2{
+      color:var(--muted2); font-size:12px; margin-top:2px;
     }
 
-    .navLinks{display:flex; gap:16px; align-items:center}
+    .navLinks{
+      display:flex; gap:18px; align-items:center;
+      justify-content:center;
+      flex: 1;
+    }
     .navLinks a{
-      color:rgba(238,242,255,.78);
-      text-decoration:none;
-      font-weight:900;
-      font-size:13px;
-      padding:10px 10px;
-      border-radius:12px;
-      transition: background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
+      color:var(--muted);
+      font-size:14px;
+      padding:8px 10px;
+      border-radius: 999px;
+      transition: all .25s var(--ease);
     }
     .navLinks a:hover{
+      color: var(--text);
       background: rgba(255,255,255,.06);
-      color:var(--text);
       transform: translateY(-1px);
     }
 
-    .navBtns{display:flex; gap:10px; align-items:center}
+    .navBtns{
+      display:flex; gap:10px; align-items:center;
+      min-width: 240px;
+      justify-content:flex-end;
+    }
+
     .btn{
+      cursor:pointer;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
-      color:var(--text);
+      color: var(--text);
+      padding:10px 14px;
       border-radius: 999px;
-      padding: 11px 14px;
-      font-weight:1000;
-      font-size:13px;
-      letter-spacing:.2px;
-      cursor:pointer;
-      transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease);
       display:inline-flex; align-items:center; gap:10px;
-      text-decoration:none;
+      transition: all .25s var(--ease);
+      box-shadow: 0 8px 28px rgba(0,0,0,.25);
       user-select:none;
     }
-    .btn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(255,255,255,.18);
-      background: rgba(255,255,255,.09);
-      box-shadow: 0 14px 40px rgba(0,0,0,.30);
-    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); }
     .btn:active{ transform: translateY(0px) scale(.99); }
 
     .btn.primary{
-      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.85));
-      border-color: rgba(255,255,255,.16);
-      box-shadow: 0 22px 70px rgba(124,58,237,.18);
+      border:1px solid rgba(245,200,76,.35);
+      background: linear-gradient(180deg, rgba(245,200,76,.22), rgba(245,200,76,.10));
+      box-shadow: 0 14px 40px rgba(245,200,76,.12), 0 10px 28px rgba(0,0,0,.28);
     }
     .btn.primary:hover{
-      box-shadow: 0 24px 80px rgba(56,189,248,.16);
+      background: linear-gradient(180deg, rgba(245,200,76,.28), rgba(245,200,76,.12));
     }
 
-    .btn.good{
-      background: linear-gradient(135deg, rgba(34,197,94,.90), rgba(56,189,248,.65));
-      border-color: rgba(255,255,255,.16);
+    .btn.ghost{
+      background: transparent;
+      box-shadow:none;
     }
 
-    .hamburger{
-      display:none;
-      width:44px; height:44px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      cursor:pointer;
-    }
-    .hamburger span{
-      display:block; width:18px; height:2px; margin:6px auto;
-      background: rgba(238,242,255,.85);
-      border-radius:99px;
+    .pill{
+      font-size:12px;
+      color: rgba(0,0,0,.86);
+      font-weight:800;
+      background: linear-gradient(180deg, var(--gold2), var(--gold));
+      padding:5px 10px;
+      border-radius: 999px;
     }
 
-    /* Hero */
+    /* ====== Hero ====== */
     .hero{
-      padding: 54px 0 18px;
+      padding: 56px 0 26px;
     }
     .heroGrid{
       display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 18px;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 26px;
       align-items:stretch;
     }
-    .heroCard{
-      border-radius: var(--radius2);
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
+    @media (max-width: 980px){
+      .heroGrid{ grid-template-columns: 1fr; }
+      .navLinks{ display:none; }
+      .brand{ min-width:auto; }
+      .navBtns{ min-width:auto; }
     }
-    .heroCard::before{
+
+    .heroLeft{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--r2);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      position:relative;
+      overflow:hidden;
+    }
+    .heroLeft::before{
       content:"";
-      position:absolute; inset:-2px;
-      background: radial-gradient(700px 260px at 12% 10%, rgba(124,58,237,.20), transparent 55%),
-                  radial-gradient(700px 260px at 90% 30%, rgba(56,189,248,.16), transparent 55%);
-      opacity:.85;
+      position:absolute; inset:-40%;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(245,200,76,.22), transparent 55%),
+        radial-gradient(circle at 70% 40%, rgba(77,163,255,.14), transparent 55%),
+        radial-gradient(circle at 50% 80%, rgba(255,59,141,.10), transparent 55%);
+      filter: blur(20px);
+      opacity:.9;
+      transform: rotate(-10deg);
       pointer-events:none;
     }
-    .heroPad{padding: 28px; position:relative}
-    .pill{
-      display:inline-flex; align-items:center; gap:10px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      font-weight:1000;
-      font-size:12px;
-      color: rgba(238,242,255,.82);
+    .heroLeft > *{ position:relative; }
+
+    .kicker{
+      display:flex; gap:10px; align-items:center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 12px;
     }
     .dot{
       width:10px; height:10px; border-radius:999px;
-      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(56,189,248,.75));
-      box-shadow: 0 0 18px rgba(34,197,94,.22);
+      background: rgba(245,200,76,.85);
+      box-shadow: 0 0 0 4px rgba(245,200,76,.12);
+      animation: pulse 2.2s var(--ease) infinite;
     }
-    .h1{
-      margin: 14px 0 10px;
-      font-size: clamp(28px, 4.2vw, 50px);
-      line-height:1.03;
-      letter-spacing:-1px;
-      font-weight:1000;
+    @keyframes pulse{
+      0%,100%{ transform: scale(1); opacity: 1; }
+      50%{ transform: scale(1.2); opacity: .75; }
+    }
+
+    h1{
+      margin: 0;
+      font-size: clamp(34px, 3.6vw, 54px);
+      letter-spacing: -0.6px;
+      line-height: 1.05;
     }
     .grad{
-      background: linear-gradient(90deg, rgba(56,189,248,.95), rgba(124,58,237,.95), rgba(34,197,94,.95));
+      background: linear-gradient(90deg, #ffffff, rgba(255,255,255,.85), rgba(245,200,76,.95));
       -webkit-background-clip:text;
       background-clip:text;
       color:transparent;
     }
-    .lead{
-      margin: 0;
-      color: rgba(238,242,255,.78);
-      font-weight:800;
-      line-height:1.6;
-      max-width: 62ch;
+    .sub{
+      margin-top: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 15px;
+      max-width: 52ch;
     }
+
     .heroBtns{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top:16px;
+      display:flex; gap:12px; flex-wrap:wrap;
+      margin-top: 18px;
     }
 
-    .miniRow{
-      margin-top: 16px;
-      display:flex; gap:10px; flex-wrap:wrap;
-      color: rgba(238,242,255,.70);
-      font-weight:800;
-      font-size:13px;
+    .miniStats{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 18px;
     }
-    .miniStat{
-      display:flex; align-items:center; gap:10px;
-      padding: 10px 12px;
-      border-radius: 14px;
+    @media (max-width: 520px){
+      .miniStats{ grid-template-columns: 1fr; }
+    }
+    .stat{
+      padding: 12px 12px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.18);
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
     }
-    .badge{
-      font-weight:1000;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
-      font-size:12px;
+    .stat .n{
+      font-weight:900;
+      letter-spacing:.2px;
+      font-size: 16px;
+    }
+    .stat .l{
+      font-size: 12px;
+      color: var(--muted2);
+      margin-top: 3px;
     }
 
-    /* Right preview card */
-    .previewCard{
-      border-radius: var(--radius2);
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      box-shadow: var(--shadow);
+    .heroRight{
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--r2);
+      box-shadow: var(--shadow2);
       overflow:hidden;
       position:relative;
+      min-height: 320px;
     }
-    .previewTop{
-      padding: 14px 14px 10px;
-      display:flex; align-items:center; justify-content:space-between;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.18);
-    }
-    .chipRow{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-    .chip{
-      padding: 8px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      font-weight:1000;
-      font-size:12px;
-      color: rgba(238,242,255,.82);
-      cursor:pointer;
-      transition: transform .18s var(--ease), background .18s var(--ease);
-      user-select:none;
-    }
-    .chip:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
-    .chip.active{
-      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.75));
-      border-color: rgba(255,255,255,.16);
-      color: var(--text);
-    }
-    .previewBody{padding: 14px}
-    .mock{
-      border-radius: 18px;
+    .screen{
+      position:absolute; inset: 18px;
+      border-radius: 20px;
+      background:
+        radial-gradient(650px 250px at 50% 0%, rgba(245,200,76,.22), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
       overflow:hidden;
     }
-    .mockHead{
+    .screen::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.09), rgba(255,255,255,0));
+      transform: translateX(-60%);
+      animation: shine 3.6s var(--ease) infinite;
+      opacity:.7;
+    }
+    @keyframes shine{
+      0%{ transform: translateX(-70%); }
+      55%{ transform: translateX(70%); }
+      100%{ transform: translateX(70%); }
+    }
+
+    .mockTop{
       display:flex; align-items:center; justify-content:space-between;
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      color: rgba(238,242,255,.82);
-      font-weight:1000;
-      font-size:12px;
+      padding: 14px 14px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(8px);
+      background: rgba(0,0,0,.18);
     }
-    .dots{display:flex; gap:6px}
-    .dots i{width:10px; height:10px; border-radius:99px; display:inline-block; background: rgba(255,255,255,.14)}
-    .mockInner{padding: 12px}
-    .mockGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
+    .mockBadge{
+      display:flex; align-items:center; gap:10px;
+      color: var(--muted);
+      font-size: 13px;
     }
-    .kpi{
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding: 12px;
-    }
-    .kpi .t{font-weight:1000; font-size:12px; color: rgba(238,242,255,.72)}
-    .kpi .v{font-weight:1000; font-size:22px; margin-top:4px; letter-spacing:-.6px}
-    .spark{
-      margin-top: 10px;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      overflow:hidden;
-    }
-    .spark > div{
-      height:100%;
-      width:60%;
-      border-radius:999px;
-      background: linear-gradient(90deg, rgba(56,189,248,.95), rgba(124,58,237,.95), rgba(34,197,94,.95));
-      filter: drop-shadow(0 0 12px rgba(56,189,248,.18));
-      animation: fill 2.6s var(--ease) infinite;
-    }
-    @keyframes fill{
-      0%,100%{ transform: translateX(-22%); width: 58%;}
-      50%{ transform: translateX(10%); width: 64%;}
-    }
-    .mockList{
-      margin-top: 10px;
-      display:grid;
-      gap:8px;
-    }
-    .line{
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding: 10px 10px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      color: rgba(238,242,255,.82);
-      font-weight:900;
-      font-size:12px;
-    }
-    .tag{
+    .mockBadge .chip{
       padding: 6px 10px;
       border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      font-weight:1000;
+      border:1px solid rgba(245,200,76,.25);
+      background: rgba(245,200,76,.10);
+      color: rgba(255,255,255,.86);
+      font-weight: 800;
+      letter-spacing:.2px;
       font-size:12px;
-      white-space:nowrap;
     }
-    .tag.good{ background: rgba(34,197,94,.14); border-color: rgba(34,197,94,.28); }
-    .tag.warn{ background: rgba(251,191,36,.14); border-color: rgba(251,191,36,.28); }
+    .mockBody{
+      padding: 14px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .mockRow{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 16px;
+      padding: 12px;
+      display:flex; justify-content:space-between; align-items:center;
+      gap: 10px;
+    }
+    .mockRow .left{
+      display:flex; gap:10px; align-items:center;
+    }
+    .mockIcon{
+      width:36px; height:36px; border-radius: 12px;
+      background: rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.10);
+      display:grid; place-items:center;
+      color: rgba(255,255,255,.84);
+      font-weight: 900;
+      letter-spacing:.2px;
+    }
+    .mockRow .t{
+      font-weight: 850;
+      font-size: 13px;
+    }
+    .mockRow .d{
+      color: var(--muted2);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+    .mockBtn{
+      padding:8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.86);
+      font-size: 12px;
+      cursor:pointer;
+      transition: all .2s var(--ease);
+      user-select:none;
+    }
+    .mockBtn:hover{ transform: translateY(-1px); }
 
-    /* Sections */
-    section{padding: 18px 0}
+    /* ====== Sections ====== */
+    .section{ padding: 26px 0; }
     .sectionTitle{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:14px;
-      margin: 8px 0 12px;
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap: 16px;
+      margin-bottom: 14px;
     }
     .sectionTitle h2{
       margin:0;
-      font-weight:1000;
-      letter-spacing:-.6px;
-      font-size: clamp(20px, 2.2vw, 28px);
+      font-size: 22px;
+      letter-spacing: -.2px;
     }
     .sectionTitle p{
       margin:0;
-      color: rgba(238,242,255,.72);
-      font-weight:800;
-      line-height:1.6;
-      max-width: 60ch;
+      color: var(--muted);
       font-size: 13px;
+      max-width: 56ch;
     }
 
-    .cards{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .grid3{
+      display:grid; grid-template-columns: repeat(3, 1fr);
       gap: 12px;
     }
+    @media (max-width: 980px){
+      .grid3{ grid-template-columns: 1fr; }
+    }
+
     .card{
-      border-radius: var(--radius);
-      border:1px solid rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.10);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: var(--r);
       padding: 16px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      box-shadow: 0 10px 35px rgba(0,0,0,.28);
+      transition: transform .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease);
+      overflow:hidden;
+      position:relative;
+    }
+    .card:hover{
+      transform: translateY(-3px);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border-color: rgba(245,200,76,.18);
+    }
+    .card .icon{
+      width:44px; height:44px; border-radius: 16px;
+      background: rgba(245,200,76,.10);
+      border:1px solid rgba(245,200,76,.20);
+      display:grid; place-items:center;
+      margin-bottom: 10px;
+      box-shadow: 0 10px 28px rgba(245,200,76,.08);
+      font-weight:900;
+    }
+    .card h3{ margin: 0 0 6px; font-size: 15px; letter-spacing:-.1px; }
+    .card p{ margin:0; color: var(--muted); font-size: 13px; line-height:1.5; }
+
+    /* ====== Pricing ====== */
+    .pricingWrap{
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.10));
+      border-radius: var(--r2);
+      padding: 18px;
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+      position:relative;
+    }
+    .pricingTopRow{
+      display:flex; align-items:center; justify-content:space-between; gap: 12px;
+      margin-bottom: 10px;
+    }
+    .note{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .note b{ color: rgba(255,255,255,.86); }
+    .plans{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 980px){
+      .plans{ grid-template-columns: 1fr; }
+    }
+
+    .plan{
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border-radius: 18px;
+      padding: 16px;
       position:relative;
       overflow:hidden;
-      min-height: 140px;
+      transition: transform .25s var(--ease), border-color .25s var(--ease), background .25s var(--ease);
     }
-    .card::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background: radial-gradient(450px 140px at 12% 10%, rgba(56,189,248,.14), transparent 55%),
-                  radial-gradient(450px 140px at 80% 35%, rgba(124,58,237,.16), transparent 55%);
-      opacity:.65;
-      pointer-events:none;
+    .plan:hover{ transform: translateY(-3px); border-color: rgba(245,200,76,.22); }
+    .plan.best{
+      border-color: rgba(245,200,76,.35);
+      box-shadow: 0 22px 80px rgba(245,200,76,.08), 0 12px 36px rgba(0,0,0,.35);
     }
-    .card > *{ position:relative; }
-    .icon{
-      width:42px; height:42px;
-      border-radius: 16px;
-      display:grid; place-items:center;
+    .planHead{
+      display:flex; align-items:flex-start; justify-content:space-between; gap: 12px;
+    }
+    .planTag{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.18);
-      font-weight:1000;
+      color: rgba(255,255,255,.82);
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing:.2px;
     }
-    .card h3{margin:12px 0 6px; font-weight:1000; letter-spacing:-.2px}
-    .card p{margin:0; color: rgba(238,242,255,.72); font-weight:800; line-height:1.6; font-size:13px}
-
-    /* Pricing */
-    .pricing{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 12px;
+    .planPrice{
+      font-size: 30px;
+      font-weight: 950;
+      letter-spacing: -.6px;
+      margin-top: 10px;
     }
-    .plan{
-      border-radius: 22px;
+    .planSub{
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 6px;
+      line-height:1.45;
+    }
+    .planBtns{
+      display:flex; gap: 10px; flex-wrap:wrap;
+      margin-top: 14px;
+    }
+    .miniBtn{
+      cursor:pointer;
       border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      padding: 16px;
-      box-shadow: 0 18px 70px rgba(0,0,0,.35);
-      position:relative;
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.88);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      transition: all .22s var(--ease);
+      user-select:none;
+      display:inline-flex; align-items:center; gap: 8px;
+    }
+    .miniBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); }
+    .miniBtn.primary{
+      border-color: rgba(245,200,76,.32);
+      background: linear-gradient(180deg, rgba(245,200,76,.22), rgba(245,200,76,.10));
+    }
+    .fine{
+      margin-top: 12px;
+      color: var(--muted2);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .addr{
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px dashed rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
       overflow:hidden;
     }
-    .plan::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background: radial-gradient(600px 220px at 10% 0%, rgba(34,197,94,.12), transparent 55%),
-                  radial-gradient(600px 220px at 90% 18%, rgba(56,189,248,.14), transparent 55%);
-      opacity:.65; pointer-events:none;
+    .addr code{
+      color: rgba(255,255,255,.86);
+      font-size: 12px;
+      word-break: break-all;
     }
-    .plan > *{position:relative}
-    .planTop{display:flex; align-items:center; justify-content:space-between; gap:10px}
-    .planName{margin-top:10px; font-weight:1000}
-    .money{font-weight:1000; font-size:30px; letter-spacing:-.9px; margin-top:6px}
-    .sub{color: rgba(238,242,255,.72); font-weight:900; line-height:1.55; font-size:13px; margin-top:6px}
-    .best{
-      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.75));
-      border-color: rgba(255,255,255,.16);
-    }
-    .ul{
-      margin: 12px 0 0;
-      padding: 0;
-      list-style:none;
-      display:grid;
-      gap:8px;
-      color: rgba(238,242,255,.78);
-      font-weight:800;
-      font-size:13px;
-    }
-    .ul li{display:flex; align-items:flex-start; gap:10px}
-    .check{
-      width:18px; height:18px;
-      border-radius:6px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(34,197,94,.14);
-      display:grid; place-items:center;
-      flex: 0 0 auto;
-      margin-top:1px;
-    }
-    .planBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
 
-    /* FAQ */
-    .faq{
+    /* ====== Footer ====== */
+    footer{
+      padding: 28px 0 34px;
+      color: var(--muted2);
+      font-size: 12px;
+      border-top:1px solid rgba(255,255,255,.08);
+      margin-top: 22px;
+    }
+    .footRow{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+    }
+
+    /* ====== Modal system (with Undo / Back) ====== */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.62);
+      backdrop-filter: blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      z-index: 120;
+    }
+    .overlay.show{ display:flex; }
+    .modal{
+      width: min(980px, 100%);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(18,18,28,.92), rgba(10,10,18,.90));
+      box-shadow: 0 30px 120px rgba(0,0,0,.65);
+      overflow:hidden;
+      transform: translateY(10px) scale(.985);
+      opacity: 0;
+      transition: transform .25s var(--ease), opacity .25s var(--ease);
+    }
+    .overlay.show .modal{
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    .modalTop{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 10px;
+      padding: 14px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+    }
+    .modalTitle{
+      display:flex; align-items:center; gap: 10px;
+      font-weight: 900;
+      letter-spacing: -.2px;
+    }
+    .xbtn{
+      cursor:pointer;
+      width: 42px; height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      display:grid; place-items:center;
+      transition: all .2s var(--ease);
+      user-select:none;
+    }
+    .xbtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); }
+    .modalBody{
+      padding: 16px;
+    }
+    .modalGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
-    details{
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      padding: 12px 14px;
-      box-shadow: 0 18px 70px rgba(0,0,0,.22);
+    @media (max-width: 900px){
+      .modalGrid{ grid-template-columns: 1fr; }
     }
-    summary{
-      cursor:pointer;
-      font-weight:1000;
-      list-style:none;
-    }
-    summary::-webkit-details-marker{display:none}
-    details p{
-      margin: 10px 0 0;
-      color: rgba(238,242,255,.72);
-      font-weight:800;
-      line-height:1.6;
-      font-size:13px;
-    }
-
-    /* Footer */
-    footer{
-      margin-top: 18px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      padding: 22px 0 28px;
-      background: rgba(0,0,0,.14);
-    }
-    .footGrid{
-      display:grid;
-      grid-template-columns: 1.3fr .7fr .7fr;
-      gap: 14px;
-      align-items:start;
-    }
-    .footTitle{font-weight:1000}
-    .footText{margin:8px 0 0; color: rgba(238,242,255,.72); font-weight:800; line-height:1.6; font-size:13px}
-    .footLinks{display:grid; gap:8px; margin-top:8px}
-    .footLinks a{
-      color: rgba(238,242,255,.78);
-      text-decoration:none;
-      font-weight:900;
-      font-size:13px;
-      padding:8px 10px;
-      border-radius: 12px;
-      transition: background .18s var(--ease), transform .18s var(--ease);
-    }
-    .footLinks a:hover{background: rgba(255,255,255,.06); transform: translateY(-1px)}
-    .tiny{margin-top:12px; color: rgba(238,242,255,.55); font-weight:800; font-size:12px; line-height:1.6}
-
-    /* Overlays / Modals (undo via back button) */
-    .overlay{
-      position:fixed; inset:0;
-      display:none;
-      place-items:center;
-      z-index:200;
-      background: rgba(0,0,0,.56);
-      backdrop-filter: blur(10px);
-      padding: 18px;
-    }
-    .overlay.show{display:grid; animation: fadeIn .18s var(--ease) both}
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
     .panel{
-      width:min(980px, 100%);
-      border-radius: 26px;
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(10,12,26,.92), rgba(8,10,20,.88));
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      transform: translateY(8px) scale(.99);
-      animation: pop .22s var(--ease) both;
-    }
-    @keyframes pop{to{transform: translateY(0) scale(1)}}
-    .panelTop{
-      padding: 14px 14px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.18);
-    }
-    .panelTop .title{
-      display:flex; gap:10px; align-items:center;
-      font-weight:1000;
-      letter-spacing:-.2px;
-    }
-    .x{
-      width:44px; height:44px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      cursor:pointer;
-      transition: transform .18s var(--ease), background .18s var(--ease);
-      font-weight:1000;
-    }
-    .x:hover{transform: translateY(-1px); background: rgba(255,255,255,.09)}
-    .panelBody{padding: 14px}
-
-    /* Checkout */
-    .checkoutGrid{
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 12px;
-    }
-    .box{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.20);
       border-radius: 18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      padding: 12px;
+      padding: 14px;
     }
-    .label{
-      font-weight:1000; font-size:12px; color: rgba(238,242,255,.72);
+    .panel h4{
+      margin: 0 0 8px;
+      font-size: 14px;
+      letter-spacing: -.1px;
     }
-    .input{
-      margin-top: 8px;
-      width:100%;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.24);
-      color: var(--text);
-      padding: 12px 12px;
-      font-weight:900;
-      outline:none;
+    .panel p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
     }
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
-    .rowBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
-    .fine{
-      margin-top:10px;
-      color: rgba(238,242,255,.72);
-      font-weight:800;
-      line-height:1.6;
-      font-size:13px;
+    .warn{
+      border-color: rgba(245,200,76,.25);
+      background: rgba(245,200,76,.08);
+    }
+    .smallRow{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap:wrap;
     }
 
-    /* Mobile Menu Overlay */
-    .menuSheet{
-      width:min(520px, 100%);
-      border-radius: 26px;
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(10,12,26,.92), rgba(8,10,20,.88));
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .menuBody{padding: 12px}
-    .menuLinks{display:grid; gap:8px}
-    .menuLinks a{justify-content:flex-start; width:100%}
-
-    /* Scroll animations */
-    .reveal{
-      opacity:0;
-      transform: translateY(10px);
-      transition: opacity .45s var(--ease), transform .45s var(--ease);
-    }
-    .reveal.on{
-      opacity:1;
-      transform: translateY(0);
-    }
-
-    /* To top */
-    .toTop{
-      position:fixed;
-      right: 18px;
-      bottom: 18px;
-      width: 46px; height: 46px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      cursor:pointer;
-      display:none;
-      z-index:120;
-      box-shadow: 0 14px 40px rgba(0,0,0,.35);
-      font-weight:1000;
-    }
-    .toTop.show{display:block}
-
-    /* Toast */
+    /* ===== Toast ===== */
     .toast{
-      position:fixed;
-      left:50%;
+      position: fixed;
+      left: 50%;
       bottom: 18px;
-      transform: translateX(-50%) translateY(10px);
-      padding: 10px 14px;
+      transform: translateX(-50%) translateY(14px);
+      padding: 10px 12px;
       border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.56);
-      color: var(--text);
-      font-weight:1000;
-      font-size:13px;
-      opacity:0;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.55);
+      color: rgba(255,255,255,.88);
+      font-size: 13px;
+      opacity: 0;
+      transition: opacity .22s var(--ease), transform .22s var(--ease);
+      z-index: 200;
       pointer-events:none;
-      z-index:250;
-      transition: opacity .18s var(--ease), transform .18s var(--ease);
       backdrop-filter: blur(10px);
+      box-shadow: 0 14px 40px rgba(0,0,0,.45);
     }
-    .toast.show{opacity:1; transform: translateX(-50%) translateY(0)}
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(0px);
+    }
 
-    /* Responsive */
-    @media (max-width: 980px){
-      .heroGrid{grid-template-columns: 1fr; }
-      .cards{grid-template-columns: 1fr; }
-      .pricing{grid-template-columns: 1fr; }
-      .faq{grid-template-columns: 1fr; }
-      .checkoutGrid{grid-template-columns: 1fr;}
-    }
-    @media (max-width: 860px){
-      .navLinks{display:none}
-      .hamburger{display:block}
-    }
+    /* ===== Simple reveal ===== */
+    .reveal{ opacity:0; transform: translateY(10px); transition: all .55s var(--ease); }
+    .reveal.on{ opacity:1; transform: translateY(0px); }
   </style>
 </head>
 
 <body>
-  <div class="bg">
-    <div class="glow"></div>
-    <canvas id="stars"></canvas>
+  <!-- Ambient -->
+  <div class="aurora" aria-hidden="true">
+    <div class="blob" style="left:6%; top:8%"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
   </div>
 
   <!-- NAV -->
-  <header class="nav">
+  <div class="nav">
     <div class="container">
       <div class="navInner">
-        <a class="brand" href="#top" aria-label="Nozzarri Tickets Home">
-          <div class="logo"><img src="assets/nozzarri.png" alt="Nozzarri logo"></div>
-          <div>
-            <div class="brandName">Nozzarri Tickets</div>
-            <div class="brandSub">Discord Ticket System</div>
+        <div class="brand">
+          <div class="logo">
+            <img src="assets/nozzarri.png" alt="Nozzarri" />
           </div>
-        </a>
+          <div class="brandText">
+            <div class="t1">Nozzarri Tickets</div>
+            <div class="t2">Discord Ticket System</div>
+          </div>
+        </div>
 
-        <nav class="navLinks" aria-label="Primary">
+        <div class="navLinks">
           <a href="#features">Features</a>
           <a href="#pricing">Premium</a>
           <a href="#faq">FAQ</a>
-          <a id="navDiscord" href="#" target="_blank" rel="noreferrer">Discord</a>
-          <a id="navYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
-        </nav>
+          <a href="#" data-open="dashboard">Dashboard</a>
+          <a href="#" id="discordLinkTop">Discord</a>
+        </div>
 
         <div class="navBtns">
-          <a class="btn good" id="botBtn" href="#" target="_blank" rel="noreferrer">🤖 Invite Bot</a>
-          <button class="btn primary" id="openDashboard" type="button">📊 Dashboard</button>
-          <button class="hamburger" id="openMenu" type="button" aria-label="Open menu">
-            <span></span><span></span><span></span>
-          </button>
+          <a class="btn ghost" href="#" data-open="dashboard">Dashboard</a>
+          <a class="btn primary" href="#" id="inviteBtnTop">
+            <span>Invite</span>
+            <span class="pill">BOT</span>
+          </a>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container">
+      <div class="heroGrid">
+        <div class="heroLeft reveal">
+          <div class="kicker">
+            <span class="dot"></span>
+            <span>Premium ticket panels • clean logs • fast setup</span>
+          </div>
+
+          <h1>
+            The ticket system your server deserves —
+            <span class="grad">clean, fast, premium.</span>
+          </h1>
+
+          <p class="sub">
+            Build professional support & trade ticket flows with a modern UI.
+            Make tickets easy for members and easy for staff.
+          </p>
+
+          <div class="heroBtns">
+            <a class="btn primary" href="#" id="inviteBtnHero">✨ Invite Bot</a>
+            <a class="btn" href="#pricing">💎 View Premium</a>
+            <a class="btn ghost" href="#" id="discordBtnHero">💬 Join Discord</a>
+          </div>
+
+          <div class="miniStats">
+            <div class="stat">
+              <div class="n">Clean Panels</div>
+              <div class="l">Easy categories & buttons</div>
+            </div>
+            <div class="stat">
+              <div class="n">Logs & History</div>
+              <div class="l">Track tickets smoothly</div>
+            </div>
+            <div class="stat">
+              <div class="n">Premium Keys</div>
+              <div class="l">$1 / $2 / $4 plans</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="heroRight reveal">
+          <div class="screen">
+            <div class="mockTop">
+              <div class="mockBadge">
+                <span class="chip">LIVE</span>
+                <span>Ticket Dashboard Preview</span>
+              </div>
+              <button class="mockBtn" type="button" data-open="dashboard">Open</button>
+            </div>
+
+            <div class="mockBody">
+              <div class="mockRow">
+                <div class="left">
+                  <div class="mockIcon">🛠️</div>
+                  <div>
+                    <div class="t">Panel Setup</div>
+                    <div class="d">Buttons • categories • permissions</div>
+                  </div>
+                </div>
+                <button class="mockBtn" type="button" data-open="dashboard">Edit</button>
+              </div>
+
+              <div class="mockRow">
+                <div class="left">
+                  <div class="mockIcon">🧾</div>
+                  <div>
+                    <div class="t">Logs</div>
+                    <div class="d">Transcript • staff actions</div>
+                  </div>
+                </div>
+                <button class="mockBtn" type="button" data-open="dashboard">View</button>
+              </div>
+
+              <div class="mockRow">
+                <div class="left">
+                  <div class="mockIcon">💎</div>
+                  <div>
+                    <div class="t">Premium</div>
+                    <div class="d">Keys • duration • upgrades</div>
+                  </div>
+                </div>
+                <button class="mockBtn" type="button" data-open="premium">Buy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </header>
 
-  <!-- HERO -->
-  <main id="top" class="hero">
-    <div class="container">
-      <div class="heroGrid">
-        <div class="heroCard reveal">
-          <div class="heroPad">
-            <div class="pill"><span class="dot"></span> Online • Fast setup • Clean UI</div>
-
-            <div class="h1">
-              The <span class="grad">Ticket Bot</span> that makes your server look professional.
-            </div>
-
-            <p class="lead">
-              Build a clean support system in minutes: ticket panels, logs, staff roles, categories and
-              smooth workflow. Premium keys unlock more customization and extra commands.
-            </p>
-
-            <div class="heroBtns">
-              <a class="btn primary" id="inviteServerBtn" href="#" target="_blank" rel="noreferrer">✨ Join Discord</a>
-              <a class="btn" id="youtubeBtn" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
-              <button class="btn" id="scrollPricing" type="button">💎 View Premium</button>
-            </div>
-
-            <div class="miniRow">
-              <div class="miniStat"><span class="badge">Tickets</span> Support + Trade categories</div>
-              <div class="miniStat"><span class="badge">Logs</span> Cleaner moderation record</div>
-              <div class="miniStat"><span class="badge">Keys</span> $1 / $2 / $4 premium access</div>
-            </div>
-
-            <div class="tiny">
-              Tip: Everything here is front-end style. A real “live dashboard” needs a backend/API.
-              This page includes a dashboard <b>preview</b> that looks professional and works as a UI.
-            </div>
-          </div>
-        </div>
-
-        <div class="previewCard reveal">
-          <div class="previewTop">
-            <div class="chipRow">
-              <div class="chip active" data-mock="analytics">Analytics</div>
-              <div class="chip" data-mock="panels">Panels</div>
-              <div class="chip" data-mock="logs">Logs</div>
-            </div>
-            <button class="btn" id="openCheckoutFromHero" type="button">💎 Buy Key</button>
-          </div>
-
-          <div class="previewBody">
-            <div class="mock" id="mockBox">
-              <div class="mockHead">
-                <div>Dashboard Preview</div>
-                <div class="dots"><i></i><i></i><i></i></div>
-              </div>
-              <div class="mockInner">
-                <div class="mockGrid" id="mockKpis">
-                  <div class="kpi">
-                    <div class="t">Open Tickets</div>
-                    <div class="v" id="kpi1">12</div>
-                    <div class="spark"><div></div></div>
-                  </div>
-                  <div class="kpi">
-                    <div class="t">Avg Response</div>
-                    <div class="v" id="kpi2">3m</div>
-                    <div class="spark"><div></div></div>
-                  </div>
-                  <div class="kpi">
-                    <div class="t">Resolved Today</div>
-                    <div class="v" id="kpi3">28</div>
-                    <div class="spark"><div></div></div>
-                  </div>
-                  <div class="kpi">
-                    <div class="t">Satisfaction</div>
-                    <div class="v" id="kpi4">98%</div>
-                    <div class="spark"><div></div></div>
-                  </div>
-                </div>
-
-                <div class="mockList" id="mockList">
-                  <div class="line"><span>#support • New ticket</span><span class="tag warn">Needs staff</span></div>
-                  <div class="line"><span>#trade • Payment checked</span><span class="tag good">Resolved</span></div>
-                  <div class="line"><span>#support • Bug report</span><span class="tag warn">Open</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="tiny">This preview is UI only (no bot API needed). You can still link it later to real data.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
   <!-- FEATURES -->
-  <section id="features">
+  <section class="section" id="features">
     <div class="container">
-      <div class="sectionTitle reveal">
+      <div class="sectionTitle">
         <div>
-          <h2>Features that feel premium</h2>
-          <p>Clean design, fast workflow, and a setup that scales from small servers to big communities.</p>
+          <h2>Features</h2>
+          <p>Made to feel premium for users, and simple for staff.</p>
         </div>
+        <a class="btn" href="#" data-open="dashboard">Open Dashboard</a>
       </div>
 
-      <div class="cards">
+      <div class="grid3">
         <div class="card reveal">
-          <div class="icon">🎫</div>
-          <h3>Ticket Panels</h3>
-          <p>Create support/trade panels with categories, roles, and custom messages.</p>
+          <div class="icon">🎛️</div>
+          <h3>Custom Panels</h3>
+          <p>Create panels with categories and buttons that feel clean and modern.</p>
         </div>
         <div class="card reveal">
           <div class="icon">🧾</div>
-          <h3>Logs & History</h3>
-          <p>Keep everything organized: closures, transcripts, and staff actions.</p>
+          <h3>Ticket Logs</h3>
+          <p>Keep actions organized with logs & transcripts for moderation.</p>
         </div>
         <div class="card reveal">
           <div class="icon">⚡</div>
           <h3>Fast Setup</h3>
-          <p>Invite the bot, configure roles, and you’re ready. No messy menus.</p>
+          <p>Invite → configure → done. Smooth experience for every server.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- PRICING -->
-  <section id="pricing">
+  <section class="section" id="pricing">
     <div class="container">
-      <div class="sectionTitle reveal">
+      <div class="sectionTitle">
         <div>
           <h2>Premium Keys</h2>
-          <p>Same prices you had before — just a cleaner purchase UI. Payments in LTC.</p>
+          <p>Choose a plan. Payments are in LTC. Quick copy buttons included.</p>
         </div>
-        <button class="btn primary" id="openCheckout" type="button">💎 Buy Premium</button>
-      </div>
-
-      <div class="pricing">
-        <div class="plan reveal" data-plan="15 DAYS" data-price="1">
-          <div class="planTop">
-            <span class="tag">15 DAYS</span>
-            <span class="tag">$1</span>
-          </div>
-          <div class="planName">Starter Key</div>
-          <div class="money">$1</div>
-          <div class="sub">Try premium for 15 days.</div>
-          <ul class="ul">
-            <li><span class="check">✓</span> Extra premium commands</li>
-            <li><span class="check">✓</span> More customization</li>
-            <li><span class="check">✓</span> Priority style</li>
-          </ul>
-          <div class="planBtns">
-            <button class="btn primary buyBtn" type="button">Buy</button>
-            <button class="btn copyLtcBtn" type="button">Copy LTC</button>
-          </div>
-        </div>
-
-        <div class="plan reveal best" data-plan="1 MONTH" data-price="2">
-          <div class="planTop">
-            <span class="tag">1 MONTH • BEST</span>
-            <span class="tag">$2</span>
-          </div>
-          <div class="planName">Pro Key</div>
-          <div class="money">$2</div>
-          <div class="sub">Most popular plan.</div>
-          <ul class="ul">
-            <li><span class="check">✓</span> Extra premium commands</li>
-            <li><span class="check">✓</span> Better customization</li>
-            <li><span class="check">✓</span> Great value</li>
-          </ul>
-          <div class="planBtns">
-            <button class="btn primary buyBtn" type="button">Buy</button>
-            <button class="btn copyLtcBtn" type="button">Copy LTC</button>
-          </div>
-        </div>
-
-        <div class="plan reveal" data-plan="3 MONTHS" data-price="4">
-          <div class="planTop">
-            <span class="tag">3 MONTHS</span>
-            <span class="tag">$4</span>
-          </div>
-          <div class="planName">Ultra Key</div>
-          <div class="money">$4</div>
-          <div class="sub">Best value (longer access).</div>
-          <ul class="ul">
-            <li><span class="check">✓</span> Extra premium commands</li>
-            <li><span class="check">✓</span> Long access</li>
-            <li><span class="check">✓</span> Best deal</li>
-          </ul>
-          <div class="planBtns">
-            <button class="btn primary buyBtn" type="button">Buy</button>
-            <button class="btn copyLtcBtn" type="button">Copy LTC</button>
-          </div>
+        <div class="btnRow">
+          <a class="btn primary" href="#" data-open="premium">💎 Buy Premium</a>
+          <a class="btn" href="#" id="copyLTCBtnTop">📋 Copy LTC</a>
         </div>
       </div>
 
-      <div class="tiny reveal" style="margin-top:10px;">
-        Payments are in LTC. Send the USD value in LTC (rate changes). Always double-check the address.
+      <div class="pricingWrap reveal">
+        <div class="pricingTopRow">
+          <div class="note">
+            <b>How it works:</b> Send the USD value in LTC (rate changes). After payment, contact the owner with your Discord username to receive your redeem code.
+          </div>
+          <a class="btn ghost" href="#" id="discordLinkPricing">Need help?</a>
+        </div>
+
+        <div class="addr">
+          <div>
+            <div style="font-weight:900; margin-bottom:6px;">LTC Address</div>
+            <code id="ltcAddrText">LPxonLCBtrcHnYAompBSXsboTfJQ8Eyuz8</code>
+          </div>
+          <button class="miniBtn primary" id="copyLTCBtn" type="button">📋 Copy</button>
+        </div>
+
+        <div class="plans">
+          <div class="plan reveal" data-plan="15 DAYS" data-price="1">
+            <div class="planHead">
+              <div class="planTag">⏳ 15 DAYS</div>
+              <div class="planTag">$1</div>
+            </div>
+            <div class="planPrice">$1</div>
+            <div class="planSub">Try premium for 15 days.</div>
+            <div class="planBtns">
+              <button class="miniBtn primary buyPlanBtn" type="button">Buy 15d</button>
+              <button class="miniBtn copyLtcMini" type="button">Copy LTC</button>
+            </div>
+          </div>
+
+          <div class="plan best reveal" data-plan="1 MONTH" data-price="2">
+            <div class="planHead">
+              <div class="planTag">⭐ 1 MONTH • BEST</div>
+              <div class="planTag">$2</div>
+            </div>
+            <div class="planPrice">$2</div>
+            <div class="planSub">Best value for most servers.</div>
+            <div class="planBtns">
+              <button class="miniBtn primary buyPlanBtn" type="button">Buy 1mo</button>
+              <button class="miniBtn copyLtcMini" type="button">Copy LTC</button>
+            </div>
+          </div>
+
+          <div class="plan reveal" data-plan="3 MONTHS" data-price="4">
+            <div class="planHead">
+              <div class="planTag">🛡️ 3 MONTHS</div>
+              <div class="planTag">$4</div>
+            </div>
+            <div class="planPrice">$4</div>
+            <div class="planSub">For bigger servers that want stability.</div>
+            <div class="planBtns">
+              <button class="miniBtn primary buyPlanBtn" type="button">Buy 3mo</button>
+              <button class="miniBtn copyLtcMini" type="button">Copy LTC</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="fine">
+          Payments are in LTC. Always double-check the address. If you send the wrong amount/address, it cannot be recovered.
+        </div>
       </div>
     </div>
   </section>
 
   <!-- FAQ -->
-  <section id="faq">
+  <section class="section" id="faq">
     <div class="container">
-      <div class="sectionTitle reveal">
+      <div class="sectionTitle">
         <div>
           <h2>FAQ</h2>
-          <p>Quick answers so your site feels legit and clear.</p>
+          <p>Quick answers people ask before buying.</p>
         </div>
+        <a class="btn" href="#" id="discordLinkFaq">Discord Support</a>
       </div>
 
-      <div class="faq">
-        <details class="reveal">
-          <summary>Do I need to change my bot script for this “Dashboard”?</summary>
-          <p>
-            Not for the UI preview. This website dashboard is front-end only.
-            If you want real live stats (tickets/responses), then yes — you’d need an API (bot sends data to a server).
-          </p>
-        </details>
-        <details class="reveal">
-          <summary>How do I get my premium key after paying?</summary>
-          <p>
-            After payment, DM the owner on Discord with your plan + TX info. Manual verification avoids fake systems.
-          </p>
-        </details>
-        <details class="reveal">
-          <summary>Can people close/undo panels?</summary>
-          <p>
-            Yes. Every panel has an X, ESC closes it, and browser Back also closes the last opened panel.
-          </p>
-        </details>
-        <details class="reveal">
-          <summary>Can I host this on GitHub Pages?</summary>
-          <p>
-            Yes — it’s a single HTML file + your assets/nozzarri.png. Works clean on PC + mobile.
-          </p>
-        </details>
+      <div class="grid3">
+        <div class="card reveal">
+          <div class="icon">🔐</div>
+          <h3>How do I get my key?</h3>
+          <p>After payment, message the owner with your Discord username and proof of payment.</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon">💬</div>
+          <h3>Can I get help setting up?</h3>
+          <p>Yes — join the Discord and ask in support. Setup is quick.</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon">🧠</div>
+          <h3>What is the Dashboard?</h3>
+          <p>A control panel concept for managing settings. Click “Dashboard” to see how it will work.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     <div class="container">
-      <div class="footGrid">
-        <div>
-          <div class="footTitle">Nozzarri Tickets</div>
-          <div class="footText">
-            A modern Discord ticket experience with clean panels, logs and premium upgrades.
-          </div>
-          <div class="tiny">© <span id="year"></span> Nozzarri Tickets • Owner: <span id="ownerName"></span></div>
+      <div class="footRow">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <img src="assets/nozzarri.png" alt="Nozzarri" style="width:26px;height:26px;border-radius:10px;border:1px solid rgba(255,255,255,.12)" />
+          <div>© <span id="year"></span> Nozzarri Tickets</div>
         </div>
-
-        <div>
-          <div class="footTitle">Links</div>
-          <div class="footLinks">
-            <a id="footerDiscord" href="#" target="_blank" rel="noreferrer">Discord</a>
-            <a id="footerYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
-            <a id="footerBot" href="#" target="_blank" rel="noreferrer">Bot Invite</a>
-          </div>
-        </div>
-
-        <div>
-          <div class="footTitle">Premium</div>
-          <div class="footLinks">
-            <button class="btn primary" id="openCheckoutFooter" type="button">💎 Buy Premium</button>
-            <button class="btn" id="copyLtcFooter" type="button">📋 Copy LTC</button>
-          </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn ghost" href="#pricing">Premium</a>
+          <a class="btn ghost" href="#" id="discordLinkFooter">Discord</a>
+          <a class="btn ghost" href="#" id="inviteBtnFooter">Invite</a>
         </div>
       </div>
     </div>
   </footer>
 
-  <!-- To top + Toast -->
-  <button id="toTop" class="toTop" type="button" aria-label="Back to top">⬆️</button>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-  <!-- DASHBOARD OVERLAY -->
-  <div class="overlay" id="dashOverlay" aria-hidden="true">
-    <div class="panel" role="dialog" aria-modal="true" aria-label="Dashboard">
-      <div class="panelTop">
-        <div class="title">📊 Dashboard (Preview UI)</div>
-        <button class="x" id="closeDashboard" type="button" aria-label="Close dashboard">✕</button>
-      </div>
-      <div class="panelBody">
-        <div class="grid" style="grid-template-columns: 1fr 1fr; gap:12px;">
-          <div class="box">
-            <div class="label">Status</div>
-            <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
-              <span class="tag good">Online</span>
-              <span class="tag">Tickets: <b>12</b></span>
-              <span class="tag">Avg response: <b>3m</b></span>
-            </div>
-            <div class="fine">
-              This is a professional looking dashboard panel. If you ever want real data here,
-              you’ll connect it to a backend later.
-            </div>
-            <div class="rowBtns">
-              <a class="btn good" id="dashDiscord" href="#" target="_blank" rel="noreferrer">Join Discord</a>
-              <a class="btn" id="dashBot" href="#" target="_blank" rel="noreferrer">Invite Bot</a>
-            </div>
-          </div>
-
-          <div class="box">
-            <div class="label">Quick actions</div>
-            <div class="rowBtns">
-              <button class="btn primary" id="dashBuy" type="button">💎 Buy Premium</button>
-              <button class="btn" id="dashCopyLtc" type="button">📋 Copy LTC</button>
-              <a class="btn" id="dashYouTube" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
-            </div>
-            <div class="fine">
-              Everything closes with X, ESC, or Back button (undo).
-            </div>
-          </div>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div class="label">Recent tickets (demo)</div>
-          <div class="mockList" style="margin-top:10px;">
-            <div class="line"><span>#support • User needs help</span><span class="tag warn">Open</span></div>
-            <div class="line"><span>#trade • Deal completed</span><span class="tag good">Resolved</span></div>
-            <div class="line"><span>#support • Bug report</span><span class="tag warn">Needs staff</span></div>
-          </div>
+  <!-- MODAL OVERLAY -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" id="modal">
+      <div class="modalTop">
+        <div class="modalTitle" id="modalTitle">Modal</div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <div class="pill" id="modalPill" style="display:none;">OPEN</div>
+          <div class="xbtn" id="closeModal" title="Close (Esc)">✕</div>
         </div>
       </div>
+      <div class="modalBody" id="modalBody"></div>
     </div>
   </div>
 
-  <!-- CHECKOUT OVERLAY -->
-  <div class="overlay" id="buyOverlay" aria-hidden="true">
-    <div class="panel" role="dialog" aria-modal="true" aria-label="Buy Premium">
-      <div class="panelTop">
-        <div class="title" id="buyTitle">💎 Buy Premium</div>
-        <button class="x" id="closeCheckout" type="button" aria-label="Close checkout">✕</button>
-      </div>
-
-      <div class="panelBody">
-        <div class="checkoutGrid">
-          <div class="box">
-            <div class="label">Selected plan</div>
-            <input class="input" id="planPicked" readonly />
-
-            <div class="label" style="margin-top:12px;">Payment message (copy & DM owner)</div>
-            <input class="input mono" id="payMsg" readonly />
-
-            <div class="rowBtns">
-              <button class="btn primary" id="copyPayInfo" type="button">📋 Copy payment + message</button>
-              <button class="btn" id="copyAddrOnly" type="button">📋 Copy LTC only</button>
-              <button class="btn" id="copyOwnerOnly" type="button">👤 Copy owner</button>
-            </div>
-
-            <div class="fine">
-              After you send payment, add/DM the owner on Discord: <b class="mono" id="ownerSpan"></b> and paste the message.
-              Manual verification avoids fake auto systems.
-            </div>
-          </div>
-
-          <div class="box">
-            <div class="label">LTC address</div>
-            <input class="input mono" id="ltcAddr" readonly />
-
-            <div class="fine">
-              Send the USD value in LTC (rate changes). Always double-check address before sending.
-            </div>
-
-            <div class="rowBtns">
-              <a class="btn good" id="checkoutDiscord" href="#" target="_blank" rel="noreferrer">Join Discord</a>
-              <a class="btn" id="checkoutBot" href="#" target="_blank" rel="noreferrer">Invite Bot</a>
-              <a class="btn" id="checkoutYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="tiny" style="margin-top:10px;">
-          This checkout UI is clean on PC and mobile and always has Undo/Close.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MOBILE MENU OVERLAY -->
-  <div class="overlay" id="menuOverlay" aria-hidden="true">
-    <div class="menuSheet" role="dialog" aria-modal="true" aria-label="Menu">
-      <div class="panelTop">
-        <div class="title">Menu</div>
-        <button class="x" id="closeMenu" type="button" aria-label="Close menu">✕</button>
-      </div>
-      <div class="menuBody">
-        <div class="menuLinks">
-          <a class="btn" href="#features" data-close="menu">✨ Features</a>
-          <a class="btn" href="#pricing" data-close="menu">💎 Premium</a>
-          <a class="btn" href="#faq" data-close="menu">❓ FAQ</a>
-          <a class="btn good" id="menuDiscord" href="#" target="_blank" rel="noreferrer">Join Discord</a>
-          <a class="btn" id="menuYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
-          <a class="btn" id="menuBot" href="#" target="_blank" rel="noreferrer">Invite Bot</a>
-          <button class="btn primary" id="menuDashboard" type="button">📊 Dashboard</button>
-          <button class="btn primary" id="menuBuy" type="button">💎 Buy Premium</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="toast" id="toast" aria-live="polite">Copied ✅</div>
 
   <script>
-    // =========================
-    // CONFIG (YOUR REAL VALUES)
-    // =========================
+    // ===== CONFIG (kept from your file) =====
     const BRAND = "Nozzarri Tickets";
     const OWNER_DISCORD = "n_om_e";
 
     const CLIENT_ID = "1442592762108186675";
-
-    // Minimal perms for ticket bot:
     const PERMISSIONS = "126032";
 
     const BOT_INVITE_URL =
       `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=bot%20applications.commands&permissions=${PERMISSIONS}`;
 
-    const YT_URL = "https://www.youtube.com/channel/UC8Ovc5xT-tXXIjxLnVe72dQ";
-    const SERVER_INVITE_URL = "https://discord.gg/FHRSPyXw";
+    const DISCORD_SERVER = "https://discord.gg/FHRSPyXw";
 
-    // LTC address (keep same)
+    // LTC address (kept from your file)
     const LTC_ADDRESS = "LPxonLCBtrcHnYAompBSXsboTfJQ8Eyuz8";
 
-    // =========================
-    // Helpers: toast + copy
-    // =========================
-    const toast = document.getElementById("toast");
-    let toastTimer = null;
+    // ===== Small helpers =====
+    const $ = (q, root=document) => root.querySelector(q);
+    const $$ = (q, root=document) => [...root.querySelectorAll(q)];
 
+    $("#year").textContent = new Date().getFullYear();
+    $("#ltcAddrText").textContent = LTC_ADDRESS;
+
+    // Link wiring
+    function openLink(url){ window.open(url, "_blank", "noopener,noreferrer"); }
+
+    $("#inviteBtnTop").addEventListener("click", (e)=>{ e.preventDefault(); openLink(BOT_INVITE_URL); });
+    $("#inviteBtnHero").addEventListener("click", (e)=>{ e.preventDefault(); openLink(BOT_INVITE_URL); });
+    $("#inviteBtnFooter").addEventListener("click", (e)=>{ e.preventDefault(); openLink(BOT_INVITE_URL); });
+
+    $("#discordBtnHero").addEventListener("click", (e)=>{ e.preventDefault(); openLink(DISCORD_SERVER); });
+
+    // All discord links
+    ["discordLinkTop","discordLinkPricing","discordLinkFaq","discordLinkFooter"].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.addEventListener("click", (e)=>{ e.preventDefault(); openLink(DISCORD_SERVER); });
+    });
+
+    // ===== Toast =====
+    const toast = $("#toast");
+    let toastTimer = null;
     function showToast(msg){
       toast.textContent = msg;
       toast.classList.add("show");
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=> toast.classList.remove("show"), 1700);
+      toastTimer = setTimeout(()=> toast.classList.remove("show"), 1600);
     }
 
     async function copyText(text){
@@ -1187,310 +1055,212 @@
         await navigator.clipboard.writeText(text);
         showToast("Copied ✅");
       }catch{
-        // fallback
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-        showToast("Copied ✅");
+        showToast("Copy failed ❌");
       }
     }
 
-    // =========================
-    // Link wiring
-    // =========================
-    document.getElementById("year").textContent = new Date().getFullYear();
-    document.getElementById("ownerName").textContent = OWNER_DISCORD;
-    document.getElementById("ownerSpan").textContent = OWNER_DISCORD;
+    $("#copyLTCBtn").addEventListener("click", ()=> copyText(LTC_ADDRESS));
+    $("#copyLTCBtnTop").addEventListener("click", (e)=>{ e.preventDefault(); copyText(LTC_ADDRESS); });
 
-    const linkIdsDiscord = ["navDiscord","footerDiscord","inviteServerBtn","dashDiscord","checkoutDiscord","menuDiscord"];
-    const linkIdsYoutube = ["navYouTube","footerYouTube","youtubeBtn","dashYouTube","checkoutYouTube","menuYouTube"];
-    const linkIdsBot = ["botBtn","footerBot","dashBot","checkoutBot","menuBot"];
-
-    linkIdsDiscord.forEach(id => { const a = document.getElementById(id); if(a) a.href = SERVER_INVITE_URL; });
-    linkIdsYoutube.forEach(id => { const a = document.getElementById(id); if(a) a.href = YT_URL; });
-    linkIdsBot.forEach(id => { const a = document.getElementById(id); if(a) a.href = BOT_INVITE_URL; });
-
-    // =========================
-    // Stars background (no cursor-follow)
-    // =========================
-    const canvas = document.getElementById("stars");
-    const ctx = canvas.getContext("2d");
-    let stars = [];
-
-    function resizeStars(){
-      canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
-      canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
-      stars = [];
-      const count = Math.floor(Math.min(220, (window.innerWidth * window.innerHeight) / 9000));
-      for(let i=0;i<count;i++){
-        stars.push({
-          x: Math.random()*canvas.width,
-          y: Math.random()*canvas.height,
-          r: (Math.random()*1.4 + .4) * devicePixelRatio,
-          a: Math.random()*0.8 + 0.2,
-          s: (Math.random()*0.35 + 0.08) * devicePixelRatio
-        });
-      }
-    }
-
-    function drawStars(){
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      for(const st of stars){
-        st.y += st.s;
-        if(st.y > canvas.height + 10) st.y = -10;
-        ctx.globalAlpha = st.a;
-        ctx.beginPath();
-        ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
-        ctx.fillStyle = "#ffffff";
-        ctx.fill();
-      }
-      requestAnimationFrame(drawStars);
-    }
-
-    window.addEventListener("resize", resizeStars);
-    resizeStars();
-    drawStars();
-
-    // =========================
-    // Reveal on scroll
-    // =========================
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{
-        if(e.isIntersecting){
-          e.target.classList.add("on");
-          io.unobserve(e.target);
-        }
-      });
-    }, {threshold: .12});
-    document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
-
-    // =========================
-    // To top button
-    // =========================
-    const toTop = document.getElementById("toTop");
-    window.addEventListener("scroll", ()=>{
-      if(window.scrollY > 700) toTop.classList.add("show");
-      else toTop.classList.remove("show");
-    });
-    toTop.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
-
-    // =========================
-    // Mock switch (right hero card)
-    // =========================
-    const chips = document.querySelectorAll(".chip");
-    const k1 = document.getElementById("kpi1");
-    const k2 = document.getElementById("kpi2");
-    const k3 = document.getElementById("kpi3");
-    const k4 = document.getElementById("kpi4");
-    const mockList = document.getElementById("mockList");
-
-    const mockData = {
-      analytics: {
-        kpis: ["12","3m","28","98%"],
-        lines: [
-          ["#support • New ticket","Open","warn"],
-          ["#trade • Payment checked","Resolved","good"],
-          ["#support • Bug report","Open","warn"]
-        ]
-      },
-      panels: {
-        kpis: ["3","2","5","Ready"],
-        lines: [
-          ["Panel: Support","Active","good"],
-          ["Panel: Trade","Active","good"],
-          ["Panel: Appeals","Draft","warn"]
-        ]
-      },
-      logs: {
-        kpis: ["74","12","2","OK"],
-        lines: [
-          ["Closed tickets today","Logged","good"],
-          ["Staff actions","Tracked","good"],
-          ["Missing transcript","Review","warn"]
-        ]
-      }
-    };
-
-    function renderMock(key){
-      const m = mockData[key];
-      [k1.textContent,k2.textContent,k3.textContent,k4.textContent] = m.kpis;
-      mockList.innerHTML = m.lines.map(([l,tag,kind]) =>
-        `<div class="line"><span>${l}</span><span class="tag ${kind}">${tag}</span></div>`
-      ).join("");
-    }
-
-    chips.forEach(ch=>{
-      ch.addEventListener("click", ()=>{
-        chips.forEach(x=>x.classList.remove("active"));
-        ch.classList.add("active");
-        renderMock(ch.dataset.mock);
-      });
+    $$(".copyLtcMini").forEach(btn=>{
+      btn.addEventListener("click", ()=> copyText(LTC_ADDRESS));
     });
 
-    // =========================
-    // “Undo / Back button” overlay system
-    // =========================
-    const dashOverlay = document.getElementById("dashOverlay");
-    const buyOverlay = document.getElementById("buyOverlay");
-    const menuOverlay = document.getElementById("menuOverlay");
+    // ===== Modal (supports Undo via browser Back) =====
+    const overlay = $("#overlay");
+    const modalTitle = $("#modalTitle");
+    const modalBody = $("#modalBody");
+    const modalPill = $("#modalPill");
 
-    function lockScroll(lock){
-      document.body.style.overflow = lock ? "hidden" : "";
+    let modalOpen = false;
+    let currentModalKey = null;
+
+    function setModal(title, pill, html){
+      modalTitle.textContent = title;
+      if(pill){
+        modalPill.style.display = "inline-flex";
+        modalPill.textContent = pill;
+      }else{
+        modalPill.style.display = "none";
+      }
+      modalBody.innerHTML = html;
     }
 
-    function showOverlay(which){
-      // pushState so browser back closes it
-      history.pushState({overlay: which}, "", "#"+which);
-      openOverlay(which, false);
+    function openModal(key, title, pill, html){
+      currentModalKey = key;
+      setModal(title, pill, html);
+      overlay.classList.add("show");
+      overlay.setAttribute("aria-hidden","false");
+      modalOpen = true;
+
+      // pushState so Back closes it (Undo)
+      history.pushState({ modal: key }, "", "#"+key);
     }
 
-    function openOverlay(which, push){
-      if(push) history.pushState({overlay: which}, "", "#"+which);
+    function closeModal(fromPop=false){
+      if(!modalOpen) return;
+      overlay.classList.remove("show");
+      overlay.setAttribute("aria-hidden","true");
+      modalOpen = false;
+      currentModalKey = null;
 
-      [dashOverlay,buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
-      if(which === "dashboard") dashOverlay.classList.add("show");
-      if(which === "checkout") buyOverlay.classList.add("show");
-      if(which === "menu") menuOverlay.classList.add("show");
-
-      lockScroll(true);
-    }
-
-    function closeAllOverlays(){
-      [dashOverlay,buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
-      lockScroll(false);
-    }
-
-    // Close overlay = go back one history step if overlay is open
-    function closeViaBack(){
-      // if an overlay is open, pop it with history.back() so undo works naturally
-      if(dashOverlay.classList.contains("show") || buyOverlay.classList.contains("show") || menuOverlay.classList.contains("show")){
-        history.back();
+      // If user clicked X/outside/esc, go back one state so URL cleans up
+      if(!fromPop){
+        // Only go back if we are currently in a modal hash
+        if(location.hash) history.back();
       }
     }
 
-    // Handle browser back
+    $("#closeModal").addEventListener("click", ()=> closeModal(false));
+
+    overlay.addEventListener("click", (e)=>{
+      if(e.target === overlay) closeModal(false);
+    });
+
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape") closeModal(false);
+    });
+
     window.addEventListener("popstate", (e)=>{
-      // if state has overlay -> open it, else close all
-      if(e.state && e.state.overlay){
-        openOverlay(e.state.overlay, false);
-      }else{
-        closeAllOverlays();
-      }
+      // If modal is open and user hit back, close modal cleanly
+      if(modalOpen) closeModal(true);
     });
 
-    // ESC closes
-    window.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape") closeViaBack();
-    });
+    // ===== Modal contents =====
+    function premiumModal(planName=null, price=null){
+      const planLine = planName
+        ? `<div class="panel warn"><h4>Selected</h4><p><b>${planName}</b> — <b>$${price}</b> (pay in LTC)</p></div>`
+        : `<div class="panel"><h4>Choose a plan</h4><p>Pick a plan below, then pay the USD value in LTC. After sending, message <b>${OWNER_DISCORD}</b> with proof + your Discord username.</p></div>`;
 
-    // Click outside closes
-    [dashOverlay,buyOverlay,menuOverlay].forEach(o=>{
-      o.addEventListener("mousedown", (e)=>{
-        if(e.target === o) closeViaBack();
-      });
-    });
+      return `
+        <div class="modalGrid">
+          ${planLine}
+          <div class="panel">
+            <h4>LTC Address</h4>
+            <p>Copy the address and send the USD value in LTC (rate changes).</p>
+            <div class="smallRow">
+              <button class="miniBtn primary" id="mCopyLTC">📋 Copy LTC</button>
+              <button class="miniBtn" id="mDiscord">💬 Discord Support</button>
+            </div>
+          </div>
 
-    // =========================
-    // Buttons open/close overlays
-    // =========================
-    document.getElementById("openDashboard").addEventListener("click", ()=> showOverlay("dashboard"));
-    document.getElementById("closeDashboard").addEventListener("click", closeViaBack);
+          <div class="panel">
+            <h4>Plans</h4>
+            <p>15 days = $1 • 1 month = $2 • 3 months = $4</p>
+            <div class="smallRow">
+              <button class="miniBtn primary" data-pick="15 DAYS" data-price="1">Buy 15d</button>
+              <button class="miniBtn primary" data-pick="1 MONTH" data-price="2">Buy 1mo</button>
+              <button class="miniBtn primary" data-pick="3 MONTHS" data-price="4">Buy 3mo</button>
+            </div>
+          </div>
 
-    document.getElementById("openCheckout").addEventListener("click", ()=> showOverlay("checkout"));
-    document.getElementById("openCheckoutFromHero").addEventListener("click", ()=> showOverlay("checkout"));
-    document.getElementById("openCheckoutFooter").addEventListener("click", ()=> showOverlay("checkout"));
-    document.getElementById("closeCheckout").addEventListener("click", closeViaBack);
-
-    document.getElementById("openMenu").addEventListener("click", ()=> showOverlay("menu"));
-    document.getElementById("closeMenu").addEventListener("click", closeViaBack);
-
-    // Menu buttons
-    document.getElementById("menuDashboard").addEventListener("click", ()=>{
-      closeViaBack();
-      setTimeout(()=> showOverlay("dashboard"), 80);
-    });
-    document.getElementById("menuBuy").addEventListener("click", ()=>{
-      closeViaBack();
-      setTimeout(()=> showOverlay("checkout"), 80);
-    });
-    document.querySelectorAll('[data-close="menu"]').forEach(a=>{
-      a.addEventListener("click", ()=> closeViaBack());
-    });
-
-    // Dashboard quick actions
-    document.getElementById("dashBuy").addEventListener("click", ()=>{
-      closeViaBack();
-      setTimeout(()=> showOverlay("checkout"), 80);
-    });
-    document.getElementById("dashCopyLtc").addEventListener("click", ()=> copyText(LTC_ADDRESS));
-
-    // Scroll to pricing
-    document.getElementById("scrollPricing").addEventListener("click", ()=>{
-      document.getElementById("pricing").scrollIntoView({behavior:"smooth", block:"start"});
-    });
-
-    // =========================
-    // Checkout logic (keeps your prices + LTC)
-    // =========================
-    const planPicked = document.getElementById("planPicked");
-    const payMsg = document.getElementById("payMsg");
-    const ltcAddr = document.getElementById("ltcAddr");
-    ltcAddr.value = LTC_ADDRESS;
-
-    function setPlan(plan, price){
-      planPicked.value = `${plan} — $${price}`;
-      const msg = `${BRAND} Premium | Plan: ${plan} | Price: $${price} | User: (your discord) | TXID: (paste txid)`;
-      payMsg.value = msg;
-      document.getElementById("buyTitle").textContent = `💎 Buy Premium — ${plan} ($${price})`;
+          <div class="panel warn">
+            <h4>Important</h4>
+            <p>Always double-check the address. Send the correct amount. After payment, contact <b>${OWNER_DISCORD}</b> to receive your redeem code.</p>
+          </div>
+        </div>
+      `;
     }
 
-    // Default plan
-    setPlan("1 MONTH", 2);
+    function dashboardModal(){
+      return `
+        <div class="modalGrid">
+          <div class="panel warn">
+            <h4>Dashboard idea (how it should feel)</h4>
+            <p>This is the front-end preview of the control panel flow you described: verify → see servers → pick a server → change settings.</p>
+          </div>
 
-    // Pricing cards -> open checkout with selected plan
-    document.querySelectorAll(".plan").forEach(card=>{
-      const plan = card.dataset.plan;
-      const price = card.dataset.price;
+          <div class="panel">
+            <h4>What you will control</h4>
+            <p>Ticket panel settings, categories, log channels, staff roles, premium status, and more — all in one place.</p>
+          </div>
 
-      card.querySelector(".buyBtn").addEventListener("click", ()=>{
-        setPlan(plan, price);
-        showOverlay("checkout");
+          <div class="panel">
+            <h4>Servers list</h4>
+            <p>After verification, users would see their servers and choose one where the bot is inside.</p>
+            <div class="smallRow">
+              <button class="miniBtn" id="dInvite">✨ Invite Bot</button>
+              <button class="miniBtn primary" id="dPremium">💎 Premium Keys</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h4>Verification</h4>
+            <p>Dashboard requires a login/verification step so the user can manage only the servers they own/admin.</p>
+          </div>
+
+          <div class="panel warn" style="grid-column: 1 / -1;">
+            <h4>Real dashboard note</h4>
+            <p>A real working dashboard needs server-side logic (Discord OAuth2 + saving settings). This page is the correct professional UI structure — when you’re ready, we connect it to your bot.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // Open from nav buttons
+    $$('[data-open="premium"]').forEach(el=>{
+      el.addEventListener("click", (e)=>{
+        e.preventDefault();
+        openModal("premium", "Premium Keys", "BUY", premiumModal(),);
+        wirePremiumModal();
       });
-
-      const copyBtn = card.querySelector(".copyLtcBtn");
-      copyBtn.addEventListener("click", ()=> copyText(LTC_ADDRESS));
     });
 
-    // Footer copy
-    document.getElementById("copyLtcFooter").addEventListener("click", ()=> copyText(LTC_ADDRESS));
-
-    // Copy buttons in checkout
-    document.getElementById("copyPayInfo").addEventListener("click", ()=>{
-      const combo =
-`LTC Address: ${LTC_ADDRESS}
-Owner: ${OWNER_DISCORD}
-Message: ${payMsg.value}`;
-      copyText(combo);
+    $$('[data-open="dashboard"]').forEach(el=>{
+      el.addEventListener("click", (e)=>{
+        e.preventDefault();
+        openModal("dashboard", "Dashboard", "PREVIEW", dashboardModal());
+        wireDashboardModal();
+      });
     });
-    document.getElementById("copyAddrOnly").addEventListener("click", ()=> copyText(LTC_ADDRESS));
-    document.getElementById("copyOwnerOnly").addEventListener("click", ()=> copyText(OWNER_DISCORD));
 
-    // =========================
-    // If user opens with a hash, open that overlay
-    // =========================
-    (function boot(){
-      const hash = (location.hash || "").replace("#","");
-      if(hash === "dashboard" || hash === "checkout" || hash === "menu"){
-        // replaceState to match overlay without stacking duplicates
-        history.replaceState({overlay: hash}, "", "#"+hash);
-        openOverlay(hash, false);
-      }else{
-        history.replaceState(null, "", "#top");
+    // Buy buttons inside pricing cards
+    $$(".buyPlanBtn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const planEl = btn.closest(".plan");
+        const plan = planEl?.getAttribute("data-plan") || "";
+        const price = planEl?.getAttribute("data-price") || "";
+        openModal("premium", "Premium Keys", "BUY", premiumModal(plan, price));
+        wirePremiumModal();
+      });
+    });
+
+    function wirePremiumModal(){
+      $("#mCopyLTC")?.addEventListener("click", ()=> copyText(LTC_ADDRESS));
+      $("#mDiscord")?.addEventListener("click", ()=> openLink(DISCORD_SERVER));
+
+      $$('[data-pick]').forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const plan = b.getAttribute("data-pick");
+          const price = b.getAttribute("data-price");
+          setModal("Premium Keys", "BUY", premiumModal(plan, price));
+          wirePremiumModal();
+        });
+      });
+    }
+
+    function wireDashboardModal(){
+      $("#dInvite")?.addEventListener("click", ()=> openLink(BOT_INVITE_URL));
+      $("#dPremium")?.addEventListener("click", ()=>{
+        setModal("Premium Keys", "BUY", premiumModal());
+        wirePremiumModal();
+      });
+    }
+
+    // ===== Reveal on scroll =====
+    const io = new IntersectionObserver((entries)=>{
+      for(const e of entries){
+        if(e.isIntersecting) e.target.classList.add("on");
       }
-    })();
+    }, { threshold: 0.12 });
+
+    $$(".reveal").forEach(el=> io.observe(el));
+
+    // If user opens page already with hash, clean it
+    // (prevents starting inside a modal)
+    if(location.hash && (location.hash === "#premium" || location.hash === "#dashboard")){
+      history.replaceState({}, "", "#");
+    }
   </script>
 </body>
 </html>

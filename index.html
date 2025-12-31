@@ -58,14 +58,8 @@
     }
 
     /* Background layers */
-    .bg{
-      position:fixed; inset:0; z-index:-2; pointer-events:none;
-    }
-    canvas#stars{
-      position:absolute; inset:0; width:100%; height:100%;
-      opacity:.26;
-      filter: blur(.0px);
-    }
+    .bg{position:fixed; inset:0; z-index:-2; pointer-events:none;}
+    canvas#stars{position:absolute; inset:0; width:100%; height:100%; opacity:.26;}
     .glow{
       position:absolute; inset:-200px;
       background:
@@ -81,10 +75,7 @@
       50%{ transform: translate3d(28px,-16px,0) scale(1.02); }
     }
 
-    /* Layout */
     .container{max-width:1200px; margin:0 auto; padding:0 20px}
-    .row{display:flex; align-items:center; justify-content:space-between; gap:14px}
-    .grid{display:grid; gap:14px}
 
     /* Top Nav */
     .nav{
@@ -111,12 +102,8 @@
       overflow:hidden;
     }
     .logo img{width:100%; height:100%; object-fit:cover}
-    .brandName{
-      font-weight:1000; letter-spacing:.2px; line-height:1;
-    }
-    .brandSub{
-      color:var(--muted); font-weight:800; font-size:12px; margin-top:2px;
-    }
+    .brandName{font-weight:1000; letter-spacing:.2px; line-height:1;}
+    .brandSub{color:var(--muted); font-weight:800; font-size:12px; margin-top:2px;}
 
     .navLinks{display:flex; gap:16px; align-items:center}
     .navLinks a{
@@ -163,9 +150,7 @@
       border-color: rgba(255,255,255,.16);
       box-shadow: 0 22px 70px rgba(124,58,237,.18);
     }
-    .btn.primary:hover{
-      box-shadow: 0 24px 80px rgba(56,189,248,.16);
-    }
+    .btn.primary:hover{ box-shadow: 0 24px 80px rgba(56,189,248,.16); }
 
     .btn.good{
       background: linear-gradient(135deg, rgba(34,197,94,.90), rgba(56,189,248,.65));
@@ -187,12 +172,10 @@
     }
 
     /* Hero */
-    .hero{
-      padding: 54px 0 18px;
-    }
+    .hero{ padding: 54px 0 18px; }
     .heroGrid{
       display:grid;
-      grid-template-columns: 1.2fr .8fr;
+      grid-template-columns: 1fr;
       gap: 18px;
       align-items:stretch;
     }
@@ -246,13 +229,12 @@
       color: rgba(238,242,255,.78);
       font-weight:800;
       line-height:1.6;
-      max-width: 62ch;
+      max-width: 70ch;
     }
     .heroBtns{
       display:flex; gap:10px; flex-wrap:wrap;
       margin-top:16px;
     }
-
     .miniRow{
       margin-top: 16px;
       display:flex; gap:10px; flex-wrap:wrap;
@@ -276,117 +258,6 @@
       font-size:12px;
     }
 
-    /* Right preview card */
-    .previewCard{
-      border-radius: var(--radius2);
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-    }
-    .previewTop{
-      padding: 14px 14px 10px;
-      display:flex; align-items:center; justify-content:space-between;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.18);
-    }
-    .chipRow{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-    .chip{
-      padding: 8px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      font-weight:1000;
-      font-size:12px;
-      color: rgba(238,242,255,.82);
-      cursor:pointer;
-      transition: transform .18s var(--ease), background .18s var(--ease);
-      user-select:none;
-    }
-    .chip:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
-    .chip.active{
-      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.75));
-      border-color: rgba(255,255,255,.16);
-      color: var(--text);
-    }
-    .previewBody{padding: 14px}
-    .mock{
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      overflow:hidden;
-    }
-    .mockHead{
-      display:flex; align-items:center; justify-content:space-between;
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      color: rgba(238,242,255,.82);
-      font-weight:1000;
-      font-size:12px;
-    }
-    .dots{display:flex; gap:6px}
-    .dots i{width:10px; height:10px; border-radius:99px; display:inline-block; background: rgba(255,255,255,.14)}
-    .mockInner{padding: 12px}
-    .mockGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .kpi{
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding: 12px;
-    }
-    .kpi .t{font-weight:1000; font-size:12px; color: rgba(238,242,255,.72)}
-    .kpi .v{font-weight:1000; font-size:22px; margin-top:4px; letter-spacing:-.6px}
-    .spark{
-      margin-top: 10px;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      overflow:hidden;
-    }
-    .spark > div{
-      height:100%;
-      width:60%;
-      border-radius:999px;
-      background: linear-gradient(90deg, rgba(56,189,248,.95), rgba(124,58,237,.95), rgba(34,197,94,.95));
-      filter: drop-shadow(0 0 12px rgba(56,189,248,.18));
-      animation: fill 2.6s var(--ease) infinite;
-    }
-    @keyframes fill{
-      0%,100%{ transform: translateX(-22%); width: 58%;}
-      50%{ transform: translateX(10%); width: 64%;}
-    }
-    .mockList{
-      margin-top: 10px;
-      display:grid;
-      gap:8px;
-    }
-    .line{
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding: 10px 10px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      color: rgba(238,242,255,.82);
-      font-weight:900;
-      font-size:12px;
-    }
-    .tag{
-      padding: 6px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      font-weight:1000;
-      font-size:12px;
-      white-space:nowrap;
-    }
-    .tag.good{ background: rgba(34,197,94,.14); border-color: rgba(34,197,94,.28); }
-    .tag.warn{ background: rgba(251,191,36,.14); border-color: rgba(251,191,36,.28); }
-
     /* Sections */
     section{padding: 18px 0}
     .sectionTitle{
@@ -404,7 +275,7 @@
       color: rgba(238,242,255,.72);
       font-weight:800;
       line-height:1.6;
-      max-width: 60ch;
+      max-width: 70ch;
       font-size: 13px;
     }
 
@@ -443,6 +314,106 @@
     .card h3{margin:12px 0 6px; font-weight:1000; letter-spacing:-.2px}
     .card p{margin:0; color: rgba(238,242,255,.72); font-weight:800; line-height:1.6; font-size:13px}
 
+    /* Commands section */
+    .cmdWrap{
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: 0 18px 70px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .cmdTop{
+      padding: 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+      flex-wrap:wrap;
+    }
+    .tabs{display:flex; gap:8px; flex-wrap:wrap}
+    .tab{
+      padding: 10px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      font-weight:1000;
+      font-size:12px;
+      color: rgba(238,242,255,.85);
+      cursor:pointer;
+      transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease);
+      user-select:none;
+    }
+    .tab:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .tab.active{
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.75));
+      border-color: rgba(255,255,255,.16);
+      color: var(--text);
+    }
+    .search{
+      flex: 1 1 260px;
+      max-width: 520px;
+      min-width: 220px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.24);
+      color: var(--text);
+      padding: 12px 12px;
+      font-weight:900;
+      outline:none;
+    }
+    .cmdBody{padding: 14px;}
+    .cmdGrid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .cmdCard{
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      padding: 12px;
+      box-shadow: 0 18px 70px rgba(0,0,0,.22);
+    }
+    .cmdHead{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+    .cmdName{
+      font-weight:1000;
+      letter-spacing:-.2px;
+      font-size:13px;
+    }
+    .cmdTag{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-weight:1000;
+      font-size:12px;
+      white-space:nowrap;
+      color: rgba(238,242,255,.86);
+    }
+    .cmdTag.premium{
+      background: rgba(124,58,237,.18);
+      border-color: rgba(124,58,237,.30);
+    }
+    .cmdDesc{
+      margin-top:8px;
+      color: rgba(238,242,255,.74);
+      font-weight:800;
+      line-height:1.6;
+      font-size:13px;
+    }
+    .cmdUsage{
+      margin-top:10px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      padding: 10px 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      color: rgba(238,242,255,.90);
+      font-weight:900;
+      font-size:12px;
+      overflow:auto;
+      white-space:nowrap;
+    }
+
     /* Pricing */
     .pricing{
       display:grid;
@@ -467,6 +438,15 @@
     }
     .plan > *{position:relative}
     .planTop{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .tag{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-weight:1000;
+      font-size:12px;
+      white-space:nowrap;
+    }
     .planName{margin-top:10px; font-weight:1000}
     .money{font-weight:1000; font-size:30px; letter-spacing:-.9px; margin-top:6px}
     .sub{color: rgba(238,242,255,.72); font-weight:900; line-height:1.55; font-size:13px; margin-top:6px}
@@ -509,11 +489,7 @@
       padding: 12px 14px;
       box-shadow: 0 18px 70px rgba(0,0,0,.22);
     }
-    summary{
-      cursor:pointer;
-      font-weight:1000;
-      list-style:none;
-    }
+    summary{cursor:pointer; font-weight:1000; list-style:none;}
     summary::-webkit-details-marker{display:none}
     details p{
       margin: 10px 0 0;
@@ -551,7 +527,7 @@
     .footLinks a:hover{background: rgba(255,255,255,.06); transform: translateY(-1px)}
     .tiny{margin-top:12px; color: rgba(238,242,255,.55); font-weight:800; font-size:12px; line-height:1.6}
 
-    /* Overlays / Modals (only Checkout + Menu now) */
+    /* Overlays */
     .overlay{
       position:fixed; inset:0;
       display:none;
@@ -611,9 +587,7 @@
       background: rgba(255,255,255,.05);
       padding: 12px;
     }
-    .label{
-      font-weight:1000; font-size:12px; color: rgba(238,242,255,.72);
-    }
+    .label{font-weight:1000; font-size:12px; color: rgba(238,242,255,.72);}
     .input{
       margin-top: 8px;
       width:100%;
@@ -635,7 +609,7 @@
       font-size:13px;
     }
 
-    /* Mobile Menu Overlay */
+    /* Mobile Menu */
     .menuSheet{
       width:min(520px, 100%);
       border-radius: 26px;
@@ -654,12 +628,9 @@
       transform: translateY(10px);
       transition: opacity .45s var(--ease), transform .45s var(--ease);
     }
-    .reveal.on{
-      opacity:1;
-      transform: translateY(0);
-    }
+    .reveal.on{opacity:1; transform: translateY(0);}
 
-    /* To top */
+    /* To top + Toast */
     .toTop{
       position:fixed;
       right: 18px;
@@ -676,8 +647,6 @@
       font-weight:1000;
     }
     .toTop.show{display:block}
-
-    /* Toast */
     .toast{
       position:fixed;
       left:50%;
@@ -700,8 +669,8 @@
 
     /* Responsive */
     @media (max-width: 980px){
-      .heroGrid{grid-template-columns: 1fr; }
       .cards{grid-template-columns: 1fr; }
+      .cmdGrid{grid-template-columns: 1fr;}
       .pricing{grid-template-columns: 1fr; }
       .faq{grid-template-columns: 1fr; }
       .checkoutGrid{grid-template-columns: 1fr;}
@@ -733,6 +702,7 @@
 
         <nav class="navLinks" aria-label="Primary">
           <a href="#features">Features</a>
+          <a href="#commands">Commands</a>
           <a href="#pricing">Premium</a>
           <a href="#faq">FAQ</a>
           <a id="navDiscord" href="#" target="_blank" rel="noreferrer">Discord</a>
@@ -741,7 +711,6 @@
 
         <div class="navBtns">
           <a class="btn good" id="botBtn" href="#" target="_blank" rel="noreferrer">🤖 Invite Bot</a>
-          <!-- REAL DASHBOARD -->
           <a class="btn primary" id="openDashboard" href="#" target="_blank" rel="noreferrer">📊 Dashboard</a>
           <button class="hamburger" id="openMenu" type="button" aria-label="Open menu">
             <span></span><span></span><span></span>
@@ -771,8 +740,8 @@
             <div class="heroBtns">
               <a class="btn primary" id="inviteServerBtn" href="#" target="_blank" rel="noreferrer">✨ Join Discord</a>
               <a class="btn" id="youtubeBtn" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
-              <!-- REAL DASHBOARD -->
               <a class="btn" id="dashboardHeroBtn" href="#" target="_blank" rel="noreferrer">📊 Dashboard Login</a>
+              <button class="btn" id="scrollCommands" type="button">📚 View Commands</button>
               <button class="btn" id="scrollPricing" type="button">💎 View Premium</button>
             </div>
 
@@ -784,59 +753,6 @@
           </div>
         </div>
 
-        <div class="previewCard reveal">
-          <div class="previewTop">
-            <div class="chipRow">
-              <div class="chip active" data-mock="analytics">Analytics</div>
-              <div class="chip" data-mock="panels">Panels</div>
-              <div class="chip" data-mock="logs">Logs</div>
-            </div>
-            <button class="btn" id="openCheckoutFromHero" type="button">💎 Buy Key</button>
-          </div>
-
-          <div class="previewBody">
-            <div class="mock" id="mockBox">
-              <div class="mockHead">
-                <div>Dashboard Preview</div>
-                <div class="dots"><i></i><i></i><i></i></div>
-              </div>
-              <div class="mockInner">
-                <div class="mockGrid" id="mockKpis">
-                  <div class="kpi">
-                    <div class="t">Open Tickets</div>
-                    <div class="v" id="kpi1">12</div>
-                    <div class="spark"><div></div></div>
-                  </div>
-                  <div class="kpi">
-                    <div class="t">Avg Response</div>
-                    <div class="v" id="kpi2">3m</div>
-                    <div class="spark"><div></div></div>
-                  </div>
-                  <div class="kpi">
-                    <div class="t">Resolved Today</div>
-                    <div class="v" id="kpi3">28</div>
-                    <div class="spark"><div></div></div>
-                  </div>
-                  <div class="kpi">
-                    <div class="t">Satisfaction</div>
-                    <div class="v" id="kpi4">98%</div>
-                    <div class="spark"><div></div></div>
-                  </div>
-                </div>
-
-                <div class="mockList" id="mockList">
-                  <div class="line"><span>#support • New ticket</span><span class="tag warn">Needs staff</span></div>
-                  <div class="line"><span>#trade • Payment checked</span><span class="tag good">Resolved</span></div>
-                  <div class="line"><span>#support • Bug report</span><span class="tag warn">Open</span></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="tiny">
-              Preview UI only. The REAL dashboard login is on the Dashboard button (top).
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </main>
@@ -866,6 +782,36 @@
           <div class="icon">⚡</div>
           <h3>Fast Setup</h3>
           <p>Invite the bot, configure roles, and you’re ready. No messy menus.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMANDS -->
+  <section id="commands">
+    <div class="container">
+      <div class="sectionTitle reveal">
+        <div>
+          <h2>Commands</h2>
+          <p>Everything your users and staff need. Use the tabs to switch between Free & Premium.</p>
+        </div>
+      </div>
+
+      <div class="cmdWrap reveal">
+        <div class="cmdTop">
+          <div class="tabs">
+            <button class="tab active" data-tab="free" type="button">✅ Free Commands</button>
+            <button class="tab" data-tab="premium" type="button">💎 Premium Commands</button>
+          </div>
+          <input id="cmdSearch" class="search" placeholder="Search commands… (ex: setup, panel, pingrole, rename)" />
+        </div>
+
+        <div class="cmdBody">
+          <div class="cmdGrid" id="cmdGrid"></div>
+          <div class="tiny" style="margin-top:10px;">
+            Tip: keep names exactly like your bot uses (ex: <span class="mono">?panel</span> / <span class="mono">?setup</span> etc).
+            If you want, tell me your exact command names and I’ll mirror them 1:1 here.
+          </div>
         </div>
       </div>
     </div>
@@ -1004,7 +950,6 @@
             <a id="footerDiscord" href="#" target="_blank" rel="noreferrer">Discord</a>
             <a id="footerYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
             <a id="footerBot" href="#" target="_blank" rel="noreferrer">Bot Invite</a>
-            <!-- REAL DASHBOARD -->
             <a id="footerDashboard" href="#" target="_blank" rel="noreferrer">Dashboard</a>
           </div>
         </div>
@@ -1087,12 +1032,12 @@
       <div class="menuBody">
         <div class="menuLinks">
           <a class="btn" href="#features" data-close="menu">✨ Features</a>
+          <a class="btn" href="#commands" data-close="menu">📚 Commands</a>
           <a class="btn" href="#pricing" data-close="menu">💎 Premium</a>
           <a class="btn" href="#faq" data-close="menu">❓ FAQ</a>
           <a class="btn good" id="menuDiscord" href="#" target="_blank" rel="noreferrer">Join Discord</a>
           <a class="btn" id="menuYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
           <a class="btn" id="menuBot" href="#" target="_blank" rel="noreferrer">Invite Bot</a>
-          <!-- REAL DASHBOARD -->
           <a class="btn primary" id="menuDashboard" href="#" target="_blank" rel="noreferrer">📊 Dashboard</a>
           <button class="btn primary" id="menuBuy" type="button">💎 Buy Premium</button>
         </div>
@@ -1108,8 +1053,6 @@
     const OWNER_DISCORD = "n_om_e";
 
     const CLIENT_ID = "1442592762108186675";
-
-    // Minimal perms for ticket bot:
     const PERMISSIONS = "126032";
 
     const BOT_INVITE_URL =
@@ -1117,12 +1060,34 @@
 
     const YT_URL = "https://www.youtube.com/channel/UC8Ovc5xT-tXXIjxLnVe72dQ";
     const SERVER_INVITE_URL = "https://discord.gg/FHRSPyXw";
-
-    // LTC address (keep same)
     const LTC_ADDRESS = "LPxonLCBtrcHnYAompBSXsboTfJQ8Eyuz8";
 
-    // ✅ REAL DASHBOARD URL (your working one)
+    // ✅ REAL DASHBOARD URL
     const REAL_DASHBOARD_URL = "http://85.215.159.4:9717/dashboard";
+
+    // =========================
+    // Commands data (edit here)
+    // =========================
+    const COMMANDS = {
+      free: [
+        { name: "?help", tag: "General", desc: "Show help panel with categories.", usage: "?help" },
+        { name: "?panel", tag: "Tickets", desc: "Send ticket panel (support/trade) in a channel.", usage: "?panel #channel" },
+        { name: "?setup", tag: "Setup", desc: "Setup ticket categories, roles, logs, transcripts.", usage: "?setup" },
+        { name: "?close", tag: "Tickets", desc: "Close a ticket (staff).", usage: "?close" },
+        { name: "?add", tag: "Tickets", desc: "Add a user to a ticket.", usage: "?add @user" },
+        { name: "?remove", tag: "Tickets", desc: "Remove a user from a ticket.", usage: "?remove @user" },
+        { name: "?rename", tag: "Tickets", desc: "Rename ticket channel.", usage: "?rename new-name" },
+        { name: "?transcript", tag: "Logs", desc: "Generate transcript for a ticket.", usage: "?transcript" }
+      ],
+      premium: [
+        { name: "?pingmode", tag: "Premium", desc: "Change ping behavior on ticket create.", usage: "?pingmode on | off" },
+        { name: "?pingrole", tag: "Premium", desc: "Set role that gets pinged when ticket is created.", usage: "?pingrole @role" },
+        { name: "?ticketname", tag: "Premium", desc: "Customize ticket channel name format.", usage: "?ticketname support-{user} | trade-{user}" },
+        { name: "?embedaccent", tag: "Premium", desc: "Set embed accent color.", usage: "?embedaccent #RRGGBB" },
+        { name: "?stafftitle", tag: "Premium", desc: "Change staff display title inside ticket messages.", usage: "?stafftitle Support Team" },
+        { name: "?premiuminfo", tag: "Premium", desc: "Show premium features + key info.", usage: "?premiuminfo" }
+      ]
+    };
 
     // =========================
     // Helpers: toast + copy
@@ -1167,12 +1132,11 @@
     linkIdsYoutube.forEach(id => { const a = document.getElementById(id); if(a) a.href = YT_URL; });
     linkIdsBot.forEach(id => { const a = document.getElementById(id); if(a) a.href = BOT_INVITE_URL; });
 
-    // Real Dashboard links
     ["openDashboard","dashboardHeroBtn","footerDashboard","menuDashboard","checkoutDashboard"]
       .forEach(id => { const a = document.getElementById(id); if(a) a.href = REAL_DASHBOARD_URL; });
 
     // =========================
-    // Stars background (no cursor-follow)
+    // Stars background
     // =========================
     const canvas = document.getElementById("stars");
     const ctx = canvas.getContext("2d");
@@ -1236,67 +1200,74 @@
     toTop.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
 
     // =========================
-    // Mock switch (right hero card)
+    // Commands rendering
     // =========================
-    const chips = document.querySelectorAll(".chip");
-    const k1 = document.getElementById("kpi1");
-    const k2 = document.getElementById("kpi2");
-    const k3 = document.getElementById("kpi3");
-    const k4 = document.getElementById("kpi4");
-    const mockList = document.getElementById("mockList");
+    const cmdGrid = document.getElementById("cmdGrid");
+    const cmdSearch = document.getElementById("cmdSearch");
+    const tabs = document.querySelectorAll(".tab");
+    let activeTab = "free";
 
-    const mockData = {
-      analytics: {
-        kpis: ["12","3m","28","98%"],
-        lines: [
-          ["#support • New ticket","Open","warn"],
-          ["#trade • Payment checked","Resolved","good"],
-          ["#support • Bug report","Open","warn"]
-        ]
-      },
-      panels: {
-        kpis: ["3","2","5","Ready"],
-        lines: [
-          ["Panel: Support","Active","good"],
-          ["Panel: Trade","Active","good"],
-          ["Panel: Appeals","Draft","warn"]
-        ]
-      },
-      logs: {
-        kpis: ["74","12","2","OK"],
-        lines: [
-          ["Closed tickets today","Logged","good"],
-          ["Staff actions","Tracked","good"],
-          ["Missing transcript","Review","warn"]
-        ]
+    function renderCommands(){
+      const q = (cmdSearch.value || "").trim().toLowerCase();
+      const list = COMMANDS[activeTab] || [];
+      const filtered = list.filter(c=>{
+        const blob = `${c.name} ${c.tag} ${c.desc} ${c.usage}`.toLowerCase();
+        return !q || blob.includes(q);
+      });
+
+      cmdGrid.innerHTML = filtered.map(c => `
+        <div class="cmdCard">
+          <div class="cmdHead">
+            <div class="cmdName">${escapeHtml(c.name)}</div>
+            <div class="cmdTag ${activeTab === "premium" ? "premium" : ""}">${escapeHtml(c.tag)}</div>
+          </div>
+          <div class="cmdDesc">${escapeHtml(c.desc)}</div>
+          <div class="cmdUsage">${escapeHtml(c.usage)}</div>
+        </div>
+      `).join("");
+
+      if(filtered.length === 0){
+        cmdGrid.innerHTML = `
+          <div class="cmdCard" style="grid-column: 1 / -1;">
+            <div class="cmdHead">
+              <div class="cmdName">No results</div>
+              <div class="cmdTag">Search</div>
+            </div>
+            <div class="cmdDesc">Try a different word. Example: <span class="mono">pingrole</span>, <span class="mono">setup</span>, <span class="mono">ticketname</span>.</div>
+            <div class="cmdUsage">Tip: You can edit commands list in the HTML (COMMANDS object).</div>
+          </div>
+        `;
       }
-    };
-
-    function renderMock(key){
-      const m = mockData[key];
-      [k1.textContent,k2.textContent,k3.textContent,k4.textContent] = m.kpis;
-      mockList.innerHTML = m.lines.map(([l,tag,kind]) =>
-        `<div class="line"><span>${l}</span><span class="tag ${kind}">${tag}</span></div>`
-      ).join("");
     }
 
-    chips.forEach(ch=>{
-      ch.addEventListener("click", ()=>{
-        chips.forEach(x=>x.classList.remove("active"));
-        ch.classList.add("active");
-        renderMock(ch.dataset.mock);
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    tabs.forEach(t=>{
+      t.addEventListener("click", ()=>{
+        tabs.forEach(x=>x.classList.remove("active"));
+        t.classList.add("active");
+        activeTab = t.dataset.tab;
+        renderCommands();
       });
     });
 
+    cmdSearch.addEventListener("input", renderCommands);
+    renderCommands();
+
     // =========================
-    // Overlay system (only Checkout + Menu)
+    // Overlay system
     // =========================
     const buyOverlay = document.getElementById("buyOverlay");
     const menuOverlay = document.getElementById("menuOverlay");
 
-    function lockScroll(lock){
-      document.body.style.overflow = lock ? "hidden" : "";
-    }
+    function lockScroll(lock){ document.body.style.overflow = lock ? "hidden" : ""; }
 
     function showOverlay(which){
       history.pushState({overlay: which}, "", "#"+which);
@@ -1309,7 +1280,6 @@
       [buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
       if(which === "checkout") buyOverlay.classList.add("show");
       if(which === "menu") menuOverlay.classList.add("show");
-
       lockScroll(true);
     }
 
@@ -1332,19 +1302,14 @@
       }
     });
 
-    window.addEventListener("keydown", (e)=>{
-      if(e.key === "Escape") closeViaBack();
-    });
+    window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeViaBack(); });
 
     [buyOverlay,menuOverlay].forEach(o=>{
-      o.addEventListener("mousedown", (e)=>{
-        if(e.target === o) closeViaBack();
-      });
+      o.addEventListener("mousedown", (e)=>{ if(e.target === o) closeViaBack(); });
     });
 
     // Buttons
     document.getElementById("openCheckout").addEventListener("click", ()=> showOverlay("checkout"));
-    document.getElementById("openCheckoutFromHero").addEventListener("click", ()=> showOverlay("checkout"));
     document.getElementById("openCheckoutFooter").addEventListener("click", ()=> showOverlay("checkout"));
     document.getElementById("closeCheckout").addEventListener("click", closeViaBack);
 
@@ -1362,9 +1327,12 @@
     document.getElementById("scrollPricing").addEventListener("click", ()=>{
       document.getElementById("pricing").scrollIntoView({behavior:"smooth", block:"start"});
     });
+    document.getElementById("scrollCommands").addEventListener("click", ()=>{
+      document.getElementById("commands").scrollIntoView({behavior:"smooth", block:"start"});
+    });
 
     // =========================
-    // Checkout logic (keeps your prices + LTC)
+    // Checkout logic
     // =========================
     const planPicked = document.getElementById("planPicked");
     const payMsg = document.getElementById("payMsg");
@@ -1377,7 +1345,6 @@
       payMsg.value = msg;
       document.getElementById("buyTitle").textContent = `💎 Buy Premium — ${plan} ($${price})`;
     }
-
     setPlan("1 MONTH", 2);
 
     document.querySelectorAll(".plan").forEach(card=>{

@@ -551,7 +551,7 @@
     .footLinks a:hover{background: rgba(255,255,255,.06); transform: translateY(-1px)}
     .tiny{margin-top:12px; color: rgba(238,242,255,.55); font-weight:800; font-size:12px; line-height:1.6}
 
-    /* Overlays / Modals (undo via back button) */
+    /* Overlays / Modals (only Checkout + Menu now) */
     .overlay{
       position:fixed; inset:0;
       display:none;
@@ -741,7 +741,8 @@
 
         <div class="navBtns">
           <a class="btn good" id="botBtn" href="#" target="_blank" rel="noreferrer">🤖 Invite Bot</a>
-          <button class="btn primary" id="openDashboard" type="button">📊 Dashboard</button>
+          <!-- REAL DASHBOARD -->
+          <a class="btn primary" id="openDashboard" href="#" target="_blank" rel="noreferrer">📊 Dashboard</a>
           <button class="hamburger" id="openMenu" type="button" aria-label="Open menu">
             <span></span><span></span><span></span>
           </button>
@@ -770,6 +771,8 @@
             <div class="heroBtns">
               <a class="btn primary" id="inviteServerBtn" href="#" target="_blank" rel="noreferrer">✨ Join Discord</a>
               <a class="btn" id="youtubeBtn" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
+              <!-- REAL DASHBOARD -->
+              <a class="btn" id="dashboardHeroBtn" href="#" target="_blank" rel="noreferrer">📊 Dashboard Login</a>
               <button class="btn" id="scrollPricing" type="button">💎 View Premium</button>
             </div>
 
@@ -777,11 +780,6 @@
               <div class="miniStat"><span class="badge">Tickets</span> Support + Trade categories</div>
               <div class="miniStat"><span class="badge">Logs</span> Cleaner moderation record</div>
               <div class="miniStat"><span class="badge">Keys</span> $1 / $2 / $4 premium access</div>
-            </div>
-
-            <div class="tiny">
-              Tip: Everything here is front-end style. A real “live dashboard” needs a backend/API.
-              This page includes a dashboard <b>preview</b> that looks professional and works as a UI.
             </div>
           </div>
         </div>
@@ -834,7 +832,9 @@
               </div>
             </div>
 
-            <div class="tiny">This preview is UI only (no bot API needed). You can still link it later to real data.</div>
+            <div class="tiny">
+              Preview UI only. The REAL dashboard login is on the Dashboard button (top).
+            </div>
           </div>
         </div>
       </div>
@@ -959,10 +959,9 @@
 
       <div class="faq">
         <details class="reveal">
-          <summary>Do I need to change my bot script for this “Dashboard”?</summary>
+          <summary>Where is the real dashboard login?</summary>
           <p>
-            Not for the UI preview. This website dashboard is front-end only.
-            If you want real live stats (tickets/responses), then yes — you’d need an API (bot sends data to a server).
+            Press <b>Dashboard</b> (top). It opens the real dashboard on your server.
           </p>
         </details>
         <details class="reveal">
@@ -972,15 +971,15 @@
           </p>
         </details>
         <details class="reveal">
-          <summary>Can people close/undo panels?</summary>
-          <p>
-            Yes. Every panel has an X, ESC closes it, and browser Back also closes the last opened panel.
-          </p>
-        </details>
-        <details class="reveal">
           <summary>Can I host this on GitHub Pages?</summary>
           <p>
             Yes — it’s a single HTML file + your assets/nozzarri.png. Works clean on PC + mobile.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>Why not embed the dashboard inside this site?</summary>
+          <p>
+            Usually it breaks because of browser security (CORS/iframe restrictions). Opening it as a separate page is the clean solution.
           </p>
         </details>
       </div>
@@ -1005,6 +1004,8 @@
             <a id="footerDiscord" href="#" target="_blank" rel="noreferrer">Discord</a>
             <a id="footerYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
             <a id="footerBot" href="#" target="_blank" rel="noreferrer">Bot Invite</a>
+            <!-- REAL DASHBOARD -->
+            <a id="footerDashboard" href="#" target="_blank" rel="noreferrer">Dashboard</a>
           </div>
         </div>
 
@@ -1022,57 +1023,6 @@
   <!-- To top + Toast -->
   <button id="toTop" class="toTop" type="button" aria-label="Back to top">⬆️</button>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-  <!-- DASHBOARD OVERLAY -->
-  <div class="overlay" id="dashOverlay" aria-hidden="true">
-    <div class="panel" role="dialog" aria-modal="true" aria-label="Dashboard">
-      <div class="panelTop">
-        <div class="title">📊 Dashboard (Preview UI)</div>
-        <button class="x" id="closeDashboard" type="button" aria-label="Close dashboard">✕</button>
-      </div>
-      <div class="panelBody">
-        <div class="grid" style="grid-template-columns: 1fr 1fr; gap:12px;">
-          <div class="box">
-            <div class="label">Status</div>
-            <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
-              <span class="tag good">Online</span>
-              <span class="tag">Tickets: <b>12</b></span>
-              <span class="tag">Avg response: <b>3m</b></span>
-            </div>
-            <div class="fine">
-              This is a professional looking dashboard panel. If you ever want real data here,
-              you’ll connect it to a backend later.
-            </div>
-            <div class="rowBtns">
-              <a class="btn good" id="dashDiscord" href="#" target="_blank" rel="noreferrer">Join Discord</a>
-              <a class="btn" id="dashBot" href="#" target="_blank" rel="noreferrer">Invite Bot</a>
-            </div>
-          </div>
-
-          <div class="box">
-            <div class="label">Quick actions</div>
-            <div class="rowBtns">
-              <button class="btn primary" id="dashBuy" type="button">💎 Buy Premium</button>
-              <button class="btn" id="dashCopyLtc" type="button">📋 Copy LTC</button>
-              <a class="btn" id="dashYouTube" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
-            </div>
-            <div class="fine">
-              Everything closes with X, ESC, or Back button (undo).
-            </div>
-          </div>
-        </div>
-
-        <div class="box" style="margin-top:12px;">
-          <div class="label">Recent tickets (demo)</div>
-          <div class="mockList" style="margin-top:10px;">
-            <div class="line"><span>#support • User needs help</span><span class="tag warn">Open</span></div>
-            <div class="line"><span>#trade • Deal completed</span><span class="tag good">Resolved</span></div>
-            <div class="line"><span>#support • Bug report</span><span class="tag warn">Needs staff</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- CHECKOUT OVERLAY -->
   <div class="overlay" id="buyOverlay" aria-hidden="true">
@@ -1115,6 +1065,7 @@
               <a class="btn good" id="checkoutDiscord" href="#" target="_blank" rel="noreferrer">Join Discord</a>
               <a class="btn" id="checkoutBot" href="#" target="_blank" rel="noreferrer">Invite Bot</a>
               <a class="btn" id="checkoutYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
+              <a class="btn primary" id="checkoutDashboard" href="#" target="_blank" rel="noreferrer">Dashboard</a>
             </div>
           </div>
         </div>
@@ -1141,7 +1092,8 @@
           <a class="btn good" id="menuDiscord" href="#" target="_blank" rel="noreferrer">Join Discord</a>
           <a class="btn" id="menuYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
           <a class="btn" id="menuBot" href="#" target="_blank" rel="noreferrer">Invite Bot</a>
-          <button class="btn primary" id="menuDashboard" type="button">📊 Dashboard</button>
+          <!-- REAL DASHBOARD -->
+          <a class="btn primary" id="menuDashboard" href="#" target="_blank" rel="noreferrer">📊 Dashboard</a>
           <button class="btn primary" id="menuBuy" type="button">💎 Buy Premium</button>
         </div>
       </div>
@@ -1169,6 +1121,9 @@
     // LTC address (keep same)
     const LTC_ADDRESS = "LPxonLCBtrcHnYAompBSXsboTfJQ8Eyuz8";
 
+    // ✅ REAL DASHBOARD URL (your working one)
+    const REAL_DASHBOARD_URL = "http://85.215.159.4:9717/dashboard";
+
     // =========================
     // Helpers: toast + copy
     // =========================
@@ -1187,7 +1142,6 @@
         await navigator.clipboard.writeText(text);
         showToast("Copied ✅");
       }catch{
-        // fallback
         const ta = document.createElement("textarea");
         ta.value = text;
         document.body.appendChild(ta);
@@ -1205,13 +1159,17 @@
     document.getElementById("ownerName").textContent = OWNER_DISCORD;
     document.getElementById("ownerSpan").textContent = OWNER_DISCORD;
 
-    const linkIdsDiscord = ["navDiscord","footerDiscord","inviteServerBtn","dashDiscord","checkoutDiscord","menuDiscord"];
-    const linkIdsYoutube = ["navYouTube","footerYouTube","youtubeBtn","dashYouTube","checkoutYouTube","menuYouTube"];
-    const linkIdsBot = ["botBtn","footerBot","dashBot","checkoutBot","menuBot"];
+    const linkIdsDiscord = ["navDiscord","footerDiscord","inviteServerBtn","checkoutDiscord","menuDiscord"];
+    const linkIdsYoutube = ["navYouTube","footerYouTube","youtubeBtn","checkoutYouTube","menuYouTube"];
+    const linkIdsBot = ["botBtn","footerBot","checkoutBot","menuBot"];
 
     linkIdsDiscord.forEach(id => { const a = document.getElementById(id); if(a) a.href = SERVER_INVITE_URL; });
     linkIdsYoutube.forEach(id => { const a = document.getElementById(id); if(a) a.href = YT_URL; });
     linkIdsBot.forEach(id => { const a = document.getElementById(id); if(a) a.href = BOT_INVITE_URL; });
+
+    // Real Dashboard links
+    ["openDashboard","dashboardHeroBtn","footerDashboard","menuDashboard","checkoutDashboard"]
+      .forEach(id => { const a = document.getElementById(id); if(a) a.href = REAL_DASHBOARD_URL; });
 
     // =========================
     // Stars background (no cursor-follow)
@@ -1331,9 +1289,8 @@
     });
 
     // =========================
-    // “Undo / Back button” overlay system
+    // Overlay system (only Checkout + Menu)
     // =========================
-    const dashOverlay = document.getElementById("dashOverlay");
     const buyOverlay = document.getElementById("buyOverlay");
     const menuOverlay = document.getElementById("menuOverlay");
 
@@ -1342,7 +1299,6 @@
     }
 
     function showOverlay(which){
-      // pushState so browser back closes it
       history.pushState({overlay: which}, "", "#"+which);
       openOverlay(which, false);
     }
@@ -1350,8 +1306,7 @@
     function openOverlay(which, push){
       if(push) history.pushState({overlay: which}, "", "#"+which);
 
-      [dashOverlay,buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
-      if(which === "dashboard") dashOverlay.classList.add("show");
+      [buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
       if(which === "checkout") buyOverlay.classList.add("show");
       if(which === "menu") menuOverlay.classList.add("show");
 
@@ -1359,21 +1314,17 @@
     }
 
     function closeAllOverlays(){
-      [dashOverlay,buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
+      [buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
       lockScroll(false);
     }
 
-    // Close overlay = go back one history step if overlay is open
     function closeViaBack(){
-      // if an overlay is open, pop it with history.back() so undo works naturally
-      if(dashOverlay.classList.contains("show") || buyOverlay.classList.contains("show") || menuOverlay.classList.contains("show")){
+      if(buyOverlay.classList.contains("show") || menuOverlay.classList.contains("show")){
         history.back();
       }
     }
 
-    // Handle browser back
     window.addEventListener("popstate", (e)=>{
-      // if state has overlay -> open it, else close all
       if(e.state && e.state.overlay){
         openOverlay(e.state.overlay, false);
       }else{
@@ -1381,24 +1332,17 @@
       }
     });
 
-    // ESC closes
     window.addEventListener("keydown", (e)=>{
       if(e.key === "Escape") closeViaBack();
     });
 
-    // Click outside closes
-    [dashOverlay,buyOverlay,menuOverlay].forEach(o=>{
+    [buyOverlay,menuOverlay].forEach(o=>{
       o.addEventListener("mousedown", (e)=>{
         if(e.target === o) closeViaBack();
       });
     });
 
-    // =========================
-    // Buttons open/close overlays
-    // =========================
-    document.getElementById("openDashboard").addEventListener("click", ()=> showOverlay("dashboard"));
-    document.getElementById("closeDashboard").addEventListener("click", closeViaBack);
-
+    // Buttons
     document.getElementById("openCheckout").addEventListener("click", ()=> showOverlay("checkout"));
     document.getElementById("openCheckoutFromHero").addEventListener("click", ()=> showOverlay("checkout"));
     document.getElementById("openCheckoutFooter").addEventListener("click", ()=> showOverlay("checkout"));
@@ -1407,11 +1351,6 @@
     document.getElementById("openMenu").addEventListener("click", ()=> showOverlay("menu"));
     document.getElementById("closeMenu").addEventListener("click", closeViaBack);
 
-    // Menu buttons
-    document.getElementById("menuDashboard").addEventListener("click", ()=>{
-      closeViaBack();
-      setTimeout(()=> showOverlay("dashboard"), 80);
-    });
     document.getElementById("menuBuy").addEventListener("click", ()=>{
       closeViaBack();
       setTimeout(()=> showOverlay("checkout"), 80);
@@ -1420,14 +1359,6 @@
       a.addEventListener("click", ()=> closeViaBack());
     });
 
-    // Dashboard quick actions
-    document.getElementById("dashBuy").addEventListener("click", ()=>{
-      closeViaBack();
-      setTimeout(()=> showOverlay("checkout"), 80);
-    });
-    document.getElementById("dashCopyLtc").addEventListener("click", ()=> copyText(LTC_ADDRESS));
-
-    // Scroll to pricing
     document.getElementById("scrollPricing").addEventListener("click", ()=>{
       document.getElementById("pricing").scrollIntoView({behavior:"smooth", block:"start"});
     });
@@ -1447,10 +1378,8 @@
       document.getElementById("buyTitle").textContent = `💎 Buy Premium — ${plan} ($${price})`;
     }
 
-    // Default plan
     setPlan("1 MONTH", 2);
 
-    // Pricing cards -> open checkout with selected plan
     document.querySelectorAll(".plan").forEach(card=>{
       const plan = card.dataset.plan;
       const price = card.dataset.price;
@@ -1460,14 +1389,11 @@
         showOverlay("checkout");
       });
 
-      const copyBtn = card.querySelector(".copyLtcBtn");
-      copyBtn.addEventListener("click", ()=> copyText(LTC_ADDRESS));
+      card.querySelector(".copyLtcBtn").addEventListener("click", ()=> copyText(LTC_ADDRESS));
     });
 
-    // Footer copy
     document.getElementById("copyLtcFooter").addEventListener("click", ()=> copyText(LTC_ADDRESS));
 
-    // Copy buttons in checkout
     document.getElementById("copyPayInfo").addEventListener("click", ()=>{
       const combo =
 `LTC Address: ${LTC_ADDRESS}
@@ -1478,13 +1404,10 @@ Message: ${payMsg.value}`;
     document.getElementById("copyAddrOnly").addEventListener("click", ()=> copyText(LTC_ADDRESS));
     document.getElementById("copyOwnerOnly").addEventListener("click", ()=> copyText(OWNER_DISCORD));
 
-    // =========================
-    // If user opens with a hash, open that overlay
-    // =========================
+    // Boot hash
     (function boot(){
       const hash = (location.hash || "").replace("#","");
-      if(hash === "dashboard" || hash === "checkout" || hash === "menu"){
-        // replaceState to match overlay without stacking duplicates
+      if(hash === "checkout" || hash === "menu"){
         history.replaceState({overlay: hash}, "", "#"+hash);
         openOverlay(hash, false);
       }else{

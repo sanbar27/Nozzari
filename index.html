@@ -3,978 +3,998 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Nozzarri Tickets | Discord Tickets</title>
-  <meta name="description" content="Nozzarri Tickets — ticket bo...cord. Support & Trade tickets, clean panels, logs, and more." />
+  <title>Nozzarri Tickets | Discord Ticket Bot</title>
+  <meta name="description" content="Nozzarri Tickets — ticket bot for Discord. Support & Trade tickets, clean panels, logs, and more." />
 
   <!-- Social preview -->
-  <meta property="og:title" content="Nozzarri Tickets | Discord Tickets" />
-  <meta property="og:description" content="Ticket bot — Support & Trade tickets, setup panel, logs, clean UI." />
+  <meta property="og:title" content="Nozzarri Tickets | Discord Ticket Bot" />
+  <meta property="og:description" content="Ticket bot — Support & Trade tickets, clean panels, logs, and more." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="assets/nozzarri.png" />
 
-  <link rel="icon" type="image/png" href="assets/nozzarri.png" />
+  <!-- ICON / LOGO -->
+  <link rel="icon" href="assets/nozzarri.png" />
 
   <style>
     :root{
-      --bg:#070A12;
-      --bg2:#0B1020;
+      --bg:#070810;
+      --bg2:#0b0e1c;
       --card:rgba(255,255,255,.06);
-      --card2:rgba(255,255,255,.08);
-      --b:rgba(255,255,255,.12);
-      --t:#EAF2FF;
-      --muted:rgba(234,242,255,.72);
-      --muted2:rgba(234,242,255,.55);
-      --brand:#7AF7FF;
-      --brand2:#9B7CFF;
-      --ok:#63ffb0;
-      --warn:#ffd36e;
-      --bad:#ff5a7a;
-      --shadow: 0 20px 70px rgba(0,0,0,.45);
+      --line:rgba(255,255,255,.10);
+      --text:#eaf0ff;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.56);
+
+      --accent:#7c5cff;
+      --accent2:#00d4ff;
+      --good:#19d38b;
+      --warn:#f5b301;
+      --bad:#ff4d6d;
+
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
       --radius: 18px;
-      --radius2: 26px;
-      --ease: cubic-bezier(.2,.9,.2,1);
+      --radius2: 24px;
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
       background:
-        radial-gradient(1200px 800px at 10% 10%, rgba(122,247,255,.12), transparent 60%),
-        radial-gradient(900px 700px at 90% 15%, rgba(155,124,255,.14), transparent 55%),
-        radial-gradient(900px 700px at 35% 95%, rgba(99,255,176,.08), transparent 60%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
-      color:var(--t);
+        radial-gradient(1200px 800px at 20% 10%, rgba(124,92,255,.25), transparent 55%),
+        radial-gradient(900px 600px at 80% 20%, rgba(0,212,255,.20), transparent 55%),
+        radial-gradient(800px 600px at 60% 90%, rgba(25,211,139,.12), transparent 55%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
       overflow-x:hidden;
     }
-    a{color:inherit; text-decoration:none}
-    .muted{color:var(--muted)}
-    .muted2{color:var(--muted2)}
+
+    a{color:inherit;text-decoration:none}
+    button{font-family:inherit}
+
+    .noise{
+      position:fixed; inset:0;
+      pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+      mix-blend-mode:overlay;
+      opacity:.08;
+    }
+
+    /* top nav */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(14px);
+      background: rgba(8,10,18,.62);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .topbar-inner{
+      max-width:1200px; margin:0 auto;
+      padding:14px 18px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:900;
+      letter-spacing:.2px;
+      min-width: 220px;
+    }
+    .brandImg{
+      width:32px; height:32px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 0 24px rgba(124,92,255,.22);
+      background: rgba(255,255,255,.06);
+    }
+    .brand small{
+      display:block;
+      font-weight:700;
+      color:var(--muted2);
+      letter-spacing:.6px;
+      margin-top:2px;
+    }
+
+    .navBtns{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+    }
+    .pillBtn{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:850;
+      font-size:13px;
+      display:flex; align-items:center; gap:8px;
+      transition: .18s transform, .18s background, .18s border-color;
+    }
+    .pillBtn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(124,92,255,.35);
+      background: rgba(124,92,255,.10);
+    }
+    .pillBtn.primary{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(90deg, rgba(124,92,255,.22), rgba(0,212,255,.14));
+    }
+
+    /* main container */
+    .container{
+      max-width:1200px;
+      margin:0 auto;
+      padding:22px 18px 44px;
+    }
+
+    /* views */
+    .view{display:none}
+    .view.show{display:block; animation: viewIn .22s ease-out}
+    @keyframes viewIn{from{opacity:.0; transform: translateY(6px)} to{opacity:1; transform:none}}
+
+    /* cards */
+    .card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px;
+    }
+    @media (min-width: 920px){
+      .grid.two{grid-template-columns: 1.1fr .9fr}
+      .grid.three{grid-template-columns: repeat(3, 1fr)}
+    }
+
+    /* hero */
+    .hero{
+      padding:18px;
+      border-radius: var(--radius2);
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(124,92,255,.25), transparent 60%),
+        radial-gradient(600px 500px at 90% 40%, rgba(0,212,255,.14), transparent 60%),
+        rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .heroTop{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      font-weight:900;
+      font-size:12px;
+      color: var(--muted);
+    }
+    .pill .dot{
+      width:9px; height:9px; border-radius:999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 18px rgba(0,212,255,.35);
+    }
+    h1{
+      margin:14px 0 8px;
+      font-size: clamp(26px, 4vw, 44px);
+      line-height:1.05;
+      letter-spacing:-.6px;
+    }
     .grad{
-      background: linear-gradient(90deg, var(--brand), var(--brand2));
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
       -webkit-background-clip:text;
       background-clip:text;
       color:transparent;
     }
-    .container{max-width:1180px; margin:0 auto; padding:0 20px}
-
-    /* ---------- FX ---------- */
-    .bgBlobs{
-      position:fixed; inset:-20vh -20vw; z-index:-2; pointer-events:none;
-      filter: blur(50px);
-      opacity:.85;
-    }
-    .blob{position:absolute; width:520px; height:520px; border-radius:50%; mix-blend-mode:screen; animation: float 10s var(--ease) infinite;}
-    .blob.b1{left:8%; top:8%; background: radial-gradient(circle at 30% 30%, rgba(122,247,255,.45), rgba(122,247,255,0) 65%); animation-duration:12s}
-    .blob.b2{right:10%; top:6%; background: radial-gradient(circle at 50% 30%, rgba(155,124,255,.42), rgba(155,124,255,0) 66%); animation-duration:13s}
-    .blob.b3{left:30%; bottom:6%; background: radial-gradient(circle at 50% 40%, rgba(99,255,176,.26), rgba(99,255,176,0) 67%); animation-duration:14s}
-    @keyframes float{
-      0%,100%{ transform: translate3d(0,0,0) scale(1); }
-      50%{ transform: translate3d(26px,-16px,0) scale(1.02); }
-    }
-    canvas#stars{ position:fixed; inset:0; width:100%; height:100%; opacity:.35; z-index:-3; }
-
-    /* ---------- LOADER ---------- */
-    .loaderWrap{
-      position:fixed; inset:0; z-index:999;
-      display:grid; place-items:center;
-      background:
-        radial-gradient(1000px 800px at 20% 20%, rgba(122,247,255,.10), transparent 60%),
-        radial-gradient(900px 700px at 85% 15%, rgba(155,124,255,.14), transparent 60%),
-        linear-gradient(180deg, rgba(7,10,18,.98), rgba(11,16,32,.98));
-      transition: opacity .35s var(--ease), transform .35s var(--ease);
-    }
-    .loader{
-      width:min(520px, 92vw);
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow);
-      padding:22px 20px;
-      position:relative;
-      overflow:hidden;
-    }
-    .loader:before{
-      content:"";
-      position:absolute; inset:-2px;
-      background: linear-gradient(120deg, rgba(122,247,255,.0), rgba(122,247,255,.18), rgba(155,124,255,.16), rgba(122,247,255,.0));
-      filter: blur(14px);
-      opacity:.7;
-      transform: translateX(-40%);
-      animation: shimmer 2.2s var(--ease) infinite;
-    }
-    @keyframes shimmer{ 0%{transform:translateX(-60%)} 50%{transform:translateX(10%)} 100%{transform:translateX(60%)} }
-    .loaderTop{display:flex; align-items:center; gap:14px; position:relative}
-    .logoDot{
-      width:54px; height:54px; border-radius:16px;
-      border:1px solid rgba(255,255,255,.15);
-      background:
-        radial-gradient(circle at 30% 30%, rgba(122,247,255,.55), rgba(122,247,255,0) 60%),
-        radial-gradient(circle at 70% 70%, rgba(155,124,255,.52), rgba(155,124,255,0) 60%),
-        rgba(255,255,255,.05);
-      box-shadow: 0 12px 40px rgba(0,0,0,.45);
-    }
-    .loaderTitle{font-weight:900; letter-spacing:.4px; font-size:18px}
-    .loaderSub{color:var(--muted2); font-size:13px; margin-top:2px}
-    .bar{
-      margin-top:16px;
-      height:12px;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 999px;
-      overflow:hidden;
-      position:relative;
-    }
-    .bar > i{
-      display:block; height:100%;
-      width:0%;
-      background: linear-gradient(90deg, rgba(122,247,255,.9), rgba(155,124,255,.9));
-      border-radius:999px;
-      box-shadow: 0 0 30px rgba(122,247,255,.25);
-      animation: load 1.8s var(--ease) forwards;
-    }
-    @keyframes load{to{width:100%}}
-
-    /* ---------- HEADER ---------- */
-    header{
-      position:sticky; top:0; z-index:50;
-      backdrop-filter: blur(14px);
-      background: linear-gradient(180deg, rgba(7,10,18,.70), rgba(7,10,18,.30));
-      border-bottom:1px solid rgba(255,255,255,.10);
-    }
-    .headInner{
-      height:74px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-    }
-    .brand{display:flex; align-items:center; gap:12px; min-width:230px}
-    .brand img{
-      width:46px; height:46px; border-radius:14px;
-      border:1px solid rgba(255,255,255,.15);
-      background: rgba(255,255,255,.05);
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
-      object-fit:cover;
-    }
-    .bname{font-weight:900; letter-spacing:.2px; font-size:16px}
-    .btag{font-size:12px; color:var(--muted2)}
-    .nav{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:center}
-    .navLink{
-      padding:10px 12px;
-      border-radius: 999px;
-      color:var(--muted);
-      border:1px solid transparent;
-      transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease);
+    .lead{
+      margin:0;
+      color: var(--muted);
       font-weight:700;
-      font-size:13px;
-      letter-spacing:.15px;
-    }
-    .navLink:hover{
-      background: rgba(255,255,255,.06);
-      border-color: rgba(255,255,255,.12);
-      transform: translateY(-1px);
-      color:var(--t);
+      line-height:1.55;
+      max-width: 70ch;
     }
 
-    .actions{display:flex; gap:10px; align-items:center}
+    .ctaRow{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:16px;
+    }
     .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:10px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
       padding:11px 14px;
       border-radius: 14px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color:var(--t);
-      font-weight:800;
-      font-size:13px;
       cursor:pointer;
-      transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease);
-      user-select:none;
+      font-weight:950;
+      letter-spacing:.2px;
+      transition:.18s transform,.18s background,.18s border-color;
+      display:inline-flex; align-items:center; gap:10px;
     }
-    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.20)}
-    .btn:active{transform: translateY(0px) scale(.99)}
-    .btn.ghost{background: transparent}
-    .btn.glow{
-      background: linear-gradient(90deg, rgba(122,247,255,.18), rgba(155,124,255,.18));
-      border-color: rgba(122,247,255,.22);
-      box-shadow: 0 20px 60px rgba(122,247,255,.10);
+    .btn:hover{transform: translateY(-1px); border-color: rgba(0,212,255,.28); background: rgba(0,212,255,.10)}
+    .btn.primary{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(90deg, rgba(124,92,255,.26), rgba(0,212,255,.14));
     }
-    .btn.iconbtn{padding:11px 12px; width:44px}
+    .btn.ghost{ background: rgba(255,255,255,.03); }
 
-    /* ---------- FREE VIEW / GATE ---------- */
-    .view{display:none}
-    .view.active{display:block}
-    .gate{
-      padding:26px 0 34px;
-    }
-    .gateTitle{
-      font-size:36px;
-      line-height:1.04;
-      letter-spacing:-.8px;
-      margin:0;
-      font-weight:1000;
-    }
-    .gateSub{margin-top:10px; max-width:720px; color:var(--muted); font-size:15px; line-height:1.6}
+    /* gate cards */
     .gateGrid{
-      margin-top:22px;
       display:grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap:16px;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:14px;
     }
-    @media (max-width: 960px){
-      .brand{min-width:auto}
-      .gateGrid{grid-template-columns: 1fr; }
-      .nav{display:none}
+    @media (min-width: 920px){
+      .gateGrid{grid-template-columns:1fr 1fr}
     }
-
-    .card{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      border-radius: var(--radius);
-      box-shadow: 0 14px 60px rgba(0,0,0,.25);
-    }
-
     .pick{
       position:relative;
-      padding:18px;
-      cursor:pointer;
+      padding:16px;
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
       overflow:hidden;
-      transition: transform .22s var(--ease), border-color .22s var(--ease), background .22s var(--ease);
+      cursor:pointer;
+      transition:.18s transform,.18s border-color,.18s background;
     }
-    .pick:hover{transform: translateY(-2px); border-color: rgba(122,247,255,.22); background: rgba(255,255,255,.06)}
+    .pick:hover{
+      transform: translateY(-2px);
+      border-color: rgba(124,92,255,.30);
+      background: rgba(124,92,255,.06);
+    }
+    .pickGlow{
+      position:absolute; inset:-140px;
+      background: radial-gradient(circle at 20% 10%, rgba(124,92,255,.25), transparent 50%),
+                  radial-gradient(circle at 80% 30%, rgba(0,212,255,.18), transparent 50%);
+      opacity:.6;
+      pointer-events:none;
+    }
     .pickTop{display:flex; align-items:center; justify-content:space-between; gap:12px}
     .tag{
-      padding:7px 10px;
-      border-radius: 999px;
-      font-weight:900;
-      font-size:12px;
-      letter-spacing:.3px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.05);
-    }
-    .tag.free{border-color: rgba(99,255,176,.20); background: rgba(99,255,176,.07)}
-    .tag.prem{border-color: rgba(155,124,255,.20); background: rgba(155,124,255,.08)}
-    .kbd{
+      font-weight:1000; font-size:12px;
       padding:6px 10px;
-      border-radius: 999px;
-      font-size:12px;
-      color:var(--muted);
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
-    }
-    .pickTitle{
-      margin-top:10px;
-      font-weight:1000;
-      font-size:18px;
-      letter-spacing:.1px;
-    }
-    .pickDesc{margin-top:6px; color:var(--muted); font-size:13px; line-height:1.55}
-    .pickGlow{
-      position:absolute; inset:-1px;
-      background: radial-gradient(420px 200px at 20% 20%, rgba(122,247,255,.14), transparent 55%),
-                  radial-gradient(420px 240px at 80% 40%, rgba(155,124,255,.14), transparent 60%);
-      opacity:.85;
-      pointer-events:none;
-    }
-
-    .heroCard{
-      padding:18px;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      position:relative;
-      overflow:hidden;
-    }
-    .heroCard:before{
-      content:"";
-      position:absolute; inset:-2px;
-      background: radial-gradient(800px 400px at 20% 20%, rgba(122,247,255,.10), transparent 60%),
-                  radial-gradient(700px 420px at 85% 30%, rgba(155,124,255,.12), transparent 60%);
-      opacity:.85;
-      pointer-events:none;
-    }
-    .heroRow{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; position:relative}
-    .pills{display:flex; gap:8px; flex-wrap:wrap}
-    .pill{
-      padding:7px 10px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.05);
-      font-size:12px;
-      color:var(--muted);
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      font-weight:800;
     }
-    .dot{width:8px; height:8px; border-radius:99px; background: linear-gradient(90deg, var(--brand), var(--brand2))}
-    .sep{height:1px; background: rgba(255,255,255,.10); margin:4px 0}
-
-    .grid{
-      display:grid;
-      gap:12px;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-    }
-    @media (max-width: 720px){
-      .grid{grid-template-columns: 1fr}
-    }
-
-    .section{padding:26px 0 46px}
-    .section h2{
-      margin:0;
-      font-size:26px;
-      letter-spacing:-.4px;
-      font-weight:1000;
-    }
-
-    .cmds{grid-template-columns: repeat(3, minmax(0,1fr))}
-    @media (max-width: 960px){ .cmds{grid-template-columns: repeat(2, minmax(0,1fr))} }
-    .cmd{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:14px 14px;
-      cursor:pointer;
-      transition: transform .18s var(--ease), border-color .18s var(--ease), background .18s var(--ease);
-    }
-    .cmd:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06)}
-    .cmd span:first-child{font-weight:1000}
-
-    details{border-radius: var(--radius)}
-    details > summary{
-      list-style:none;
-      cursor:pointer;
-      padding:14px 14px;
-      font-weight:900;
-    }
-    details[open]{border-color: rgba(122,247,255,.20)}
-    details p{margin:0; padding:0 14px 14px; color:var(--muted); line-height:1.6; font-size:13px}
-    summary::-webkit-details-marker{display:none}
-
-    /* ---------- PREMIUM VIEW ---------- */
-    .premWrap{padding:30px 0 50px}
-    .premGrid{
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap:16px;
-      align-items:start;
-    }
-    @media (max-width: 960px){ .premGrid{grid-template-columns:1fr} }
-
-    .premHero{
-      position:relative;
-      overflow:hidden;
-      padding:22px 18px;
-    }
-    .premHeroGlow{
-      position:absolute; inset:-1px;
-      background: radial-gradient(700px 360px at 20% 20%, rgba(155,124,255,.18), transparent 60%),
-                  radial-gradient(700px 400px at 80% 35%, rgba(122,247,255,.14), transparent 60%);
-      opacity:.85;
-      pointer-events:none;
-    }
-    .premTopPill{position:relative}
-    .premTitleBig{position:relative; font-weight:1100; letter-spacing:-.7px; font-size:34px; margin-top:10px}
-    .premList{position:relative; margin-top:14px; display:grid; gap:10px}
-    .li{
-      display:flex; gap:10px; align-items:flex-start;
-      padding:12px 12px; border-radius: 14px;
+    .tag.free{border-color: rgba(25,211,139,.35); background: rgba(25,211,139,.08)}
+    .tag.prem{border-color: rgba(245,179,1,.35); background: rgba(245,179,1,.10)}
+    .kbd{color:var(--muted2); font-weight:850; font-size:12px}
+    .pickTitle{font-size:18px; font-weight:1100; margin-top:10px}
+    .pickText{color:var(--muted); font-weight:750; line-height:1.5; margin-top:8px}
+    .pickBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    .miniBtn{
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-    }
-    .li b{display:block; font-weight:1000}
-    .li span{display:block; color:var(--muted); font-size:13px; margin-top:2px; line-height:1.55}
-
-    .prices{padding:18px}
-    .priceBox{
-      display:flex; flex-direction:column; gap:10px;
-    }
-    .priceRow{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:12px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-    }
-    .priceRow:hover{border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06)}
-    .priceRow .name{font-weight:1000}
-    .priceRow .amt{font-weight:1000}
-    .payCard{padding:18px; margin-top:12px}
-    .payGrid{display:grid; gap:10px}
-    .copyLine{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:12px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      font-size:13px;
-    }
-    .copyLine code{
-      color:var(--t);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-      font-size:12px;
-      word-break: break-all;
-    }
-
-    .toast{
-      position:fixed; left:50%; bottom:18px; transform: translateX(-50%) translateY(18px);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
       padding:10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight:950;
+      transition:.18s transform,.18s background,.18s border-color;
+    }
+    .miniBtn:hover{transform: translateY(-1px); border-color: rgba(0,212,255,.28); background: rgba(0,212,255,.10)}
+    .miniBtn.primary{
+      border-color: rgba(124,92,255,.45);
+      background: linear-gradient(90deg, rgba(124,92,255,.26), rgba(0,212,255,.14));
+    }
+
+    .sectionTitle{
+      font-weight:1100;
+      font-size:16px;
+      letter-spacing:.2px;
+      margin:0;
+      padding:14px 14px 0;
+    }
+    .sectionBody{
+      padding:14px;
+      color:var(--muted);
+      font-weight:750;
+      line-height:1.6;
+    }
+
+    .listRow{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:12px;
+      padding:12px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      border-radius: 16px;
+      transition:.16s transform,.16s border-color,.16s background;
+      margin-top:10px;
+    }
+    .listRow:hover{transform: translateY(-1px); border-color: rgba(124,92,255,.25); background: rgba(124,92,255,.06)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+
+    /* dashboard preview */
+    .dashShell{
+      display:grid; gap:14px;
+      grid-template-columns: 1fr;
+    }
+    @media(min-width: 980px){
+      .dashShell{grid-template-columns: 280px 1fr}
+    }
+    .dashNav{ padding:12px; }
+    .dashNav .dashBtn{ width:100%; text-align:left; margin-top:10px; border-radius: 16px; }
+    .dashPanel{ padding:14px; min-height: 320px; }
+
+    /* toast */
+    .toast{
+      position:fixed;
+      left:50%; bottom:18px;
+      transform: translateX(-50%);
+      padding:12px 14px;
       border-radius: 999px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.45);
-      color:var(--t);
-      font-weight:900;
-      font-size:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(12,14,26,.92);
+      box-shadow: var(--shadow);
+      color: var(--text);
+      font-weight:950;
+      z-index:90;
       opacity:0;
       pointer-events:none;
-      transition: opacity .22s var(--ease), transform .22s var(--ease);
-      z-index:999;
+      transition: .18s opacity, .18s transform;
     }
-    .toast.show{opacity:1; transform: translateX(-50%) translateY(0)}
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(-2px);
+    }
 
-    /* ---------- REVEAL ---------- */
-    .reveal{opacity:0; transform: translateY(12px); transition: opacity .6s var(--ease), transform .6s var(--ease)}
-    .reveal.show{opacity:1; transform: translateY(0)}
+    /* loader */
+    .loader{
+      position:fixed; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      background: radial-gradient(900px 600px at 20% 10%, rgba(124,92,255,.25), transparent 60%),
+                  radial-gradient(800px 600px at 80% 30%, rgba(0,212,255,.20), transparent 60%),
+                  linear-gradient(180deg, #060711, #090b16);
+      z-index: 120;
+      transition: .35s opacity, .35s transform;
+    }
+    .loader.hide{opacity:0; pointer-events:none; transform: scale(1.02)}
+    .loadCard{
+      width:min(540px, 100%);
+      border-radius: 24px;
+      padding:18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      box-shadow: var(--shadow);
+    }
+    .bar{
+      width:100%; height:10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      margin-top:12px;
+    }
+    .barFill{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 999px;
+      transition: width .22s ease;
+    }
+    .loadRow{
+      display:flex; justify-content:space-between; align-items:center;
+      color: var(--muted);
+      font-weight:850;
+      font-size:13px;
+      margin-top:10px;
+    }
 
-    /* ---------- PANELS (no deep scroll) ---------- */
-    html,body{height:100%}
-    body{overflow:hidden}
-    #freeView{height:100vh; overflow:hidden}
-    #freeView .container{position:relative}
-    .panel{display:none; height:calc(100vh - 88px); overflow:auto; padding-bottom:30px;}
-    .panel.active{display:block; animation: panelIn .22s ease both;}
-    @keyframes panelIn{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)}}
-    .navLink{border:0; background:transparent; cursor:pointer}
-    .navLink.active{color:var(--t); text-shadow: 0 0 18px rgba(142, 246, 255, .35);}
+    footer{
+      margin-top:22px;
+      color: var(--muted2);
+      font-weight:800;
+      font-size:12px;
+      text-align:center;
+      opacity:.9;
+    }
   </style>
 </head>
 
 <body>
-  <div class="bgBlobs" aria-hidden="true">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="blob b3"></div>
-  </div>
-  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="noise" aria-hidden="true"></div>
 
   <!-- LOADER -->
-  <div class="loaderWrap" id="loader">
-    <div class="loader">
-      <div class="loaderTop">
-        <div class="logoDot"></div>
-        <div>
-          <div class="loaderTitle">Nozzarri Tickets</div>
-          <div class="loaderSub">Loading UI…</div>
-        </div>
+  <div class="loader" id="loader" aria-hidden="false">
+    <div class="loadCard">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="assets/nozzarri.png" alt="Nozzarri" class="brandImg" onerror="this.style.display='none'">
+        <div style="font-weight:1100; letter-spacing:.2px;">Nozzarri Tickets</div>
       </div>
-      <div class="bar"><i></i></div>
+      <div class="loadRow">
+        <span id="loadText">Booting</span>
+        <span id="loadPct">0%</span>
+      </div>
+      <div class="bar"><div class="barFill" id="barFill"></div></div>
+      <div class="hint">Loading UI, routes, and animations…</div>
     </div>
   </div>
 
-  <div class="toast" id="toast">Copied!</div>
-
-  <!-- FREE VIEW -->
-  <div class="view active" id="freeView">
-    <header>
-      <div class="container headInner">
-        <a class="brand" href="#" title="Home">
-          <img src="assets/nozzarri.png" alt="Nozzarri Tickets" />
-          <div>
-            <div class="bname">Nozzarri Tickets</div>
-            <div class="btag">Discord Tickets</div>
-          </div>
-        </a>
-
-        <nav class="nav" aria-label="Primary">
-          <button class="navLink" type="button" data-panel="home">Home</button>
-          <button class="navLink" type="button" data-panel="features">Features</button>
-          <button class="navLink" type="button" data-panel="commands">Commands</button>
-          <button class="navLink" type="button" data-panel="dashboard">Dashboard</button>
-          <button class="navLink" type="button" data-panel="faq">FAQ</button>
-        </nav>
-
-        <div class="actions">
-          <button class="btn ghost iconbtn" id="navBack" type="button" title="Back" style="display:none;">↩️</button>
-          <a class="btn ghost" id="youtubeBtn" href="#" target="_blank" rel="noreferrer" title="YouTube">▶️ YouTube</a>
-          <button class="btn ghost iconbtn" id="copyInvite" type="button" title="Copy Discord server invite">📋</button>
-          <button class="btn glow" id="openPremium" type="button">Premium</button>
+  <!-- TOP NAV -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="assets/nozzarri.png" alt="Nozzarri" class="brandImg" onerror="this.style.display='none'">
+        <div>
+          Nozzarri Tickets
+          <small>Free • Premium • Dashboard</small>
         </div>
       </div>
-    </header>
 
-    <main class="container panel active" data-panel="home" id="gateRoot">
-      <section class="gate">
-        <div class="heroCard card reveal">
-          <div class="heroRow">
-            <div class="pills">
-              <div class="pill"><span class="dot"></span> Support tickets</div>
-              <div class="pill"><span class="dot"></span> Trade / MM tickets</div>
-              <div class="pill"><span class="dot"></span> Logs & transcripts</div>
-            </div>
-            <div style="display:flex; gap:10px; align-items:center;">
-              <button class="btn ghost" id="copySite" type="button" title="Copy website link">🔗 Copy site</button>
-            </div>
-          </div>
-          <div class="sep"></div>
-          <h1 class="gateTitle reveal">Nozzarri Tickets — <span class="grad">Clean</span> panels & fast setup</h1>
-          <div class="gateSub reveal">
-            A ticket bot for Discord with clean panels, support flows, logs/transcripts and easy setup.
-            Use <b>?support</b> or <b>?ticket</b> to open panels.
+      <div class="navBtns">
+        <button class="pillBtn" id="navUndo" type="button" title="Undo last menu change">↩ Undo</button>
+        <button class="pillBtn" id="navHome" type="button">🏠 Home</button>
+        <button class="pillBtn" id="navFree" type="button">✅ Free</button>
+        <button class="pillBtn" id="navPremium" type="button">💎 Premium</button>
+        <button class="pillBtn primary" id="navDashboard" type="button">🧩 Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- HOME -->
+    <div class="view show" id="gateRoot">
+      <div class="hero">
+        <div class="heroTop">
+          <div class="pill"><span class="dot"></span> Ticket Bot • Panels • Logs • Clean UI</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="pillBtn" id="copySite" type="button" title="Copy website link">🔗 Copy site</button>
+            <button class="pillBtn" id="openDiscord" type="button">💬 Discord</button>
+            <button class="pillBtn" id="openYoutube" type="button">▶️ YouTube</button>
           </div>
         </div>
 
-        <div class="gateGrid">
+        <h1>Tickets with <span class="grad">premium</span> style</h1>
+        <p class="lead">
+          Nozzarri Tickets gives you Support + Trade tickets, clean panels, logs, and safer permission checks.
+          Use the dashboard to manage settings.
+        </p>
+
+        <div class="ctaRow">
+          <button class="btn primary" id="goFree" type="button">✅ Open Free</button>
+          <button class="btn" id="goPrem" type="button">💎 Open Premium</button>
+          <button class="btn ghost" id="goDash" type="button">🧩 Open Dashboard</button>
+        </div>
+
+        <div class="gateGrid" aria-label="Select plan">
           <!-- FREE -->
-          <div class="pick card reveal" id="pickFree" role="button" tabindex="0" aria-label="Select Free">
+          <div class="pick" id="pickFree" role="button" tabindex="0" aria-label="Select Free">
             <div class="pickGlow" aria-hidden="true"></div>
             <div class="pickTop">
               <div class="tag free">FREE</div>
-              <div class="kbd">instant access</div>
+              <div class="kbd">main commands</div>
             </div>
-            <div class="pickTitle">Free Bot</div>
-            <div class="pickDesc">
-              Basic ticket panels, logs, transcripts & stable performance.
+            <div class="pickTitle">Nozzarri Tickets — Free</div>
+            <div class="pickText">
+              Support + Ticket panels + basic commands. Dashboard is accessible.
             </div>
-            <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
-              <a class="btn glow" id="inviteBtn" href="#" target="_blank" rel="noreferrer">Invite bot</a>
-              <a class="btn ghost" id="serverBtn" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">Support server</a>
-              <button class="btn ghost" type="button" id="goDashboard">Open dashboard</button>
+            <div class="pickBtns">
+              <button class="miniBtn primary" id="freeOpen" type="button">Open Free</button>
+              <button class="miniBtn" id="freeInvite" type="button">Join Discord</button>
             </div>
           </div>
 
           <!-- PREMIUM -->
-          <div class="pick card reveal" id="pickPrem" role="button" tabindex="0" aria-label="Select Premium">
+          <div class="pick" id="pickPrem" role="button" tabindex="0" aria-label="Select Premium">
             <div class="pickGlow" aria-hidden="true"></div>
             <div class="pickTop">
               <div class="tag prem">PREMIUM</div>
-              <div class="kbd">keys & extras</div>
+              <div class="kbd">extra options</div>
             </div>
-            <div class="pickTitle">Premium</div>
-            <div class="pickDesc">
-              More commands, priority support, extra configuration & features.
+            <div class="pickTitle">Nozzarri Tickets — Premium</div>
+            <div class="pickText">
+              Premium adds extra customization. (Dashboard stays free; premium settings can be locked.)
             </div>
-            <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
-              <button class="btn glow" id="openPremium2" type="button">View premium</button>
-              <button class="btn ghost" id="copyPremiumInfo" type="button">Copy payment info</button>
+            <div class="pickBtns">
+              <button class="miniBtn primary" id="premOpen" type="button">Open Premium</button>
+              <button class="miniBtn" id="premDiscord" type="button">Discord</button>
             </div>
           </div>
         </div>
-      </section>
-    </main>
+      </div>
 
-    <div class="container">
-      <section id="features" class="section panel" data-panel="features">
-        <h2 class="reveal">Features</h2>
-        <p class="muted reveal">Everything you need for a clean ticket experience.</p>
-
-        <div class="grid">
-          <div class="card reveal" style="padding:16px;">
-            <div style="font-weight:1000;">🎫 Panels (Support / Trade / Custom)</div>
-            <div class="muted" style="margin-top:6px; line-height:1.6;">Button-based ticket panels — simple UX for members.</div>
-          </div>
-          <div class="card reveal" style="padding:16px;">
-            <div style="font-weight:1000;">🧾 Logs & Transcripts</div>
-            <div class="muted" style="margin-top:6px; line-height:1.6;">Auto-log actions and save transcripts to a logs channel.</div>
-          </div>
-          <div class="card reveal" style="padding:16px;">
-            <div style="font-weight:1000;">🔐 Permissions</div>
-            <div class="muted" style="margin-top:6px; line-height:1.6;">Roles to view/manage tickets, private staff tools.</div>
-          </div>
-          <div class="card reveal" style="padding:16px;">
-            <div style="font-weight:1000;">⚡ Fast Setup</div>
-            <div class="muted" style="margin-top:6px; line-height:1.6;">Setup in minutes, clean channels & consistent layout.</div>
-          </div>
+      <div class="grid three" style="margin-top:16px;">
+        <div class="card">
+          <p class="sectionTitle">⚡ Fast setup</p>
+          <div class="sectionBody">Clean panels, simple flows, and smart permission checks.</div>
         </div>
-      </section>
-
-      <section id="commands" class="section panel" data-panel="commands">
-        <h2 class="reveal">Commands</h2>
-        <p class="muted reveal">Click a command to copy it.</p>
-
-        <div class="grid cmds">
-          <button class="cmd card reveal" data-copy="?help"><span>?help</span> <span class="kbd">copy</span></button>
-          <button class="cmd card reveal" data-copy="?support"><span>?support</span> <span class="kbd">copy</span></button>
-          <button class="cmd card reveal" data-copy="?ticket"><span>?ticket</span> <span class="kbd">copy</span></button>
-          <button class="cmd card reveal" data-copy="?close"><span>?close</span> <span class="kbd">copy</span></button>
-          <button class="cmd card reveal" data-copy="?setup"><span>?setup <span class="muted">(owner)</span></span> <span class="kbd">copy</span></button>
-          <button class="cmd card reveal" data-copy="?panel"><span>?panel <span class="muted">(owner)</span></span> <span class="kbd">copy</span></button>
+        <div class="card">
+          <p class="sectionTitle">🧾 Panels</p>
+          <div class="sectionBody">Support / Ticket panels for easy usage.</div>
         </div>
-
-        <div class="note card reveal" style="margin-top:14px; padding:14px;">
-          <div class="muted">Tip: The bot uses buttons/panels — <b>?support</b> and <b>?ticket</b> open the ticket panels.</div>
+        <div class="card">
+          <p class="sectionTitle">🧩 Dashboard</p>
+          <div class="sectionBody">Login with Discord, select your server, and change settings.</div>
         </div>
-      </section>
+      </div>
 
-      <section id="dashboard" class="section panel" data-panel="dashboard">
-        <h2 class="reveal">Dashboard</h2>
-        <p class="muted reveal">Free dashboard to manage your server panels & ticket settings. Login with Discord.</p>
-
-        <div class="grid" style="grid-template-columns: 1.2fr .8fr; gap:16px;">
-          <div class="card reveal" style="padding:18px;">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-              <div>
-                <div style="font-weight:800; font-size:18px;">Server Manager</div>
-                <div class="muted" style="margin-top:4px;">Panels, logs channel, transcripts, roles, and more.</div>
-              </div>
-              <a class="btn" id="dashOpen" href="/dashboard" target="_blank" rel="noreferrer">Open dashboard</a>
-            </div>
-
-            <div style="margin-top:14px;" class="grid" >
-              <div class="card" style="padding:14px;">
-                <div style="font-weight:700;">✅ Ticket Panels</div>
-                <div class="muted">Create Support / Trade / Custom panels.</div>
-              </div>
-              <div class="card" style="padding:14px;">
-                <div style="font-weight:700;">🧾 Transcripts</div>
-                <div class="muted">Auto-save conversations to a logs channel.</div>
-              </div>
-              <div class="card" style="padding:14px;">
-                <div style="font-weight:700;">🔐 Permissions</div>
-                <div class="muted">Roles allowed to view / manage tickets.</div>
-              </div>
-              <div class="card" style="padding:14px;">
-                <div style="font-weight:700;">🎨 Theme</div>
-                <div class="muted">Customize colors to match your server.</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card reveal" style="padding:18px;">
-            <div style="font-weight:800; font-size:18px;">Login</div>
-            <div class="muted" style="margin-top:4px;">Use Discord OAuth to access your servers.</div>
-
-            <div style="display:grid; gap:10px; margin-top:12px;">
-              <a class="btn glow" id="dashLogin" href="/auth/discord" rel="noreferrer">Login with Discord</a>
-              <button class="btn ghost" id="dashCopyCallback" type="button" data-copy="http://85.215.159.4:9717/auth/discord/callback">Copy callback URL</button>
-              <div class="muted" style="font-size:12px; line-height:1.4;">
-                If you host the dashboard on the IP, keep the callback URL exactly as above in your Discord developer portal.
-              </div>
-            </div>
-
-            <div class="sep" style="margin:14px 0;"></div>
-
-            <div style="font-weight:700;">Where is the dashboard?</div>
-            <div class="muted" style="margin-top:6px;">After login, you’ll be redirected to <b>/dashboard</b>. If you’re using a different path, change the links in this page.</div>
-          </div>
-        </div>
-      </section>
-
-      <section id="faq" class="section panel" data-panel="faq">
-        <h2 class="reveal">FAQ</h2>
-        <div class="faq">
-          <details class="card reveal">
-            <summary>Is the dashboard free?</summary>
-            <p>Yes — the dashboard is free. Premium just adds extra options/features.</p>
-          </details>
-
-          <details class="card reveal">
-            <summary>How do I open ticket panels?</summary>
-            <p>Use <b>?support</b> or <b>?ticket</b> (then click the buttons in the panel).</p>
-          </details>
-
-          <details class="card reveal">
-            <summary>Where do I get help?</summary>
-            <p>Join the support server: <a href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer"><b>discord.gg/FHRSPyXw</b></a></p>
-          </details>
-        </div>
-      </section>
+      <footer>
+        © <span id="year"></span> Nozzarri Tickets • Built for Discord communities
+      </footer>
     </div>
-  </div>
 
-  <!-- PREMIUM VIEW -->
-  <div class="view" id="premView">
-    <header>
-      <div class="container headInner">
-        <a class="brand" href="#" id="backToFree" title="Back">
-          <img src="assets/nozzarri.png" alt="Nozzarri Tickets" />
-          <div>
-            <div class="bname">Nozzarri Tickets</div>
-            <div class="btag">Premium</div>
+    <!-- FREE VIEW -->
+    <div class="view" id="freeView">
+      <div class="hero">
+        <div class="heroTop">
+          <div class="pill"><span class="dot"></span> Free • Commands</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="pillBtn" id="backGate1" type="button">⬅ Back</button>
+            <button class="pillBtn primary" id="freeDashBtn" type="button">🧩 Dashboard</button>
           </div>
-        </a>
-        <div class="actions">
-          <button class="btn ghost" id="backBtn" type="button">← Back</button>
-          <a class="btn ghost" href="https://discord.gg/FHRSPyXw" target="_blank" rel="noreferrer">Support server</a>
+        </div>
+
+        <h1>Free bot, <span class="grad">simple</span> commands</h1>
+        <p class="lead">
+          These are the only commands shown on the website (no fake ones).
+        </p>
+
+        <div class="ctaRow">
+          <a class="btn primary" id="inviteBtn3" href="#" target="_blank" rel="noreferrer">💬 Join Discord</a>
+          <a class="btn ghost" id="botBtn3" href="#" target="_blank" rel="noreferrer">➕ Add Bot</a>
+          <button class="btn" id="copyInvite3" type="button">📋 Copy server invite</button>
+          <a class="btn ghost" id="youtubeBtn3" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
         </div>
       </div>
-    </header>
 
-    <main class="container premWrap">
-      <div class="premGrid">
-        <div class="premLeft">
-          <div class="premHero card reveal">
-            <div class="premHeroGlow" aria-hidden="true"></div>
-            <div class="premTopPill">
-              <div class="pill"><span class="dot"></span> Premium • Keys • Extra Commands</div>
-            </div>
-            <div class="premTitleBig">Nozzarri Tickets <span class="grad">Premium</span></div>
-            <p class="muted" style="position:relative; line-height:1.6; margin:10px 0 0;">
-              Upgrade for extra features and priority support.
-            </p>
-
-            <div class="premList">
-              <div class="li"><div>✨</div><div><b>More settings</b><span>More dashboard configuration options.</span></div></div>
-              <div class="li"><div>🚀</div><div><b>Priority support</b><span>Faster help in the support server.</span></div></div>
-              <div class="li"><div>🔧</div><div><b>Extra commands</b><span>Advanced tools for staff (depends on your build).</span></div></div>
-            </div>
-          </div>
+      <div class="grid two" style="margin-top:16px;">
+        <div class="card">
+          <p class="sectionTitle">✅ Free features</p>
+          <div class="sectionBody" id="freeFeatures"></div>
         </div>
 
-        <div class="premRight">
-          <div class="card prices reveal">
-            <div style="font-weight:1000; font-size:18px;">Plans</div>
-            <div class="muted" style="margin-top:4px;">Pick a key tier.</div>
-            <div class="priceBox" style="margin-top:12px;">
-              <div class="priceRow"><div><div class="name">$1 Key</div><div class="muted2" style="font-size:12px;">Starter</div></div><div class="amt">$1</div></div>
-              <div class="priceRow"><div><div class="name">$2 Key</div><div class="muted2" style="font-size:12px;">Plus</div></div><div class="amt">$2</div></div>
-              <div class="priceRow"><div><div class="name">$4 Key</div><div class="muted2" style="font-size:12px;">Pro</div></div><div class="amt">$4</div></div>
-            </div>
-          </div>
-
-          <div class="card payCard reveal">
-            <div style="font-weight:1000; font-size:18px;">Pay</div>
-            <div class="muted" style="margin-top:4px;">Copy payment info.</div>
-
-            <div class="payGrid" style="margin-top:12px;">
-              <div class="copyLine">
-                <div class="muted2">LTC Address</div>
-                <code id="ltcAddr">YOUR_LTC_ADDRESS_HERE</code>
-                <button class="btn iconbtn" data-copy-from="#ltcAddr" type="button">📋</button>
-              </div>
-
-              <div class="copyLine">
-                <div class="muted2">Discord</div>
-                <code id="discTag">discord.gg/FHRSPyXw</code>
-                <button class="btn iconbtn" data-copy-from="#discTag" type="button">📋</button>
-              </div>
-
-              <div class="copyLine">
-                <div class="muted2">Info</div>
-                <code id="payInfo">Send the TXID after payment.</code>
-                <button class="btn iconbtn" data-copy-from="#payInfo" type="button">📋</button>
-              </div>
-            </div>
-
-            <div class="sep" style="margin:14px 0;"></div>
-            <div class="muted" style="font-size:12px; line-height:1.5;">
-              Note: Replace YOUR_LTC_ADDRESS_HERE with your real address in this file.
-            </div>
-          </div>
-
+        <div class="card">
+          <p class="sectionTitle">⌨️ Commands</p>
+          <div class="sectionBody" id="freeCommands"></div>
         </div>
       </div>
-    </main>
+
+      <footer>
+        Tip: use the <b class="mono">Dashboard</b> button to manage servers.
+      </footer>
+    </div>
+
+    <!-- PREMIUM VIEW -->
+    <div class="view" id="premView">
+      <div class="hero">
+        <div class="heroTop">
+          <div class="pill"><span class="dot"></span> Premium • Info</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="pillBtn" id="backGate2" type="button">⬅ Back</button>
+            <button class="pillBtn primary" id="premDashBtn" type="button">🧩 Dashboard</button>
+          </div>
+        </div>
+
+        <h1>Nozzarri Tickets <span class="grad">Premium</span></h1>
+        <p class="lead">
+          Premium adds extra features. Website does not list “random commands”.
+        </p>
+
+        <div class="ctaRow">
+          <button class="btn primary" id="openRealDash2" type="button">🧩 Open Real Dashboard</button>
+        </div>
+      </div>
+
+      <div class="grid two" style="margin-top:16px;">
+        <div class="card">
+          <p class="sectionTitle">⭐ What premium means</p>
+          <div class="sectionBody">
+            Premium can unlock extra settings in the dashboard (themes, more config etc).
+            <div class="hint" style="margin-top:10px;">
+              Dashboard itself stays usable for everyone — only premium settings should be locked.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="sectionTitle">✅ Real commands (website)</p>
+          <div class="sectionBody">
+            This website only shows:
+            <div class="listRow"><div><div class="mono" style="font-weight:1100;">?help</div><div class="hint">Help / info</div></div></div>
+            <div class="listRow"><div><div class="mono" style="font-weight:1100;">?ticket</div><div class="hint">Ticket panel</div></div></div>
+            <div class="listRow"><div><div class="mono" style="font-weight:1100;">?support</div><div class="hint">Support panel</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        Want the real dashboard? Click <b class="mono">Open Real Dashboard</b>.
+      </footer>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div class="view" id="dashView">
+      <div class="hero">
+        <div class="heroTop">
+          <div class="pill"><span class="dot"></span> Dashboard • FREE</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="pillBtn" id="backGate3" type="button">⬅ Back</button>
+            <button class="pillBtn primary" id="openRealDash" type="button">🧩 Open Real Dashboard</button>
+          </div>
+        </div>
+
+        <h1>Real <span class="grad">Dashboard</span> access</h1>
+        <p class="lead">
+          This page is the website UI preview. The real dashboard is hosted by your backend (index.js).
+        </p>
+
+        <div class="ctaRow">
+          <button class="btn primary" id="dashLoginBtn" type="button">🔐 Login (Real Dashboard)</button>
+          <button class="btn" id="dashUndoBtn" type="button">↩ Undo (Dashboard menu)</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="dashShell">
+          <div class="dashNav">
+            <div style="font-weight:1100; padding:10px 8px; color:var(--muted);">Dashboard Menu</div>
+            <button class="btn dashBtn primary" id="menuOverview" type="button">📌 Overview</button>
+            <button class="btn dashBtn" id="menuCommands" type="button">⌨️ Commands</button>
+            <button class="btn dashBtn" id="menuFAQ" type="button">❓ FAQ</button>
+
+            <div class="hint" style="margin-top:12px; padding:0 8px;">
+              This switches panels instantly (no scrolling).
+            </div>
+          </div>
+
+          <div class="dashPanel" id="dashPanel"></div>
+        </div>
+      </div>
+
+      <footer>
+        Real dashboard URL: <b class="mono" id="realDashUrl"></b>
+      </footer>
+    </div>
+
   </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast" aria-hidden="true"></div>
 
   <script>
-    // Loader hide
-    window.addEventListener('load', ()=>{
-      setTimeout(()=>{
-        const l = document.getElementById('loader');
-        if(l){ l.style.opacity = '0'; l.style.pointerEvents='none'; }
-      }, 550);
-    });
+    // ============================================================
+    // CONFIG (EDIT THESE)
+    // ============================================================
+    const SITE_URL = location.origin;
 
-    // Stars canvas
-    (function(){
-      const c = document.getElementById('stars');
-      if(!c) return;
-      const ctx = c.getContext('2d');
-      let w,h,stars=[];
-      function resize(){
-        w=c.width=window.innerWidth;
-        h=c.height=window.innerHeight;
-        stars = Array.from({length: Math.floor((w*h)/24000)}, ()=>({
-          x: Math.random()*w, y: Math.random()*h,
-          r: Math.random()*1.4 + .2,
-          a: Math.random()*0.6 + .25,
-          s: Math.random()*0.35 + .05
-        }));
-      }
-      function tick(){
-        ctx.clearRect(0,0,w,h);
-        for(const st of stars){
-          st.y += st.s;
-          if(st.y>h){ st.y=-10; st.x=Math.random()*w; }
-          ctx.globalAlpha = st.a;
-          ctx.beginPath();
-          ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
-          ctx.fillStyle = "#fff";
-          ctx.fill();
-        }
-        requestAnimationFrame(tick);
-      }
-      window.addEventListener('resize', resize);
-      resize(); tick();
-    })();
+    // Your Discord server invite
+    const SERVER_INVITE_URL = "https://discord.gg/FHRSPyXw";
 
-    // Toast + copy helpers
-    const toast = document.getElementById('toast');
-    function showToast(msg="Copied!"){
-      if(!toast) return;
-      toast.textContent = msg;
-      toast.classList.add('show');
+    // Your bot invite
+    const BOT_INVITE_URL = "https://discord.com/oauth2/authorize?client_id=1442592762108186675";
+
+    // Youtube / updates link
+    const YOUTUBE_URL = "https://www.youtube.com/";
+
+    // REAL DASHBOARD BASE (backend from index.js)
+    const DASHBOARD_BASE = "http://85.215.159.4:9717";
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    const $ = (id) => document.getElementById(id);
+
+    function showToast(msg){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      t.setAttribute("aria-hidden","false");
       clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=>toast.classList.remove('show'), 1400);
+      showToast._t = setTimeout(()=>{
+        t.classList.remove("show");
+        t.setAttribute("aria-hidden","true");
+      }, 1400);
     }
-    async function copyText(txt){
+
+    async function copyText(text){
       try{
-        await navigator.clipboard.writeText(txt);
-        showToast("Copied!");
-      }catch(e){
-        // fallback
-        const ta = document.createElement('textarea');
-        ta.value = txt;
+        await navigator.clipboard.writeText(text);
+        showToast("Copied ✅");
+      }catch{
+        const ta = document.createElement("textarea");
+        ta.value = text;
         document.body.appendChild(ta);
         ta.select();
-        document.execCommand('copy');
+        document.execCommand("copy");
         ta.remove();
-        showToast("Copied!");
+        showToast("Copied ✅");
       }
     }
 
-    // Click-to-copy commands & buttons
-    document.addEventListener('click', (e)=>{
-      const cmd = e.target.closest('[data-copy]');
-      if(cmd){
-        copyText(cmd.getAttribute('data-copy'));
-      }
-      const from = e.target.closest('[data-copy-from]');
-      if(from){
-        const sel = from.getAttribute('data-copy-from');
-        const el = document.querySelector(sel);
-        if(el) copyText(el.textContent.trim());
-      }
-    });
-
-    // Set your links here
-    const INVITE_LINK = "https://discord.com/oauth2/authorize?client_id=1442592762108186675";
-    const YT_LINK = "#"; // your youtube link if you have it
-    const SITE_LINK = location.href;
-
-    const inviteBtn = document.getElementById('inviteBtn');
-    const youtubeBtn = document.getElementById('youtubeBtn');
-    const copyInvite = document.getElementById('copyInvite');
-    const copySite = document.getElementById('copySite');
-    if(inviteBtn) inviteBtn.href = INVITE_LINK;
-    if(youtubeBtn) youtubeBtn.href = YT_LINK;
-
-    if(copyInvite) copyInvite.addEventListener('click', ()=> copyText("https://discord.gg/FHRSPyXw"));
-    if(copySite) copySite.addEventListener('click', ()=> copyText(SITE_LINK));
-
-    // Premium view switch
-    const freeView = document.getElementById('freeView');
-    const premView = document.getElementById('premView');
-    const openPremium = document.getElementById('openPremium');
-    const openPremium2 = document.getElementById('openPremium2');
-    const backBtn = document.getElementById('backBtn');
-    const backToFree = document.getElementById('backToFree');
-    function showPremium(){
-      freeView.classList.remove('active');
-      premView.classList.add('active');
-      window.scrollTo(0,0);
+    function openUrl(url){
+      window.open(url, "_blank", "noopener,noreferrer");
     }
-    function showFree(){
-      premView.classList.remove('active');
-      freeView.classList.add('active');
-      window.scrollTo(0,0);
-    }
-    openPremium && openPremium.addEventListener('click', showPremium);
-    openPremium2 && openPremium2.addEventListener('click', showPremium);
-    backBtn && backBtn.addEventListener('click', showFree);
-    backToFree && backToFree.addEventListener('click', (e)=>{ e.preventDefault(); showFree(); });
 
-    const copyPremiumInfo = document.getElementById('copyPremiumInfo');
-    copyPremiumInfo && copyPremiumInfo.addEventListener('click', ()=>{
-      copyText("Premium payments: LTC + TXID. Join support server for keys: https://discord.gg/FHRSPyXw");
-    });
-
-    // Reveal on enter
-    (function(){
-      const els = Array.from(document.querySelectorAll('.reveal'));
-      const io = new IntersectionObserver((entries)=>{
-        entries.forEach(ent=>{
-          if(ent.isIntersecting) ent.target.classList.add('show');
-        });
-      }, {threshold: 0.12});
-      els.forEach(el=>io.observe(el));
+    // ============================================================
+    // LOADER
+    // ============================================================
+    const loader = $("loader");
+    const loadText = $("loadText");
+    const loadPct = $("loadPct");
+    const barFill = $("barFill");
+    const steps = [
+      ["Booting UI", 12],
+      ["Loading assets", 32],
+      ["Preparing menus", 60],
+      ["Finalizing", 90],
+      ["Ready", 100],
+    ];
+    (function runLoader(){
+      let i = 0;
+      function step(){
+        const [t, p] = steps[i];
+        loadText.textContent = t;
+        barFill.style.width = p + "%";
+        loadPct.textContent = p + "%";
+        i++;
+        if(i < steps.length){
+          setTimeout(step, 180 + Math.random()*160);
+        }else{
+          setTimeout(() => loader.classList.add("hide"), 320);
+        }
+      }
+      setTimeout(step, 220);
     })();
 
-    // Panel navigation (NO deep scroll)
-    (function(){
-      const freeView = document.getElementById('freeView');
-      if(!freeView) return;
+    // ============================================================
+    // VIEWS + HISTORY (UNDO)
+    // ============================================================
+    const gateRoot = $("gateRoot");
+    const freeView = $("freeView");
+    const premView = $("premView");
+    const dashView = $("dashView");
 
-      const navButtons = Array.from(document.querySelectorAll('.nav .navLink[data-panel]'));
-      const panels = Array.from(document.querySelectorAll('#freeView [data-panel]'));
-      const backBtn = document.getElementById('navBack');
+    const historyStack = []; // { viewId, dashPanelKey? }
 
-      const stack = [];
+    function currentViewId(){
+      if(gateRoot.classList.contains("show")) return "gateRoot";
+      if(freeView.classList.contains("show")) return "freeView";
+      if(premView.classList.contains("show")) return "premView";
+      if(dashView.classList.contains("show")) return "dashView";
+      return "gateRoot";
+    }
 
-      function setActive(panelName, push=true){
-        const current = panels.find(p=>p.classList.contains('active'));
-        if(current && current.getAttribute('data-panel') === panelName) return;
-
-        if(current){
-          current.classList.remove('active');
-          if(push) stack.push(current.getAttribute('data-panel'));
-        }
-
-        const next = panels.find(p=>p.getAttribute('data-panel')===panelName);
-        if(next){
-          next.classList.add('active');
-          next.scrollTop = 0;
-        }
-
-        navButtons.forEach(b=>{
-          b.classList.toggle('active', b.getAttribute('data-panel')===panelName);
-        });
-
-        backBtn.style.display = stack.length ? 'inline-flex' : 'none';
-      }
-
-      navButtons.forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          setActive(btn.getAttribute('data-panel'), true);
-        });
+    function hideAllViews(){
+      [gateRoot, freeView, premView, dashView].forEach(v=>{
+        v.classList.remove("show");
+        v.style.display = "none";
       });
+    }
+    function showViewById(id){
+      hideAllViews();
+      const el = $(id);
+      el.style.display = "block";
+      el.classList.add("show");
+    }
 
-      backBtn && backBtn.addEventListener('click', ()=>{
-        const prev = stack.pop();
-        if(!prev) return;
-        setActive(prev, false);
-        backBtn.style.display = stack.length ? 'inline-flex' : 'none';
+    function pushHistory(next){
+      const cur = { viewId: currentViewId(), dashPanelKey: dashState.activeKey };
+      const last = historyStack[historyStack.length - 1];
+      // avoid duplicates
+      if(!last || last.viewId !== cur.viewId || last.dashPanelKey !== cur.dashPanelKey){
+        historyStack.push(cur);
+      }
+    }
+
+    function undo(){
+      const prev = historyStack.pop();
+      if(!prev){
+        showToast("Nothing to undo");
+        return;
+      }
+      showViewById(prev.viewId);
+      if(prev.viewId === "dashView"){
+        setDashPanel(prev.dashPanelKey || "overview", false);
+      }
+      showToast("Undo ↩");
+    }
+
+    // show helpers (these push history)
+    function showGate(){ pushHistory(); showViewById("gateRoot"); }
+    function showFree(){ pushHistory(); showViewById("freeView"); }
+    function showPrem(){ pushHistory(); showViewById("premView"); }
+    function showDash(){ pushHistory(); showViewById("dashView"); setDashPanel(dashState.activeKey || "overview", false); }
+
+    // ============================================================
+    // TOP NAV
+    // ============================================================
+    $("navUndo").addEventListener("click", undo);
+    $("navHome").addEventListener("click", showGate);
+    $("navFree").addEventListener("click", showFree);
+    $("navPremium").addEventListener("click", showPrem);
+    $("navDashboard").addEventListener("click", showDash);
+
+    // home CTA buttons
+    $("goFree").addEventListener("click", showFree);
+    $("goPrem").addEventListener("click", showPrem);
+    $("goDash").addEventListener("click", showDash);
+
+    // gate cards
+    $("pickFree").addEventListener("click", (e)=>{ if(e.target.closest("button")) return; showFree(); });
+    $("pickPrem").addEventListener("click", (e)=>{ if(e.target.closest("button")) return; showPrem(); });
+    $("freeOpen").addEventListener("click", showFree);
+    $("premOpen").addEventListener("click", showPrem);
+
+    // back buttons
+    $("backGate1").addEventListener("click", ()=>{ pushHistory(); showGate(); });
+    $("backGate2").addEventListener("click", ()=>{ pushHistory(); showGate(); });
+    $("backGate3").addEventListener("click", ()=>{ pushHistory(); showGate(); });
+
+    // ============================================================
+    // LINKS
+    // ============================================================
+    $("openDiscord").addEventListener("click", ()=>openUrl(SERVER_INVITE_URL));
+    $("openYoutube").addEventListener("click", ()=>openUrl(YOUTUBE_URL));
+    $("freeInvite").addEventListener("click", ()=>openUrl(SERVER_INVITE_URL));
+    $("premDiscord").addEventListener("click", ()=>openUrl(SERVER_INVITE_URL));
+
+    $("inviteBtn3").href = SERVER_INVITE_URL;
+    $("botBtn3").href = BOT_INVITE_URL;
+    $("youtubeBtn3").href = YOUTUBE_URL;
+
+    $("copyInvite3").addEventListener("click", ()=>copyText(SERVER_INVITE_URL));
+    $("copySite").addEventListener("click", ()=>copyText(SITE_URL));
+
+    // ============================================================
+    // REAL DASHBOARD OPEN
+    // ============================================================
+    const REAL_DASH_URL = DASHBOARD_BASE.replace(/\/+$/,"") + "/dashboard";
+    $("realDashUrl").textContent = REAL_DASH_URL;
+
+    function openRealDashboard(){
+      openUrl(REAL_DASH_URL);
+    }
+    $("openRealDash").addEventListener("click", openRealDashboard);
+    $("dashLoginBtn").addEventListener("click", openRealDashboard);
+    $("freeDashBtn").addEventListener("click", openRealDashboard);
+    $("premDashBtn").addEventListener("click", openRealDashboard);
+    $("openRealDash2").addEventListener("click", openRealDashboard);
+
+    // ============================================================
+    // FREE CONTENT (ONLY REAL COMMANDS YOU SAID)
+    // ============================================================
+    const freeFeatures = [
+      "✅ Support panel",
+      "✅ Ticket panel",
+      "✅ Clean buttons UI",
+      "✅ Dashboard access (free)"
+    ];
+
+    const realCommands = [
+      { cmd: "?help", desc: "Shows help / info" },
+      { cmd: "?ticket", desc: "Ticket panel" },
+      { cmd: "?support", desc: "Support panel" }
+    ];
+
+    $("freeFeatures").innerHTML =
+      freeFeatures.map(x=>`<div class="listRow"><div style="font-weight:950;">${x}</div><div class="hint">Free</div></div>`).join("");
+
+    $("freeCommands").innerHTML =
+      realCommands.map(c=>`
+        <div class="listRow">
+          <div>
+            <div class="mono" style="font-weight:1100;">${c.cmd}</div>
+            <div class="hint">${c.desc}</div>
+          </div>
+          <button class="btn" type="button" data-copy="${c.cmd}">Copy</button>
+        </div>
+      `).join("");
+
+    document.querySelectorAll("[data-copy]").forEach(btn=>{
+      btn.addEventListener("click", ()=>copyText(btn.getAttribute("data-copy")));
+    });
+
+    // ============================================================
+    // DASHBOARD PREVIEW (NO SCROLL, UNDO)
+    // ============================================================
+    const dashPanel = $("dashPanel");
+    const menuOverview = $("menuOverview");
+    const menuCommands = $("menuCommands");
+    const menuFAQ = $("menuFAQ");
+
+    const dashState = { activeKey: "overview" };
+
+    function setDashActive(btn){
+      [menuOverview, menuCommands, menuFAQ].forEach(b=>b.classList.remove("primary"));
+      btn.classList.add("primary");
+    }
+
+    function renderOverview(){
+      dashPanel.innerHTML = `
+        <div style="font-weight:1100; font-size:16px;">📌 Overview</div>
+        <div class="hint" style="margin-top:8px;">
+          Dashboard is FREE. Premium settings (if any) should only be locked inside the real panel.
+        </div>
+
+        <div class="listRow">
+          <div>
+            <div style="font-weight:1100;">Open Real Dashboard</div>
+            <div class="hint">Login with Discord and manage your server settings.</div>
+          </div>
+          <button class="btn primary" id="openRealDashInside" type="button">Open</button>
+        </div>
+
+        <div class="hint" style="margin-top:10px;">
+          URL: <span class="mono">${REAL_DASH_URL}</span>
+        </div>
+      `;
+      $("openRealDashInside").addEventListener("click", openRealDashboard);
+    }
+
+    function renderCommands(){
+      dashPanel.innerHTML = `
+        <div style="font-weight:1100; font-size:16px;">⌨️ Commands</div>
+        <div class="hint" style="margin-top:8px;">Only the real commands you asked for:</div>
+
+        ${realCommands.map(c=>`
+          <div class="listRow">
+            <div>
+              <div class="mono" style="font-weight:1100;">${c.cmd}</div>
+              <div class="hint">${c.desc}</div>
+            </div>
+            <button class="btn" type="button" data-dcopy="${c.cmd}">Copy</button>
+          </div>
+        `).join("")}
+      `;
+      dashPanel.querySelectorAll("[data-dcopy]").forEach(btn=>{
+        btn.addEventListener("click", ()=>copyText(btn.getAttribute("data-dcopy")));
       });
+    }
 
-      // Default panel: home
-      setActive('home', false);
+    function renderFAQ(){
+      dashPanel.innerHTML = `
+        <div style="font-weight:1100; font-size:16px;">❓ FAQ</div>
 
-      // Brand click go home
-      const brand = document.querySelector('.brand');
-      brand && brand.addEventListener('click', (e)=>{ e.preventDefault(); setActive('home', true); });
+        <div class="listRow">
+          <div>
+            <div style="font-weight:1100;">Where is the real dashboard?</div>
+            <div class="hint"><span class="mono">${REAL_DASH_URL}</span></div>
+          </div>
+          <button class="btn" id="copyDashUrl" type="button">Copy</button>
+        </div>
 
-      // Open dashboard from home button
-      const goDashboard = document.getElementById('goDashboard');
-      goDashboard && goDashboard.addEventListener('click', ()=> setActive('dashboard', true));
+        <div class="listRow">
+          <div>
+            <div style="font-weight:1100;">Why is it a different page?</div>
+            <div class="hint">Because OAuth + sessions are handled by your backend.</div>
+          </div>
+          <div class="tag free">Info</div>
+        </div>
+      `;
+      $("copyDashUrl").addEventListener("click", ()=>copyText(REAL_DASH_URL));
+    }
 
-      // Dashboard links fallback to IP if you're using IP host
-      const dashOpen = document.getElementById('dashOpen');
-      const dashLogin = document.getElementById('dashLogin');
-      const baseIp = 'http://85.215.159.4:9717';
-      if(dashOpen && dashOpen.getAttribute('href')==='/dashboard'){
-        dashOpen.addEventListener('click', (e)=>{
-          // If hosting only static site, open your IP dashboard
-          if(location.host.endsWith('github.io')){ e.preventDefault(); window.open(baseIp + '/dashboard', '_blank', 'noopener'); }
-        });
-      }
-      if(dashLogin && dashLogin.getAttribute('href')==='/auth/discord'){
-        dashLogin.addEventListener('click', (e)=>{
-          if(location.host.endsWith('github.io')){ e.preventDefault(); window.open(baseIp + '/auth/discord','_blank','noopener'); }
-        });
-      }
-    })();
+    function setDashPanel(key, push=true){
+      if(push) pushHistory();
+      dashState.activeKey = key;
+
+      if(key === "overview"){ setDashActive(menuOverview); renderOverview(); }
+      if(key === "commands"){ setDashActive(menuCommands); renderCommands(); }
+      if(key === "faq"){ setDashActive(menuFAQ); renderFAQ(); }
+    }
+
+    menuOverview.addEventListener("click", ()=>setDashPanel("overview", true));
+    menuCommands.addEventListener("click", ()=>setDashPanel("commands", true));
+    menuFAQ.addEventListener("click", ()=>setDashPanel("faq", true));
+
+    $("dashUndoBtn").addEventListener("click", undo);
+
+    // defaults
+    setDashPanel("overview", false);
+
+    // misc
+    $("year").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>

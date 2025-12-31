@@ -8,693 +8,1133 @@
 
   <!-- Social preview -->
   <meta property="og:title" content="Nozzarri Tickets | Discord Ticket Bot" />
-  <meta property="og:description" content="Ticket bot — Support & Trade tickets, clean panels, logs, and more." />
+  <meta property="og:description" content="Ticket bot — Support & Trade tickets, setup panel, logs, clean UI." />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/nozzarri.png" />
 
-  <!-- ICON / LOGO -->
-  <link rel="icon" href="assets/nozzarri.png" />
+  <link rel="icon" type="image/png" href="assets/nozzarri.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg:#070810;
-      --bg2:#0b0e1c;
-      --card:rgba(255,255,255,.06);
-      --line:rgba(255,255,255,.10);
-      --text:#eaf0ff;
-      --muted:rgba(234,240,255,.72);
-      --muted2:rgba(234,240,255,.56);
+      --bg0:#05060f;
+      --bg1:#070824;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.09);
+      --border: rgba(255,255,255,.12);
 
-      --accent:#7c5cff;
-      --accent2:#00d4ff;
-      --good:#19d38b;
-      --warn:#f5b301;
-      --bad:#ff4d6d;
+      --text:#eef2ff;
+      --muted: rgba(238,242,255,.72);
 
-      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --a:#7c3aed;
+      --b:#38bdf8;
+      --c:#22c55e;
+      --d:#fbbf24;
+
+      --shadow: 0 26px 90px rgba(0,0,0,.62);
       --radius: 18px;
-      --radius2: 24px;
+      --radius2: 26px;
+
+      --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+      --ease: cubic-bezier(.2,.8,.2,1);
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-family:var(--font);
       color:var(--text);
       background:
-        radial-gradient(1200px 800px at 20% 10%, rgba(124,92,255,.25), transparent 55%),
-        radial-gradient(900px 600px at 80% 20%, rgba(0,212,255,.20), transparent 55%),
-        radial-gradient(800px 600px at 60% 90%, rgba(25,211,139,.12), transparent 55%),
-        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+        radial-gradient(1200px 700px at 20% 15%, rgba(124,58,237,.18), transparent 55%),
+        radial-gradient(900px 600px at 80% 18%, rgba(56,189,248,.14), transparent 55%),
+        radial-gradient(1100px 750px at 60% 92%, rgba(34,197,94,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
     }
 
-    a{color:inherit;text-decoration:none}
-    button{font-family:inherit}
-
-    .noise{
-      position:fixed; inset:0;
-      pointer-events:none;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
-      mix-blend-mode:overlay;
-      opacity:.08;
+    /* Background layers */
+    .bg{
+      position:fixed; inset:0; z-index:-2; pointer-events:none;
+    }
+    canvas#stars{
+      position:absolute; inset:0; width:100%; height:100%;
+      opacity:.26;
+      filter: blur(.0px);
+    }
+    .glow{
+      position:absolute; inset:-200px;
+      background:
+        radial-gradient(circle at 22% 22%, rgba(124,58,237,.22), transparent 52%),
+        radial-gradient(circle at 82% 25%, rgba(56,189,248,.16), transparent 52%),
+        radial-gradient(circle at 60% 88%, rgba(34,197,94,.12), transparent 52%);
+      filter: blur(50px);
+      opacity:.9;
+      animation: float 12s var(--ease) infinite;
+    }
+    @keyframes float{
+      0%,100%{ transform: translate3d(0,0,0) scale(1); }
+      50%{ transform: translate3d(28px,-16px,0) scale(1.02); }
     }
 
-    /* top nav */
-    .topbar{
-      position:sticky; top:0; z-index:50;
-      backdrop-filter: blur(14px);
-      background: rgba(8,10,18,.62);
+    /* Layout */
+    .container{max-width:1200px; margin:0 auto; padding:0 20px}
+    .row{display:flex; align-items:center; justify-content:space-between; gap:14px}
+    .grid{display:grid; gap:14px}
+
+    /* Top Nav */
+    .nav{
+      position:sticky; top:0; z-index:60;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(5,6,15,.80), rgba(5,6,15,.45));
       border-bottom: 1px solid rgba(255,255,255,.08);
     }
-    .topbar-inner{
-      max-width:1200px; margin:0 auto;
-      padding:14px 18px;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
+    .navInner{
+      height:72px;
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
     }
     .brand{
-      display:flex; align-items:center; gap:10px;
-      font-weight:900;
-      letter-spacing:.2px;
-      min-width: 220px;
+      display:flex; align-items:center; gap:12px;
+      text-decoration:none; color:var(--text);
+      user-select:none;
     }
-    .brandImg{
-      width:32px; height:32px;
-      border-radius: 10px;
-      object-fit: cover;
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 0 24px rgba(124,92,255,.22);
+    .logo{
+      width:42px; height:42px; border-radius:14px;
       background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      display:grid; place-items:center;
+      box-shadow: 0 0 34px rgba(124,58,237,.18);
+      overflow:hidden;
     }
-    .brand small{
-      display:block;
-      font-weight:700;
-      color:var(--muted2);
-      letter-spacing:.6px;
-      margin-top:2px;
+    .logo img{width:100%; height:100%; object-fit:cover}
+    .brandName{
+      font-weight:1000; letter-spacing:.2px; line-height:1;
+    }
+    .brandSub{
+      color:var(--muted); font-weight:800; font-size:12px; margin-top:2px;
     }
 
-    .navBtns{
-      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+    .navLinks{display:flex; gap:16px; align-items:center}
+    .navLinks a{
+      color:rgba(238,242,255,.78);
+      text-decoration:none;
+      font-weight:900;
+      font-size:13px;
+      padding:10px 10px;
+      border-radius:12px;
+      transition: background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
     }
-    .pillBtn{
-      border:1px solid rgba(255,255,255,.10);
+    .navLinks a:hover{
       background: rgba(255,255,255,.06);
       color:var(--text);
-      padding:10px 12px;
-      border-radius:999px;
-      cursor:pointer;
-      font-weight:850;
-      font-size:13px;
-      display:flex; align-items:center; gap:8px;
-      transition: .18s transform, .18s background, .18s border-color;
-    }
-    .pillBtn:hover{
       transform: translateY(-1px);
-      border-color: rgba(124,92,255,.35);
-      background: rgba(124,92,255,.10);
-    }
-    .pillBtn.primary{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(90deg, rgba(124,92,255,.22), rgba(0,212,255,.14));
     }
 
-    /* main container */
-    .container{
-      max-width:1200px;
-      margin:0 auto;
-      padding:22px 18px 44px;
+    .navBtns{display:flex; gap:10px; align-items:center}
+    .btn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius: 999px;
+      padding: 11px 14px;
+      font-weight:1000;
+      font-size:13px;
+      letter-spacing:.2px;
+      cursor:pointer;
+      transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease);
+      display:inline-flex; align-items:center; gap:10px;
+      text-decoration:none;
+      user-select:none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.09);
+      box-shadow: 0 14px 40px rgba(0,0,0,.30);
+    }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.85));
+      border-color: rgba(255,255,255,.16);
+      box-shadow: 0 22px 70px rgba(124,58,237,.18);
+    }
+    .btn.primary:hover{
+      box-shadow: 0 24px 80px rgba(56,189,248,.16);
     }
 
-    /* views */
-    .view{display:none}
-    .view.show{display:block; animation: viewIn .22s ease-out}
-    @keyframes viewIn{from{opacity:.0; transform: translateY(6px)} to{opacity:1; transform:none}}
-
-    /* cards */
-    .card{
-      background: var(--card);
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+    .btn.good{
+      background: linear-gradient(135deg, rgba(34,197,94,.90), rgba(56,189,248,.65));
+      border-color: rgba(255,255,255,.16);
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:16px;
+    .hamburger{
+      display:none;
+      width:44px; height:44px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      cursor:pointer;
     }
-    @media (min-width: 920px){
-      .grid.two{grid-template-columns: 1.1fr .9fr}
-      .grid.three{grid-template-columns: repeat(3, 1fr)}
+    .hamburger span{
+      display:block; width:18px; height:2px; margin:6px auto;
+      background: rgba(238,242,255,.85);
+      border-radius:99px;
     }
 
-    /* hero */
+    /* Hero */
     .hero{
-      padding:18px;
+      padding: 54px 0 18px;
+    }
+    .heroGrid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      align-items:stretch;
+    }
+    .heroCard{
       border-radius: var(--radius2);
-      background:
-        radial-gradient(900px 500px at 20% 10%, rgba(124,92,255,.25), transparent 60%),
-        radial-gradient(600px 500px at 90% 40%, rgba(0,212,255,.14), transparent 60%),
-        rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
       box-shadow: var(--shadow);
       overflow:hidden;
       position:relative;
     }
-    .heroTop{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; flex-wrap:wrap;
+    .heroCard::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(700px 260px at 12% 10%, rgba(124,58,237,.20), transparent 55%),
+                  radial-gradient(700px 260px at 90% 30%, rgba(56,189,248,.16), transparent 55%);
+      opacity:.85;
+      pointer-events:none;
     }
+    .heroPad{padding: 28px; position:relative}
     .pill{
       display:inline-flex; align-items:center; gap:10px;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      font-weight:900;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      font-weight:1000;
       font-size:12px;
-      color: var(--muted);
+      color: rgba(238,242,255,.82);
     }
-    .pill .dot{
-      width:9px; height:9px; border-radius:999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 18px rgba(0,212,255,.35);
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(56,189,248,.75));
+      box-shadow: 0 0 18px rgba(34,197,94,.22);
     }
-    h1{
-      margin:14px 0 8px;
-      font-size: clamp(26px, 4vw, 44px);
-      line-height:1.05;
-      letter-spacing:-.6px;
+    .h1{
+      margin: 14px 0 10px;
+      font-size: clamp(28px, 4.2vw, 50px);
+      line-height:1.03;
+      letter-spacing:-1px;
+      font-weight:1000;
     }
     .grad{
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      background: linear-gradient(90deg, rgba(56,189,248,.95), rgba(124,58,237,.95), rgba(34,197,94,.95));
       -webkit-background-clip:text;
       background-clip:text;
       color:transparent;
     }
     .lead{
-      margin:0;
-      color: var(--muted);
-      font-weight:700;
-      line-height:1.55;
-      max-width: 70ch;
+      margin: 0;
+      color: rgba(238,242,255,.78);
+      font-weight:800;
+      line-height:1.6;
+      max-width: 62ch;
     }
-
-    .ctaRow{
+    .heroBtns{
       display:flex; gap:10px; flex-wrap:wrap;
       margin-top:16px;
     }
-    .btn{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding:11px 14px;
-      border-radius: 14px;
-      cursor:pointer;
-      font-weight:950;
-      letter-spacing:.2px;
-      transition:.18s transform,.18s background,.18s border-color;
-      display:inline-flex; align-items:center; gap:10px;
-    }
-    .btn:hover{transform: translateY(-1px); border-color: rgba(0,212,255,.28); background: rgba(0,212,255,.10)}
-    .btn.primary{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(90deg, rgba(124,92,255,.26), rgba(0,212,255,.14));
-    }
-    .btn.ghost{ background: rgba(255,255,255,.03); }
 
-    /* gate cards */
-    .gateGrid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:14px;
-      margin-top:14px;
+    .miniRow{
+      margin-top: 16px;
+      display:flex; gap:10px; flex-wrap:wrap;
+      color: rgba(238,242,255,.70);
+      font-weight:800;
+      font-size:13px;
     }
-    @media (min-width: 920px){
-      .gateGrid{grid-template-columns:1fr 1fr}
-    }
-    .pick{
-      position:relative;
-      padding:16px;
-      border-radius: var(--radius2);
+    .miniStat{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.04);
-      overflow:hidden;
-      cursor:pointer;
-      transition:.18s transform,.18s border-color,.18s background;
     }
-    .pick:hover{
-      transform: translateY(-2px);
-      border-color: rgba(124,92,255,.30);
-      background: rgba(124,92,255,.06);
-    }
-    .pickGlow{
-      position:absolute; inset:-140px;
-      background: radial-gradient(circle at 20% 10%, rgba(124,92,255,.25), transparent 50%),
-                  radial-gradient(circle at 80% 30%, rgba(0,212,255,.18), transparent 50%);
-      opacity:.6;
-      pointer-events:none;
-    }
-    .pickTop{display:flex; align-items:center; justify-content:space-between; gap:12px}
-    .tag{
-      font-weight:1000; font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-    }
-    .tag.free{border-color: rgba(25,211,139,.35); background: rgba(25,211,139,.08)}
-    .tag.prem{border-color: rgba(245,179,1,.35); background: rgba(245,179,1,.10)}
-    .kbd{color:var(--muted2); font-weight:850; font-size:12px}
-    .pickTitle{font-size:18px; font-weight:1100; margin-top:10px}
-    .pickText{color:var(--muted); font-weight:750; line-height:1.5; margin-top:8px}
-    .pickBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
-    .miniBtn{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding:10px 12px;
-      border-radius: 14px;
-      cursor:pointer;
-      font-weight:950;
-      transition:.18s transform,.18s background,.18s border-color;
-    }
-    .miniBtn:hover{transform: translateY(-1px); border-color: rgba(0,212,255,.28); background: rgba(0,212,255,.10)}
-    .miniBtn.primary{
-      border-color: rgba(124,92,255,.45);
-      background: linear-gradient(90deg, rgba(124,92,255,.26), rgba(0,212,255,.14));
-    }
-
-    .sectionTitle{
-      font-weight:1100;
-      font-size:16px;
-      letter-spacing:.2px;
-      margin:0;
-      padding:14px 14px 0;
-    }
-    .sectionBody{
-      padding:14px;
-      color:var(--muted);
-      font-weight:750;
-      line-height:1.6;
-    }
-
-    .listRow{
-      display:flex; justify-content:space-between; align-items:center;
-      gap:12px;
-      padding:12px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      border-radius: 16px;
-      transition:.16s transform,.16s border-color,.16s background;
-      margin-top:10px;
-    }
-    .listRow:hover{transform: translateY(-1px); border-color: rgba(124,92,255,.25); background: rgba(124,92,255,.06)}
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
-
-    /* dashboard preview */
-    .dashShell{
-      display:grid; gap:14px;
-      grid-template-columns: 1fr;
-    }
-    @media(min-width: 980px){
-      .dashShell{grid-template-columns: 280px 1fr}
-    }
-    .dashNav{ padding:12px; }
-    .dashNav .dashBtn{ width:100%; text-align:left; margin-top:10px; border-radius: 16px; }
-    .dashPanel{ padding:14px; min-height: 320px; }
-
-    /* toast */
-    .toast{
-      position:fixed;
-      left:50%; bottom:18px;
-      transform: translateX(-50%);
-      padding:12px 14px;
+    .badge{
+      font-weight:1000;
+      padding: 6px 10px;
       border-radius: 999px;
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(12,14,26,.92);
-      box-shadow: var(--shadow);
-      color: var(--text);
-      font-weight:950;
-      z-index:90;
-      opacity:0;
-      pointer-events:none;
-      transition: .18s opacity, .18s transform;
-    }
-    .toast.show{
-      opacity:1;
-      transform: translateX(-50%) translateY(-2px);
+      background: rgba(0,0,0,.20);
+      font-size:12px;
     }
 
-    /* loader */
-    .loader{
-      position:fixed; inset:0;
-      display:flex; align-items:center; justify-content:center;
-      background: radial-gradient(900px 600px at 20% 10%, rgba(124,92,255,.25), transparent 60%),
-                  radial-gradient(800px 600px at 80% 30%, rgba(0,212,255,.20), transparent 60%),
-                  linear-gradient(180deg, #060711, #090b16);
-      z-index: 120;
-      transition: .35s opacity, .35s transform;
-    }
-    .loader.hide{opacity:0; pointer-events:none; transform: scale(1.02)}
-    .loadCard{
-      width:min(540px, 100%);
-      border-radius: 24px;
-      padding:18px;
+    /* Right preview card */
+    .previewCard{
+      border-radius: var(--radius2);
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
     }
-    .bar{
-      width:100%; height:10px;
+    .previewTop{
+      padding: 14px 14px 10px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+    }
+    .chipRow{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .chip{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      font-weight:1000;
+      font-size:12px;
+      color: rgba(238,242,255,.82);
+      cursor:pointer;
+      transition: transform .18s var(--ease), background .18s var(--ease);
+      user-select:none;
+    }
+    .chip:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .chip.active{
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.75));
+      border-color: rgba(255,255,255,.16);
+      color: var(--text);
+    }
+    .previewBody{padding: 14px}
+    .mock{
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+    }
+    .mockHead{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: rgba(238,242,255,.82);
+      font-weight:1000;
+      font-size:12px;
+    }
+    .dots{display:flex; gap:6px}
+    .dots i{width:10px; height:10px; border-radius:99px; display:inline-block; background: rgba(255,255,255,.14)}
+    .mockInner{padding: 12px}
+    .mockGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .kpi{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding: 12px;
+    }
+    .kpi .t{font-weight:1000; font-size:12px; color: rgba(238,242,255,.72)}
+    .kpi .v{font-weight:1000; font-size:22px; margin-top:4px; letter-spacing:-.6px}
+    .spark{
+      margin-top: 10px;
+      height: 8px;
       border-radius: 999px;
       background: rgba(255,255,255,.08);
       overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      margin-top:12px;
     }
-    .barFill{
+    .spark > div{
       height:100%;
-      width:0%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      border-radius: 999px;
-      transition: width .22s ease;
+      width:60%;
+      border-radius:999px;
+      background: linear-gradient(90deg, rgba(56,189,248,.95), rgba(124,58,237,.95), rgba(34,197,94,.95));
+      filter: drop-shadow(0 0 12px rgba(56,189,248,.18));
+      animation: fill 2.6s var(--ease) infinite;
     }
-    .loadRow{
-      display:flex; justify-content:space-between; align-items:center;
-      color: var(--muted);
-      font-weight:850;
-      font-size:13px;
-      margin-top:10px;
+    @keyframes fill{
+      0%,100%{ transform: translateX(-22%); width: 58%;}
+      50%{ transform: translateX(10%); width: 64%;}
+    }
+    .mockList{
+      margin-top: 10px;
+      display:grid;
+      gap:8px;
+    }
+    .line{
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding: 10px 10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      color: rgba(238,242,255,.82);
+      font-weight:900;
+      font-size:12px;
+    }
+    .tag{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-weight:1000;
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .tag.good{ background: rgba(34,197,94,.14); border-color: rgba(34,197,94,.28); }
+    .tag.warn{ background: rgba(251,191,36,.14); border-color: rgba(251,191,36,.28); }
+
+    /* Sections */
+    section{padding: 18px 0}
+    .sectionTitle{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:14px;
+      margin: 8px 0 12px;
+    }
+    .sectionTitle h2{
+      margin:0;
+      font-weight:1000;
+      letter-spacing:-.6px;
+      font-size: clamp(20px, 2.2vw, 28px);
+    }
+    .sectionTitle p{
+      margin:0;
+      color: rgba(238,242,255,.72);
+      font-weight:800;
+      line-height:1.6;
+      max-width: 60ch;
+      font-size: 13px;
     }
 
-    footer{
-      margin-top:22px;
-      color: var(--muted2);
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .card{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      padding: 16px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+      min-height: 140px;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(450px 140px at 12% 10%, rgba(56,189,248,.14), transparent 55%),
+                  radial-gradient(450px 140px at 80% 35%, rgba(124,58,237,.16), transparent 55%);
+      opacity:.65;
+      pointer-events:none;
+    }
+    .card > *{ position:relative; }
+    .icon{
+      width:42px; height:42px;
+      border-radius: 16px;
+      display:grid; place-items:center;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-weight:1000;
+    }
+    .card h3{margin:12px 0 6px; font-weight:1000; letter-spacing:-.2px}
+    .card p{margin:0; color: rgba(238,242,255,.72); font-weight:800; line-height:1.6; font-size:13px}
+
+    /* Pricing */
+    .pricing{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+    }
+    .plan{
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      padding: 16px;
+      box-shadow: 0 18px 70px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+    }
+    .plan::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(600px 220px at 10% 0%, rgba(34,197,94,.12), transparent 55%),
+                  radial-gradient(600px 220px at 90% 18%, rgba(56,189,248,.14), transparent 55%);
+      opacity:.65; pointer-events:none;
+    }
+    .plan > *{position:relative}
+    .planTop{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .planName{margin-top:10px; font-weight:1000}
+    .money{font-weight:1000; font-size:30px; letter-spacing:-.9px; margin-top:6px}
+    .sub{color: rgba(238,242,255,.72); font-weight:900; line-height:1.55; font-size:13px; margin-top:6px}
+    .best{
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.75));
+      border-color: rgba(255,255,255,.16);
+    }
+    .ul{
+      margin: 12px 0 0;
+      padding: 0;
+      list-style:none;
+      display:grid;
+      gap:8px;
+      color: rgba(238,242,255,.78);
       font-weight:800;
-      font-size:12px;
-      text-align:center;
-      opacity:.9;
+      font-size:13px;
+    }
+    .ul li{display:flex; align-items:flex-start; gap:10px}
+    .check{
+      width:18px; height:18px;
+      border-radius:6px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(34,197,94,.14);
+      display:grid; place-items:center;
+      flex: 0 0 auto;
+      margin-top:1px;
+    }
+    .planBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+
+    /* FAQ */
+    .faq{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    details{
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      padding: 12px 14px;
+      box-shadow: 0 18px 70px rgba(0,0,0,.22);
+    }
+    summary{
+      cursor:pointer;
+      font-weight:1000;
+      list-style:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    details p{
+      margin: 10px 0 0;
+      color: rgba(238,242,255,.72);
+      font-weight:800;
+      line-height:1.6;
+      font-size:13px;
+    }
+
+    /* Footer */
+    footer{
+      margin-top: 18px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding: 22px 0 28px;
+      background: rgba(0,0,0,.14);
+    }
+    .footGrid{
+      display:grid;
+      grid-template-columns: 1.3fr .7fr .7fr;
+      gap: 14px;
+      align-items:start;
+    }
+    .footTitle{font-weight:1000}
+    .footText{margin:8px 0 0; color: rgba(238,242,255,.72); font-weight:800; line-height:1.6; font-size:13px}
+    .footLinks{display:grid; gap:8px; margin-top:8px}
+    .footLinks a{
+      color: rgba(238,242,255,.78);
+      text-decoration:none;
+      font-weight:900;
+      font-size:13px;
+      padding:8px 10px;
+      border-radius: 12px;
+      transition: background .18s var(--ease), transform .18s var(--ease);
+    }
+    .footLinks a:hover{background: rgba(255,255,255,.06); transform: translateY(-1px)}
+    .tiny{margin-top:12px; color: rgba(238,242,255,.55); font-weight:800; font-size:12px; line-height:1.6}
+
+    /* Overlays / Modals (only Checkout + Menu now) */
+    .overlay{
+      position:fixed; inset:0;
+      display:none;
+      place-items:center;
+      z-index:200;
+      background: rgba(0,0,0,.56);
+      backdrop-filter: blur(10px);
+      padding: 18px;
+    }
+    .overlay.show{display:grid; animation: fadeIn .18s var(--ease) both}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    .panel{
+      width:min(980px, 100%);
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(10,12,26,.92), rgba(8,10,20,.88));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transform: translateY(8px) scale(.99);
+      animation: pop .22s var(--ease) both;
+    }
+    @keyframes pop{to{transform: translateY(0) scale(1)}}
+    .panelTop{
+      padding: 14px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+    }
+    .panelTop .title{
+      display:flex; gap:10px; align-items:center;
+      font-weight:1000;
+      letter-spacing:-.2px;
+    }
+    .x{
+      width:44px; height:44px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      transition: transform .18s var(--ease), background .18s var(--ease);
+      font-weight:1000;
+    }
+    .x:hover{transform: translateY(-1px); background: rgba(255,255,255,.09)}
+    .panelBody{padding: 14px}
+
+    /* Checkout */
+    .checkoutGrid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 12px;
+    }
+    .box{
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      padding: 12px;
+    }
+    .label{
+      font-weight:1000; font-size:12px; color: rgba(238,242,255,.72);
+    }
+    .input{
+      margin-top: 8px;
+      width:100%;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.24);
+      color: var(--text);
+      padding: 12px 12px;
+      font-weight:900;
+      outline:none;
+    }
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+    .rowBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .fine{
+      margin-top:10px;
+      color: rgba(238,242,255,.72);
+      font-weight:800;
+      line-height:1.6;
+      font-size:13px;
+    }
+
+    /* Mobile Menu Overlay */
+    .menuSheet{
+      width:min(520px, 100%);
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(10,12,26,.92), rgba(8,10,20,.88));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .menuBody{padding: 12px}
+    .menuLinks{display:grid; gap:8px}
+    .menuLinks a{justify-content:flex-start; width:100%}
+
+    /* Scroll animations */
+    .reveal{
+      opacity:0;
+      transform: translateY(10px);
+      transition: opacity .45s var(--ease), transform .45s var(--ease);
+    }
+    .reveal.on{
+      opacity:1;
+      transform: translateY(0);
+    }
+
+    /* To top */
+    .toTop{
+      position:fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 46px; height: 46px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      display:none;
+      z-index:120;
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      font-weight:1000;
+    }
+    .toTop.show{display:block}
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(10px);
+      padding: 10px 14px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.56);
+      color: var(--text);
+      font-weight:1000;
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      z-index:250;
+      transition: opacity .18s var(--ease), transform .18s var(--ease);
+      backdrop-filter: blur(10px);
+    }
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(0)}
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .heroGrid{grid-template-columns: 1fr; }
+      .cards{grid-template-columns: 1fr; }
+      .pricing{grid-template-columns: 1fr; }
+      .faq{grid-template-columns: 1fr; }
+      .checkoutGrid{grid-template-columns: 1fr;}
+    }
+    @media (max-width: 860px){
+      .navLinks{display:none}
+      .hamburger{display:block}
     }
   </style>
 </head>
 
 <body>
-  <div class="noise" aria-hidden="true"></div>
-
-  <!-- LOADER -->
-  <div class="loader" id="loader" aria-hidden="false">
-    <div class="loadCard">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <img src="assets/nozzarri.png" alt="Nozzarri" class="brandImg" onerror="this.style.display='none'">
-        <div style="font-weight:1100; letter-spacing:.2px;">Nozzarri Tickets</div>
-      </div>
-      <div class="loadRow">
-        <span id="loadText">Booting</span>
-        <span id="loadPct">0%</span>
-      </div>
-      <div class="bar"><div class="barFill" id="barFill"></div></div>
-      <div class="hint">Loading UI, routes, and animations…</div>
-    </div>
+  <div class="bg">
+    <div class="glow"></div>
+    <canvas id="stars"></canvas>
   </div>
 
-  <!-- TOP NAV -->
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">
-        <img src="assets/nozzarri.png" alt="Nozzarri" class="brandImg" onerror="this.style.display='none'">
+  <!-- NAV -->
+  <header class="nav">
+    <div class="container">
+      <div class="navInner">
+        <a class="brand" href="#top" aria-label="Nozzarri Tickets Home">
+          <div class="logo"><img src="assets/nozzarri.png" alt="Nozzarri logo"></div>
+          <div>
+            <div class="brandName">Nozzarri Tickets</div>
+            <div class="brandSub">Discord Ticket System</div>
+          </div>
+        </a>
+
+        <nav class="navLinks" aria-label="Primary">
+          <a href="#features">Features</a>
+          <a href="#pricing">Premium</a>
+          <a href="#faq">FAQ</a>
+          <a id="navDiscord" href="#" target="_blank" rel="noreferrer">Discord</a>
+          <a id="navYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
+        </nav>
+
+        <div class="navBtns">
+          <a class="btn good" id="botBtn" href="#" target="_blank" rel="noreferrer">🤖 Invite Bot</a>
+          <!-- REAL DASHBOARD -->
+          <a class="btn primary" id="openDashboard" href="#" target="_blank" rel="noreferrer">📊 Dashboard</a>
+          <button class="hamburger" id="openMenu" type="button" aria-label="Open menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main id="top" class="hero">
+    <div class="container">
+      <div class="heroGrid">
+        <div class="heroCard reveal">
+          <div class="heroPad">
+            <div class="pill"><span class="dot"></span> Online • Fast setup • Clean UI</div>
+
+            <div class="h1">
+              The <span class="grad">Ticket Bot</span> that makes your server look professional.
+            </div>
+
+            <p class="lead">
+              Build a clean support system in minutes: ticket panels, logs, staff roles, categories and
+              smooth workflow. Premium keys unlock more customization and extra commands.
+            </p>
+
+            <div class="heroBtns">
+              <a class="btn primary" id="inviteServerBtn" href="#" target="_blank" rel="noreferrer">✨ Join Discord</a>
+              <a class="btn" id="youtubeBtn" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
+              <!-- REAL DASHBOARD -->
+              <a class="btn" id="dashboardHeroBtn" href="#" target="_blank" rel="noreferrer">📊 Dashboard Login</a>
+              <button class="btn" id="scrollPricing" type="button">💎 View Premium</button>
+            </div>
+
+            <div class="miniRow">
+              <div class="miniStat"><span class="badge">Tickets</span> Support + Trade categories</div>
+              <div class="miniStat"><span class="badge">Logs</span> Cleaner moderation record</div>
+              <div class="miniStat"><span class="badge">Keys</span> $1 / $2 / $4 premium access</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="previewCard reveal">
+          <div class="previewTop">
+            <div class="chipRow">
+              <div class="chip active" data-mock="analytics">Analytics</div>
+              <div class="chip" data-mock="panels">Panels</div>
+              <div class="chip" data-mock="logs">Logs</div>
+            </div>
+            <button class="btn" id="openCheckoutFromHero" type="button">💎 Buy Key</button>
+          </div>
+
+          <div class="previewBody">
+            <div class="mock" id="mockBox">
+              <div class="mockHead">
+                <div>Dashboard Preview</div>
+                <div class="dots"><i></i><i></i><i></i></div>
+              </div>
+              <div class="mockInner">
+                <div class="mockGrid" id="mockKpis">
+                  <div class="kpi">
+                    <div class="t">Open Tickets</div>
+                    <div class="v" id="kpi1">12</div>
+                    <div class="spark"><div></div></div>
+                  </div>
+                  <div class="kpi">
+                    <div class="t">Avg Response</div>
+                    <div class="v" id="kpi2">3m</div>
+                    <div class="spark"><div></div></div>
+                  </div>
+                  <div class="kpi">
+                    <div class="t">Resolved Today</div>
+                    <div class="v" id="kpi3">28</div>
+                    <div class="spark"><div></div></div>
+                  </div>
+                  <div class="kpi">
+                    <div class="t">Satisfaction</div>
+                    <div class="v" id="kpi4">98%</div>
+                    <div class="spark"><div></div></div>
+                  </div>
+                </div>
+
+                <div class="mockList" id="mockList">
+                  <div class="line"><span>#support • New ticket</span><span class="tag warn">Needs staff</span></div>
+                  <div class="line"><span>#trade • Payment checked</span><span class="tag good">Resolved</span></div>
+                  <div class="line"><span>#support • Bug report</span><span class="tag warn">Open</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tiny">
+              Preview UI only. The REAL dashboard login is on the Dashboard button (top).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="container">
+      <div class="sectionTitle reveal">
         <div>
-          Nozzarri Tickets
-          <small>Free • Premium • Dashboard</small>
+          <h2>Features that feel premium</h2>
+          <p>Clean design, fast workflow, and a setup that scales from small servers to big communities.</p>
         </div>
       </div>
 
-      <div class="navBtns">
-        <button class="pillBtn" id="navUndo" type="button" title="Undo last menu change">↩ Undo</button>
-        <button class="pillBtn" id="navHome" type="button">🏠 Home</button>
-        <button class="pillBtn" id="navFree" type="button">✅ Free</button>
-        <button class="pillBtn" id="navPremium" type="button">💎 Premium</button>
-        <button class="pillBtn primary" id="navDashboard" type="button">🧩 Dashboard</button>
+      <div class="cards">
+        <div class="card reveal">
+          <div class="icon">🎫</div>
+          <h3>Ticket Panels</h3>
+          <p>Create support/trade panels with categories, roles, and custom messages.</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon">🧾</div>
+          <h3>Logs & History</h3>
+          <p>Keep everything organized: closures, transcripts, and staff actions.</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon">⚡</div>
+          <h3>Fast Setup</h3>
+          <p>Invite the bot, configure roles, and you’re ready. No messy menus.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="container">
+      <div class="sectionTitle reveal">
+        <div>
+          <h2>Premium Keys</h2>
+          <p>Same prices you had before — just a cleaner purchase UI. Payments in LTC.</p>
+        </div>
+        <button class="btn primary" id="openCheckout" type="button">💎 Buy Premium</button>
+      </div>
+
+      <div class="pricing">
+        <div class="plan reveal" data-plan="15 DAYS" data-price="1">
+          <div class="planTop">
+            <span class="tag">15 DAYS</span>
+            <span class="tag">$1</span>
+          </div>
+          <div class="planName">Starter Key</div>
+          <div class="money">$1</div>
+          <div class="sub">Try premium for 15 days.</div>
+          <ul class="ul">
+            <li><span class="check">✓</span> Extra premium commands</li>
+            <li><span class="check">✓</span> More customization</li>
+            <li><span class="check">✓</span> Priority style</li>
+          </ul>
+          <div class="planBtns">
+            <button class="btn primary buyBtn" type="button">Buy</button>
+            <button class="btn copyLtcBtn" type="button">Copy LTC</button>
+          </div>
+        </div>
+
+        <div class="plan reveal best" data-plan="1 MONTH" data-price="2">
+          <div class="planTop">
+            <span class="tag">1 MONTH • BEST</span>
+            <span class="tag">$2</span>
+          </div>
+          <div class="planName">Pro Key</div>
+          <div class="money">$2</div>
+          <div class="sub">Most popular plan.</div>
+          <ul class="ul">
+            <li><span class="check">✓</span> Extra premium commands</li>
+            <li><span class="check">✓</span> Better customization</li>
+            <li><span class="check">✓</span> Great value</li>
+          </ul>
+          <div class="planBtns">
+            <button class="btn primary buyBtn" type="button">Buy</button>
+            <button class="btn copyLtcBtn" type="button">Copy LTC</button>
+          </div>
+        </div>
+
+        <div class="plan reveal" data-plan="3 MONTHS" data-price="4">
+          <div class="planTop">
+            <span class="tag">3 MONTHS</span>
+            <span class="tag">$4</span>
+          </div>
+          <div class="planName">Ultra Key</div>
+          <div class="money">$4</div>
+          <div class="sub">Best value (longer access).</div>
+          <ul class="ul">
+            <li><span class="check">✓</span> Extra premium commands</li>
+            <li><span class="check">✓</span> Long access</li>
+            <li><span class="check">✓</span> Best deal</li>
+          </ul>
+          <div class="planBtns">
+            <button class="btn primary buyBtn" type="button">Buy</button>
+            <button class="btn copyLtcBtn" type="button">Copy LTC</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tiny reveal" style="margin-top:10px;">
+        Payments are in LTC. Send the USD value in LTC (rate changes). Always double-check the address.
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <div class="sectionTitle reveal">
+        <div>
+          <h2>FAQ</h2>
+          <p>Quick answers so your site feels legit and clear.</p>
+        </div>
+      </div>
+
+      <div class="faq">
+        <details class="reveal">
+          <summary>Where is the real dashboard login?</summary>
+          <p>
+            Press <b>Dashboard</b> (top). It opens the real dashboard on your server.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>How do I get my premium key after paying?</summary>
+          <p>
+            After payment, DM the owner on Discord with your plan + TX info. Manual verification avoids fake systems.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>Can I host this on GitHub Pages?</summary>
+          <p>
+            Yes — it’s a single HTML file + your assets/nozzarri.png. Works clean on PC + mobile.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>Why not embed the dashboard inside this site?</summary>
+          <p>
+            Usually it breaks because of browser security (CORS/iframe restrictions). Opening it as a separate page is the clean solution.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footGrid">
+        <div>
+          <div class="footTitle">Nozzarri Tickets</div>
+          <div class="footText">
+            A modern Discord ticket experience with clean panels, logs and premium upgrades.
+          </div>
+          <div class="tiny">© <span id="year"></span> Nozzarri Tickets • Owner: <span id="ownerName"></span></div>
+        </div>
+
+        <div>
+          <div class="footTitle">Links</div>
+          <div class="footLinks">
+            <a id="footerDiscord" href="#" target="_blank" rel="noreferrer">Discord</a>
+            <a id="footerYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
+            <a id="footerBot" href="#" target="_blank" rel="noreferrer">Bot Invite</a>
+            <!-- REAL DASHBOARD -->
+            <a id="footerDashboard" href="#" target="_blank" rel="noreferrer">Dashboard</a>
+          </div>
+        </div>
+
+        <div>
+          <div class="footTitle">Premium</div>
+          <div class="footLinks">
+            <button class="btn primary" id="openCheckoutFooter" type="button">💎 Buy Premium</button>
+            <button class="btn" id="copyLtcFooter" type="button">📋 Copy LTC</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- To top + Toast -->
+  <button id="toTop" class="toTop" type="button" aria-label="Back to top">⬆️</button>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- CHECKOUT OVERLAY -->
+  <div class="overlay" id="buyOverlay" aria-hidden="true">
+    <div class="panel" role="dialog" aria-modal="true" aria-label="Buy Premium">
+      <div class="panelTop">
+        <div class="title" id="buyTitle">💎 Buy Premium</div>
+        <button class="x" id="closeCheckout" type="button" aria-label="Close checkout">✕</button>
+      </div>
+
+      <div class="panelBody">
+        <div class="checkoutGrid">
+          <div class="box">
+            <div class="label">Selected plan</div>
+            <input class="input" id="planPicked" readonly />
+
+            <div class="label" style="margin-top:12px;">Payment message (copy & DM owner)</div>
+            <input class="input mono" id="payMsg" readonly />
+
+            <div class="rowBtns">
+              <button class="btn primary" id="copyPayInfo" type="button">📋 Copy payment + message</button>
+              <button class="btn" id="copyAddrOnly" type="button">📋 Copy LTC only</button>
+              <button class="btn" id="copyOwnerOnly" type="button">👤 Copy owner</button>
+            </div>
+
+            <div class="fine">
+              After you send payment, add/DM the owner on Discord: <b class="mono" id="ownerSpan"></b> and paste the message.
+              Manual verification avoids fake auto systems.
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="label">LTC address</div>
+            <input class="input mono" id="ltcAddr" readonly />
+
+            <div class="fine">
+              Send the USD value in LTC (rate changes). Always double-check address before sending.
+            </div>
+
+            <div class="rowBtns">
+              <a class="btn good" id="checkoutDiscord" href="#" target="_blank" rel="noreferrer">Join Discord</a>
+              <a class="btn" id="checkoutBot" href="#" target="_blank" rel="noreferrer">Invite Bot</a>
+              <a class="btn" id="checkoutYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
+              <a class="btn primary" id="checkoutDashboard" href="#" target="_blank" rel="noreferrer">Dashboard</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="tiny" style="margin-top:10px;">
+          This checkout UI is clean on PC and mobile and always has Undo/Close.
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="container">
-
-    <!-- HOME -->
-    <div class="view show" id="gateRoot">
-      <div class="hero">
-        <div class="heroTop">
-          <div class="pill"><span class="dot"></span> Ticket Bot • Panels • Logs • Clean UI</div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="pillBtn" id="copySite" type="button" title="Copy website link">🔗 Copy site</button>
-            <button class="pillBtn" id="openDiscord" type="button">💬 Discord</button>
-            <button class="pillBtn" id="openYoutube" type="button">▶️ YouTube</button>
-          </div>
-        </div>
-
-        <h1>Tickets with <span class="grad">premium</span> style</h1>
-        <p class="lead">
-          Nozzarri Tickets gives you Support + Trade tickets, clean panels, logs, and safer permission checks.
-          Use the dashboard to manage settings.
-        </p>
-
-        <div class="ctaRow">
-          <button class="btn primary" id="goFree" type="button">✅ Open Free</button>
-          <button class="btn" id="goPrem" type="button">💎 Open Premium</button>
-          <button class="btn ghost" id="goDash" type="button">🧩 Open Dashboard</button>
-        </div>
-
-        <div class="gateGrid" aria-label="Select plan">
-          <!-- FREE -->
-          <div class="pick" id="pickFree" role="button" tabindex="0" aria-label="Select Free">
-            <div class="pickGlow" aria-hidden="true"></div>
-            <div class="pickTop">
-              <div class="tag free">FREE</div>
-              <div class="kbd">main commands</div>
-            </div>
-            <div class="pickTitle">Nozzarri Tickets — Free</div>
-            <div class="pickText">
-              Support + Ticket panels + basic commands. Dashboard is accessible.
-            </div>
-            <div class="pickBtns">
-              <button class="miniBtn primary" id="freeOpen" type="button">Open Free</button>
-              <button class="miniBtn" id="freeInvite" type="button">Join Discord</button>
-            </div>
-          </div>
-
-          <!-- PREMIUM -->
-          <div class="pick" id="pickPrem" role="button" tabindex="0" aria-label="Select Premium">
-            <div class="pickGlow" aria-hidden="true"></div>
-            <div class="pickTop">
-              <div class="tag prem">PREMIUM</div>
-              <div class="kbd">extra options</div>
-            </div>
-            <div class="pickTitle">Nozzarri Tickets — Premium</div>
-            <div class="pickText">
-              Premium adds extra customization. (Dashboard stays free; premium settings can be locked.)
-            </div>
-            <div class="pickBtns">
-              <button class="miniBtn primary" id="premOpen" type="button">Open Premium</button>
-              <button class="miniBtn" id="premDiscord" type="button">Discord</button>
-            </div>
-          </div>
+  <!-- MOBILE MENU OVERLAY -->
+  <div class="overlay" id="menuOverlay" aria-hidden="true">
+    <div class="menuSheet" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="panelTop">
+        <div class="title">Menu</div>
+        <button class="x" id="closeMenu" type="button" aria-label="Close menu">✕</button>
+      </div>
+      <div class="menuBody">
+        <div class="menuLinks">
+          <a class="btn" href="#features" data-close="menu">✨ Features</a>
+          <a class="btn" href="#pricing" data-close="menu">💎 Premium</a>
+          <a class="btn" href="#faq" data-close="menu">❓ FAQ</a>
+          <a class="btn good" id="menuDiscord" href="#" target="_blank" rel="noreferrer">Join Discord</a>
+          <a class="btn" id="menuYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
+          <a class="btn" id="menuBot" href="#" target="_blank" rel="noreferrer">Invite Bot</a>
+          <!-- REAL DASHBOARD -->
+          <a class="btn primary" id="menuDashboard" href="#" target="_blank" rel="noreferrer">📊 Dashboard</a>
+          <button class="btn primary" id="menuBuy" type="button">💎 Buy Premium</button>
         </div>
       </div>
-
-      <div class="grid three" style="margin-top:16px;">
-        <div class="card">
-          <p class="sectionTitle">⚡ Fast setup</p>
-          <div class="sectionBody">Clean panels, simple flows, and smart permission checks.</div>
-        </div>
-        <div class="card">
-          <p class="sectionTitle">🧾 Panels</p>
-          <div class="sectionBody">Support / Ticket panels for easy usage.</div>
-        </div>
-        <div class="card">
-          <p class="sectionTitle">🧩 Dashboard</p>
-          <div class="sectionBody">Login with Discord, select your server, and change settings.</div>
-        </div>
-      </div>
-
-      <footer>
-        © <span id="year"></span> Nozzarri Tickets • Built for Discord communities
-      </footer>
     </div>
-
-    <!-- FREE VIEW -->
-    <div class="view" id="freeView">
-      <div class="hero">
-        <div class="heroTop">
-          <div class="pill"><span class="dot"></span> Free • Commands</div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="pillBtn" id="backGate1" type="button">⬅ Back</button>
-            <button class="pillBtn primary" id="freeDashBtn" type="button">🧩 Dashboard</button>
-          </div>
-        </div>
-
-        <h1>Free bot, <span class="grad">simple</span> commands</h1>
-        <p class="lead">
-          These are the only commands shown on the website (no fake ones).
-        </p>
-
-        <div class="ctaRow">
-          <a class="btn primary" id="inviteBtn3" href="#" target="_blank" rel="noreferrer">💬 Join Discord</a>
-          <a class="btn ghost" id="botBtn3" href="#" target="_blank" rel="noreferrer">➕ Add Bot</a>
-          <button class="btn" id="copyInvite3" type="button">📋 Copy server invite</button>
-          <a class="btn ghost" id="youtubeBtn3" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
-        </div>
-      </div>
-
-      <div class="grid two" style="margin-top:16px;">
-        <div class="card">
-          <p class="sectionTitle">✅ Free features</p>
-          <div class="sectionBody" id="freeFeatures"></div>
-        </div>
-
-        <div class="card">
-          <p class="sectionTitle">⌨️ Commands</p>
-          <div class="sectionBody" id="freeCommands"></div>
-        </div>
-      </div>
-
-      <footer>
-        Tip: use the <b class="mono">Dashboard</b> button to manage servers.
-      </footer>
-    </div>
-
-    <!-- PREMIUM VIEW -->
-    <div class="view" id="premView">
-      <div class="hero">
-        <div class="heroTop">
-          <div class="pill"><span class="dot"></span> Premium • Info</div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="pillBtn" id="backGate2" type="button">⬅ Back</button>
-            <button class="pillBtn primary" id="premDashBtn" type="button">🧩 Dashboard</button>
-          </div>
-        </div>
-
-        <h1>Nozzarri Tickets <span class="grad">Premium</span></h1>
-        <p class="lead">
-          Premium adds extra features. Website does not list “random commands”.
-        </p>
-
-        <div class="ctaRow">
-          <button class="btn primary" id="openRealDash2" type="button">🧩 Open Real Dashboard</button>
-        </div>
-      </div>
-
-      <div class="grid two" style="margin-top:16px;">
-        <div class="card">
-          <p class="sectionTitle">⭐ What premium means</p>
-          <div class="sectionBody">
-            Premium can unlock extra settings in the dashboard (themes, more config etc).
-            <div class="hint" style="margin-top:10px;">
-              Dashboard itself stays usable for everyone — only premium settings should be locked.
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <p class="sectionTitle">✅ Real commands (website)</p>
-          <div class="sectionBody">
-            This website only shows:
-            <div class="listRow"><div><div class="mono" style="font-weight:1100;">?help</div><div class="hint">Help / info</div></div></div>
-            <div class="listRow"><div><div class="mono" style="font-weight:1100;">?ticket</div><div class="hint">Ticket panel</div></div></div>
-            <div class="listRow"><div><div class="mono" style="font-weight:1100;">?support</div><div class="hint">Support panel</div></div></div>
-          </div>
-        </div>
-      </div>
-
-      <footer>
-        Want the real dashboard? Click <b class="mono">Open Real Dashboard</b>.
-      </footer>
-    </div>
-
-    <!-- DASHBOARD VIEW -->
-    <div class="view" id="dashView">
-      <div class="hero">
-        <div class="heroTop">
-          <div class="pill"><span class="dot"></span> Dashboard • FREE</div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="pillBtn" id="backGate3" type="button">⬅ Back</button>
-            <button class="pillBtn primary" id="openRealDash" type="button">🧩 Open Real Dashboard</button>
-          </div>
-        </div>
-
-        <h1>Real <span class="grad">Dashboard</span> access</h1>
-        <p class="lead">
-          This page is the website UI preview. The real dashboard is hosted by your backend (index.js).
-        </p>
-
-        <div class="ctaRow">
-          <button class="btn primary" id="dashLoginBtn" type="button">🔐 Login (Real Dashboard)</button>
-          <button class="btn" id="dashUndoBtn" type="button">↩ Undo (Dashboard menu)</button>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:16px;">
-        <div class="dashShell">
-          <div class="dashNav">
-            <div style="font-weight:1100; padding:10px 8px; color:var(--muted);">Dashboard Menu</div>
-            <button class="btn dashBtn primary" id="menuOverview" type="button">📌 Overview</button>
-            <button class="btn dashBtn" id="menuCommands" type="button">⌨️ Commands</button>
-            <button class="btn dashBtn" id="menuFAQ" type="button">❓ FAQ</button>
-
-            <div class="hint" style="margin-top:12px; padding:0 8px;">
-              This switches panels instantly (no scrolling).
-            </div>
-          </div>
-
-          <div class="dashPanel" id="dashPanel"></div>
-        </div>
-      </div>
-
-      <footer>
-        Real dashboard URL: <b class="mono" id="realDashUrl"></b>
-      </footer>
-    </div>
-
   </div>
-
-  <!-- TOAST -->
-  <div class="toast" id="toast" aria-hidden="true"></div>
 
   <script>
-    // ============================================================
-    // CONFIG (EDIT THESE)
-    // ============================================================
-    const SITE_URL = location.origin;
+    // =========================
+    // CONFIG (YOUR REAL VALUES)
+    // =========================
+    const BRAND = "Nozzarri Tickets";
+    const OWNER_DISCORD = "n_om_e";
 
-    // Your Discord server invite
+    const CLIENT_ID = "1442592762108186675";
+
+    // Minimal perms for ticket bot:
+    const PERMISSIONS = "126032";
+
+    const BOT_INVITE_URL =
+      `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=bot%20applications.commands&permissions=${PERMISSIONS}`;
+
+    const YT_URL = "https://www.youtube.com/channel/UC8Ovc5xT-tXXIjxLnVe72dQ";
     const SERVER_INVITE_URL = "https://discord.gg/FHRSPyXw";
 
-    // Your bot invite
-    const BOT_INVITE_URL = "https://discord.com/oauth2/authorize?client_id=1442592762108186675";
+    // LTC address (keep same)
+    const LTC_ADDRESS = "LPxonLCBtrcHnYAompBSXsboTfJQ8Eyuz8";
 
-    // Youtube / updates link
-    const YOUTUBE_URL = "https://www.youtube.com/";
+    // ✅ REAL DASHBOARD URL (your working one)
+    const REAL_DASHBOARD_URL = "http://85.215.159.4:9717/dashboard";
 
-    // REAL DASHBOARD BASE (backend from index.js)
-    const DASHBOARD_BASE = "http://85.215.159.4:9717";
-
-    // ============================================================
-    // HELPERS
-    // ============================================================
-    const $ = (id) => document.getElementById(id);
+    // =========================
+    // Helpers: toast + copy
+    // =========================
+    const toast = document.getElementById("toast");
+    let toastTimer = null;
 
     function showToast(msg){
-      const t = $("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      t.setAttribute("aria-hidden","false");
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=>{
-        t.classList.remove("show");
-        t.setAttribute("aria-hidden","true");
-      }, 1400);
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=> toast.classList.remove("show"), 1700);
     }
 
     async function copyText(text){
@@ -707,294 +1147,273 @@
         document.body.appendChild(ta);
         ta.select();
         document.execCommand("copy");
-        ta.remove();
+        document.body.removeChild(ta);
         showToast("Copied ✅");
       }
     }
 
-    function openUrl(url){
-      window.open(url, "_blank", "noopener,noreferrer");
+    // =========================
+    // Link wiring
+    // =========================
+    document.getElementById("year").textContent = new Date().getFullYear();
+    document.getElementById("ownerName").textContent = OWNER_DISCORD;
+    document.getElementById("ownerSpan").textContent = OWNER_DISCORD;
+
+    const linkIdsDiscord = ["navDiscord","footerDiscord","inviteServerBtn","checkoutDiscord","menuDiscord"];
+    const linkIdsYoutube = ["navYouTube","footerYouTube","youtubeBtn","checkoutYouTube","menuYouTube"];
+    const linkIdsBot = ["botBtn","footerBot","checkoutBot","menuBot"];
+
+    linkIdsDiscord.forEach(id => { const a = document.getElementById(id); if(a) a.href = SERVER_INVITE_URL; });
+    linkIdsYoutube.forEach(id => { const a = document.getElementById(id); if(a) a.href = YT_URL; });
+    linkIdsBot.forEach(id => { const a = document.getElementById(id); if(a) a.href = BOT_INVITE_URL; });
+
+    // Real Dashboard links
+    ["openDashboard","dashboardHeroBtn","footerDashboard","menuDashboard","checkoutDashboard"]
+      .forEach(id => { const a = document.getElementById(id); if(a) a.href = REAL_DASHBOARD_URL; });
+
+    // =========================
+    // Stars background (no cursor-follow)
+    // =========================
+    const canvas = document.getElementById("stars");
+    const ctx = canvas.getContext("2d");
+    let stars = [];
+
+    function resizeStars(){
+      canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
+      canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+      stars = [];
+      const count = Math.floor(Math.min(220, (window.innerWidth * window.innerHeight) / 9000));
+      for(let i=0;i<count;i++){
+        stars.push({
+          x: Math.random()*canvas.width,
+          y: Math.random()*canvas.height,
+          r: (Math.random()*1.4 + .4) * devicePixelRatio,
+          a: Math.random()*0.8 + 0.2,
+          s: (Math.random()*0.35 + 0.08) * devicePixelRatio
+        });
+      }
     }
 
-    // ============================================================
-    // LOADER
-    // ============================================================
-    const loader = $("loader");
-    const loadText = $("loadText");
-    const loadPct = $("loadPct");
-    const barFill = $("barFill");
-    const steps = [
-      ["Booting UI", 12],
-      ["Loading assets", 32],
-      ["Preparing menus", 60],
-      ["Finalizing", 90],
-      ["Ready", 100],
-    ];
-    (function runLoader(){
-      let i = 0;
-      function step(){
-        const [t, p] = steps[i];
-        loadText.textContent = t;
-        barFill.style.width = p + "%";
-        loadPct.textContent = p + "%";
-        i++;
-        if(i < steps.length){
-          setTimeout(step, 180 + Math.random()*160);
-        }else{
-          setTimeout(() => loader.classList.add("hide"), 320);
+    function drawStars(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      for(const st of stars){
+        st.y += st.s;
+        if(st.y > canvas.height + 10) st.y = -10;
+        ctx.globalAlpha = st.a;
+        ctx.beginPath();
+        ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+      }
+      requestAnimationFrame(drawStars);
+    }
+
+    window.addEventListener("resize", resizeStars);
+    resizeStars();
+    drawStars();
+
+    // =========================
+    // Reveal on scroll
+    // =========================
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add("on");
+          io.unobserve(e.target);
         }
-      }
-      setTimeout(step, 220);
-    })();
-
-    // ============================================================
-    // VIEWS + HISTORY (UNDO)
-    // ============================================================
-    const gateRoot = $("gateRoot");
-    const freeView = $("freeView");
-    const premView = $("premView");
-    const dashView = $("dashView");
-
-    const historyStack = []; // { viewId, dashPanelKey? }
-
-    function currentViewId(){
-      if(gateRoot.classList.contains("show")) return "gateRoot";
-      if(freeView.classList.contains("show")) return "freeView";
-      if(premView.classList.contains("show")) return "premView";
-      if(dashView.classList.contains("show")) return "dashView";
-      return "gateRoot";
-    }
-
-    function hideAllViews(){
-      [gateRoot, freeView, premView, dashView].forEach(v=>{
-        v.classList.remove("show");
-        v.style.display = "none";
       });
-    }
-    function showViewById(id){
-      hideAllViews();
-      const el = $(id);
-      el.style.display = "block";
-      el.classList.add("show");
-    }
+    }, {threshold: .12});
+    document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
 
-    function pushHistory(next){
-      const cur = { viewId: currentViewId(), dashPanelKey: dashState.activeKey };
-      const last = historyStack[historyStack.length - 1];
-      // avoid duplicates
-      if(!last || last.viewId !== cur.viewId || last.dashPanelKey !== cur.dashPanelKey){
-        historyStack.push(cur);
+    // =========================
+    // To top button
+    // =========================
+    const toTop = document.getElementById("toTop");
+    window.addEventListener("scroll", ()=>{
+      if(window.scrollY > 700) toTop.classList.add("show");
+      else toTop.classList.remove("show");
+    });
+    toTop.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
+
+    // =========================
+    // Mock switch (right hero card)
+    // =========================
+    const chips = document.querySelectorAll(".chip");
+    const k1 = document.getElementById("kpi1");
+    const k2 = document.getElementById("kpi2");
+    const k3 = document.getElementById("kpi3");
+    const k4 = document.getElementById("kpi4");
+    const mockList = document.getElementById("mockList");
+
+    const mockData = {
+      analytics: {
+        kpis: ["12","3m","28","98%"],
+        lines: [
+          ["#support • New ticket","Open","warn"],
+          ["#trade • Payment checked","Resolved","good"],
+          ["#support • Bug report","Open","warn"]
+        ]
+      },
+      panels: {
+        kpis: ["3","2","5","Ready"],
+        lines: [
+          ["Panel: Support","Active","good"],
+          ["Panel: Trade","Active","good"],
+          ["Panel: Appeals","Draft","warn"]
+        ]
+      },
+      logs: {
+        kpis: ["74","12","2","OK"],
+        lines: [
+          ["Closed tickets today","Logged","good"],
+          ["Staff actions","Tracked","good"],
+          ["Missing transcript","Review","warn"]
+        ]
       }
+    };
+
+    function renderMock(key){
+      const m = mockData[key];
+      [k1.textContent,k2.textContent,k3.textContent,k4.textContent] = m.kpis;
+      mockList.innerHTML = m.lines.map(([l,tag,kind]) =>
+        `<div class="line"><span>${l}</span><span class="tag ${kind}">${tag}</span></div>`
+      ).join("");
     }
 
-    function undo(){
-      const prev = historyStack.pop();
-      if(!prev){
-        showToast("Nothing to undo");
-        return;
-      }
-      showViewById(prev.viewId);
-      if(prev.viewId === "dashView"){
-        setDashPanel(prev.dashPanelKey || "overview", false);
-      }
-      showToast("Undo ↩");
-    }
-
-    // show helpers (these push history)
-    function showGate(){ pushHistory(); showViewById("gateRoot"); }
-    function showFree(){ pushHistory(); showViewById("freeView"); }
-    function showPrem(){ pushHistory(); showViewById("premView"); }
-    function showDash(){ pushHistory(); showViewById("dashView"); setDashPanel(dashState.activeKey || "overview", false); }
-
-    // ============================================================
-    // TOP NAV
-    // ============================================================
-    $("navUndo").addEventListener("click", undo);
-    $("navHome").addEventListener("click", showGate);
-    $("navFree").addEventListener("click", showFree);
-    $("navPremium").addEventListener("click", showPrem);
-    $("navDashboard").addEventListener("click", showDash);
-
-    // home CTA buttons
-    $("goFree").addEventListener("click", showFree);
-    $("goPrem").addEventListener("click", showPrem);
-    $("goDash").addEventListener("click", showDash);
-
-    // gate cards
-    $("pickFree").addEventListener("click", (e)=>{ if(e.target.closest("button")) return; showFree(); });
-    $("pickPrem").addEventListener("click", (e)=>{ if(e.target.closest("button")) return; showPrem(); });
-    $("freeOpen").addEventListener("click", showFree);
-    $("premOpen").addEventListener("click", showPrem);
-
-    // back buttons
-    $("backGate1").addEventListener("click", ()=>{ pushHistory(); showGate(); });
-    $("backGate2").addEventListener("click", ()=>{ pushHistory(); showGate(); });
-    $("backGate3").addEventListener("click", ()=>{ pushHistory(); showGate(); });
-
-    // ============================================================
-    // LINKS
-    // ============================================================
-    $("openDiscord").addEventListener("click", ()=>openUrl(SERVER_INVITE_URL));
-    $("openYoutube").addEventListener("click", ()=>openUrl(YOUTUBE_URL));
-    $("freeInvite").addEventListener("click", ()=>openUrl(SERVER_INVITE_URL));
-    $("premDiscord").addEventListener("click", ()=>openUrl(SERVER_INVITE_URL));
-
-    $("inviteBtn3").href = SERVER_INVITE_URL;
-    $("botBtn3").href = BOT_INVITE_URL;
-    $("youtubeBtn3").href = YOUTUBE_URL;
-
-    $("copyInvite3").addEventListener("click", ()=>copyText(SERVER_INVITE_URL));
-    $("copySite").addEventListener("click", ()=>copyText(SITE_URL));
-
-    // ============================================================
-    // REAL DASHBOARD OPEN
-    // ============================================================
-    const REAL_DASH_URL = DASHBOARD_BASE.replace(/\/+$/,"") + "/dashboard";
-    $("realDashUrl").textContent = REAL_DASH_URL;
-
-    function openRealDashboard(){
-      openUrl(REAL_DASH_URL);
-    }
-    $("openRealDash").addEventListener("click", openRealDashboard);
-    $("dashLoginBtn").addEventListener("click", openRealDashboard);
-    $("freeDashBtn").addEventListener("click", openRealDashboard);
-    $("premDashBtn").addEventListener("click", openRealDashboard);
-    $("openRealDash2").addEventListener("click", openRealDashboard);
-
-    // ============================================================
-    // FREE CONTENT (ONLY REAL COMMANDS YOU SAID)
-    // ============================================================
-    const freeFeatures = [
-      "✅ Support panel",
-      "✅ Ticket panel",
-      "✅ Clean buttons UI",
-      "✅ Dashboard access (free)"
-    ];
-
-    const realCommands = [
-      { cmd: "?help", desc: "Shows help / info" },
-      { cmd: "?ticket", desc: "Ticket panel" },
-      { cmd: "?support", desc: "Support panel" }
-    ];
-
-    $("freeFeatures").innerHTML =
-      freeFeatures.map(x=>`<div class="listRow"><div style="font-weight:950;">${x}</div><div class="hint">Free</div></div>`).join("");
-
-    $("freeCommands").innerHTML =
-      realCommands.map(c=>`
-        <div class="listRow">
-          <div>
-            <div class="mono" style="font-weight:1100;">${c.cmd}</div>
-            <div class="hint">${c.desc}</div>
-          </div>
-          <button class="btn" type="button" data-copy="${c.cmd}">Copy</button>
-        </div>
-      `).join("");
-
-    document.querySelectorAll("[data-copy]").forEach(btn=>{
-      btn.addEventListener("click", ()=>copyText(btn.getAttribute("data-copy")));
+    chips.forEach(ch=>{
+      ch.addEventListener("click", ()=>{
+        chips.forEach(x=>x.classList.remove("active"));
+        ch.classList.add("active");
+        renderMock(ch.dataset.mock);
+      });
     });
 
-    // ============================================================
-    // DASHBOARD PREVIEW (NO SCROLL, UNDO)
-    // ============================================================
-    const dashPanel = $("dashPanel");
-    const menuOverview = $("menuOverview");
-    const menuCommands = $("menuCommands");
-    const menuFAQ = $("menuFAQ");
+    // =========================
+    // Overlay system (only Checkout + Menu)
+    // =========================
+    const buyOverlay = document.getElementById("buyOverlay");
+    const menuOverlay = document.getElementById("menuOverlay");
 
-    const dashState = { activeKey: "overview" };
-
-    function setDashActive(btn){
-      [menuOverview, menuCommands, menuFAQ].forEach(b=>b.classList.remove("primary"));
-      btn.classList.add("primary");
+    function lockScroll(lock){
+      document.body.style.overflow = lock ? "hidden" : "";
     }
 
-    function renderOverview(){
-      dashPanel.innerHTML = `
-        <div style="font-weight:1100; font-size:16px;">📌 Overview</div>
-        <div class="hint" style="margin-top:8px;">
-          Dashboard is FREE. Premium settings (if any) should only be locked inside the real panel.
-        </div>
-
-        <div class="listRow">
-          <div>
-            <div style="font-weight:1100;">Open Real Dashboard</div>
-            <div class="hint">Login with Discord and manage your server settings.</div>
-          </div>
-          <button class="btn primary" id="openRealDashInside" type="button">Open</button>
-        </div>
-
-        <div class="hint" style="margin-top:10px;">
-          URL: <span class="mono">${REAL_DASH_URL}</span>
-        </div>
-      `;
-      $("openRealDashInside").addEventListener("click", openRealDashboard);
+    function showOverlay(which){
+      history.pushState({overlay: which}, "", "#"+which);
+      openOverlay(which, false);
     }
 
-    function renderCommands(){
-      dashPanel.innerHTML = `
-        <div style="font-weight:1100; font-size:16px;">⌨️ Commands</div>
-        <div class="hint" style="margin-top:8px;">Only the real commands you asked for:</div>
+    function openOverlay(which, push){
+      if(push) history.pushState({overlay: which}, "", "#"+which);
 
-        ${realCommands.map(c=>`
-          <div class="listRow">
-            <div>
-              <div class="mono" style="font-weight:1100;">${c.cmd}</div>
-              <div class="hint">${c.desc}</div>
-            </div>
-            <button class="btn" type="button" data-dcopy="${c.cmd}">Copy</button>
-          </div>
-        `).join("")}
-      `;
-      dashPanel.querySelectorAll("[data-dcopy]").forEach(btn=>{
-        btn.addEventListener("click", ()=>copyText(btn.getAttribute("data-dcopy")));
+      [buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
+      if(which === "checkout") buyOverlay.classList.add("show");
+      if(which === "menu") menuOverlay.classList.add("show");
+
+      lockScroll(true);
+    }
+
+    function closeAllOverlays(){
+      [buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
+      lockScroll(false);
+    }
+
+    function closeViaBack(){
+      if(buyOverlay.classList.contains("show") || menuOverlay.classList.contains("show")){
+        history.back();
+      }
+    }
+
+    window.addEventListener("popstate", (e)=>{
+      if(e.state && e.state.overlay){
+        openOverlay(e.state.overlay, false);
+      }else{
+        closeAllOverlays();
+      }
+    });
+
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape") closeViaBack();
+    });
+
+    [buyOverlay,menuOverlay].forEach(o=>{
+      o.addEventListener("mousedown", (e)=>{
+        if(e.target === o) closeViaBack();
       });
+    });
+
+    // Buttons
+    document.getElementById("openCheckout").addEventListener("click", ()=> showOverlay("checkout"));
+    document.getElementById("openCheckoutFromHero").addEventListener("click", ()=> showOverlay("checkout"));
+    document.getElementById("openCheckoutFooter").addEventListener("click", ()=> showOverlay("checkout"));
+    document.getElementById("closeCheckout").addEventListener("click", closeViaBack);
+
+    document.getElementById("openMenu").addEventListener("click", ()=> showOverlay("menu"));
+    document.getElementById("closeMenu").addEventListener("click", closeViaBack);
+
+    document.getElementById("menuBuy").addEventListener("click", ()=>{
+      closeViaBack();
+      setTimeout(()=> showOverlay("checkout"), 80);
+    });
+    document.querySelectorAll('[data-close="menu"]').forEach(a=>{
+      a.addEventListener("click", ()=> closeViaBack());
+    });
+
+    document.getElementById("scrollPricing").addEventListener("click", ()=>{
+      document.getElementById("pricing").scrollIntoView({behavior:"smooth", block:"start"});
+    });
+
+    // =========================
+    // Checkout logic (keeps your prices + LTC)
+    // =========================
+    const planPicked = document.getElementById("planPicked");
+    const payMsg = document.getElementById("payMsg");
+    const ltcAddr = document.getElementById("ltcAddr");
+    ltcAddr.value = LTC_ADDRESS;
+
+    function setPlan(plan, price){
+      planPicked.value = `${plan} — $${price}`;
+      const msg = `${BRAND} Premium | Plan: ${plan} | Price: $${price} | User: (your discord) | TXID: (paste txid)`;
+      payMsg.value = msg;
+      document.getElementById("buyTitle").textContent = `💎 Buy Premium — ${plan} ($${price})`;
     }
 
-    function renderFAQ(){
-      dashPanel.innerHTML = `
-        <div style="font-weight:1100; font-size:16px;">❓ FAQ</div>
+    setPlan("1 MONTH", 2);
 
-        <div class="listRow">
-          <div>
-            <div style="font-weight:1100;">Where is the real dashboard?</div>
-            <div class="hint"><span class="mono">${REAL_DASH_URL}</span></div>
-          </div>
-          <button class="btn" id="copyDashUrl" type="button">Copy</button>
-        </div>
+    document.querySelectorAll(".plan").forEach(card=>{
+      const plan = card.dataset.plan;
+      const price = card.dataset.price;
 
-        <div class="listRow">
-          <div>
-            <div style="font-weight:1100;">Why is it a different page?</div>
-            <div class="hint">Because OAuth + sessions are handled by your backend.</div>
-          </div>
-          <div class="tag free">Info</div>
-        </div>
-      `;
-      $("copyDashUrl").addEventListener("click", ()=>copyText(REAL_DASH_URL));
-    }
+      card.querySelector(".buyBtn").addEventListener("click", ()=>{
+        setPlan(plan, price);
+        showOverlay("checkout");
+      });
 
-    function setDashPanel(key, push=true){
-      if(push) pushHistory();
-      dashState.activeKey = key;
+      card.querySelector(".copyLtcBtn").addEventListener("click", ()=> copyText(LTC_ADDRESS));
+    });
 
-      if(key === "overview"){ setDashActive(menuOverview); renderOverview(); }
-      if(key === "commands"){ setDashActive(menuCommands); renderCommands(); }
-      if(key === "faq"){ setDashActive(menuFAQ); renderFAQ(); }
-    }
+    document.getElementById("copyLtcFooter").addEventListener("click", ()=> copyText(LTC_ADDRESS));
 
-    menuOverview.addEventListener("click", ()=>setDashPanel("overview", true));
-    menuCommands.addEventListener("click", ()=>setDashPanel("commands", true));
-    menuFAQ.addEventListener("click", ()=>setDashPanel("faq", true));
+    document.getElementById("copyPayInfo").addEventListener("click", ()=>{
+      const combo =
+`LTC Address: ${LTC_ADDRESS}
+Owner: ${OWNER_DISCORD}
+Message: ${payMsg.value}`;
+      copyText(combo);
+    });
+    document.getElementById("copyAddrOnly").addEventListener("click", ()=> copyText(LTC_ADDRESS));
+    document.getElementById("copyOwnerOnly").addEventListener("click", ()=> copyText(OWNER_DISCORD));
 
-    $("dashUndoBtn").addEventListener("click", undo);
-
-    // defaults
-    setDashPanel("overview", false);
-
-    // misc
-    $("year").textContent = new Date().getFullYear();
+    // Boot hash
+    (function boot(){
+      const hash = (location.hash || "").replace("#","");
+      if(hash === "checkout" || hash === "menu"){
+        history.replaceState({overlay: hash}, "", "#"+hash);
+        openOverlay(hash, false);
+      }else{
+        history.replaceState(null, "", "#top");
+      }
+    })();
   </script>
 </body>
 </html>

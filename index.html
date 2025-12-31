@@ -8,806 +8,1133 @@
 
   <!-- Social preview -->
   <meta property="og:title" content="Nozzarri Tickets | Discord Ticket Bot" />
-  <meta property="og:description" content="Ticket bot — Support & Trade tickets, clean panels, logs, and more." />
+  <meta property="og:description" content="Ticket bot — Support & Trade tickets, setup panel, logs, clean UI." />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/nozzarri.png" />
+
+  <link rel="icon" type="image/png" href="assets/nozzarri.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg0:#050611;
-      --bg1:#070a18;
-      --bg2:#0a0f24;
-
+      --bg0:#05060f;
+      --bg1:#070824;
       --card: rgba(255,255,255,.06);
       --card2: rgba(255,255,255,.09);
-      --line: rgba(255,255,255,.10);
+      --border: rgba(255,255,255,.12);
 
       --text:#eef2ff;
-      --muted: rgba(238,242,255,.70);
-      --muted2: rgba(238,242,255,.55);
+      --muted: rgba(238,242,255,.72);
 
-      --p1:#8b5cf6;   /* violet */
-      --p2:#22d3ee;   /* cyan */
-      --p3:#fb7185;   /* pink */
-      --good:#34d399;
-      --warn:#fbbf24;
-      --bad:#fb7185;
+      --a:#7c3aed;
+      --b:#38bdf8;
+      --c:#22c55e;
+      --d:#fbbf24;
 
-      --shadow: 0 22px 70px rgba(0,0,0,.58);
-      --r: 18px;
-      --r2: 24px;
+      --shadow: 0 26px 90px rgba(0,0,0,.62);
+      --radius: 18px;
+      --radius2: 26px;
+
+      --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+      --ease: cubic-bezier(.2,.8,.2,1);
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      font-family:var(--font);
       color:var(--text);
       background:
-        radial-gradient(1200px 900px at 10% 10%, rgba(139,92,246,.30), transparent 55%),
-        radial-gradient(900px 700px at 90% 20%, rgba(34,211,238,.20), transparent 55%),
-        radial-gradient(900px 700px at 60% 95%, rgba(251,113,133,.14), transparent 60%),
-        linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 45%, var(--bg2) 100%);
+        radial-gradient(1200px 700px at 20% 15%, rgba(124,58,237,.18), transparent 55%),
+        radial-gradient(900px 600px at 80% 18%, rgba(56,189,248,.14), transparent 55%),
+        radial-gradient(1100px 750px at 60% 92%, rgba(34,197,94,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
     }
 
-    a{color:inherit;text-decoration:none}
-    button{font-family:inherit}
-
-    /* ---------- Galaxy stars layers ---------- */
-    .stars, .stars2, .stars3{
-      position: fixed; inset:0;
-      pointer-events:none;
-      background-repeat: repeat;
-      opacity:.55;
-      z-index:0;
-      mix-blend-mode: screen;
+    /* Background layers */
+    .bg{
+      position:fixed; inset:0; z-index:-2; pointer-events:none;
     }
-    .stars{
-      background-image:
-        radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,.55), transparent 60%),
-        radial-gradient(1px 1px at 80px 120px, rgba(255,255,255,.45), transparent 55%),
-        radial-gradient(2px 2px at 200px 220px, rgba(255,255,255,.50), transparent 60%),
-        radial-gradient(1px 1px at 320px 90px, rgba(255,255,255,.40), transparent 55%),
-        radial-gradient(2px 2px at 420px 160px, rgba(255,255,255,.46), transparent 60%);
-      background-size: 520px 320px;
-      animation: drift 26s linear infinite;
-      opacity:.35;
+    canvas#stars{
+      position:absolute; inset:0; width:100%; height:100%;
+      opacity:.26;
+      filter: blur(.0px);
     }
-    .stars2{
-      background-image:
-        radial-gradient(1px 1px at 60px 60px, rgba(34,211,238,.55), transparent 55%),
-        radial-gradient(1px 1px at 140px 180px, rgba(139,92,246,.45), transparent 55%),
-        radial-gradient(2px 2px at 260px 70px, rgba(255,255,255,.35), transparent 60%),
-        radial-gradient(1px 1px at 360px 210px, rgba(251,113,133,.40), transparent 55%);
-      background-size: 460px 280px;
-      animation: drift 40s linear infinite reverse;
-      opacity:.22;
+    .glow{
+      position:absolute; inset:-200px;
+      background:
+        radial-gradient(circle at 22% 22%, rgba(124,58,237,.22), transparent 52%),
+        radial-gradient(circle at 82% 25%, rgba(56,189,248,.16), transparent 52%),
+        radial-gradient(circle at 60% 88%, rgba(34,197,94,.12), transparent 52%);
+      filter: blur(50px);
+      opacity:.9;
+      animation: float 12s var(--ease) infinite;
     }
-    .stars3{
-      background-image:
-        radial-gradient(3px 3px at 120px 110px, rgba(255,255,255,.22), transparent 65%),
-        radial-gradient(2px 2px at 280px 200px, rgba(255,255,255,.18), transparent 65%),
-        radial-gradient(2px 2px at 380px 60px, rgba(255,255,255,.14), transparent 65%);
-      background-size: 520px 360px;
-      animation: drift 60s linear infinite;
-      opacity:.12;
-    }
-    @keyframes drift{
-      from{ transform: translate3d(0,0,0); }
-      to{ transform: translate3d(-140px, 60px, 0); }
+    @keyframes float{
+      0%,100%{ transform: translate3d(0,0,0) scale(1); }
+      50%{ transform: translate3d(28px,-16px,0) scale(1.02); }
     }
 
-    /* subtle noise */
-    .noise{
-      position:fixed; inset:0;
-      pointer-events:none;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
-      mix-blend-mode:overlay;
-      opacity:.08;
-      z-index:1;
-    }
+    /* Layout */
+    .container{max-width:1200px; margin:0 auto; padding:0 20px}
+    .row{display:flex; align-items:center; justify-content:space-between; gap:14px}
+    .grid{display:grid; gap:14px}
 
-    /* ---------- Topbar ---------- */
-    .topbar{
-      position:sticky; top:0; z-index:50;
-      backdrop-filter: blur(16px);
-      background: rgba(6,8,18,.62);
+    /* Top Nav */
+    .nav{
+      position:sticky; top:0; z-index:60;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(5,6,15,.80), rgba(5,6,15,.45));
       border-bottom: 1px solid rgba(255,255,255,.08);
     }
-    .topbar-inner{
-      max-width:1200px; margin:0 auto;
-      padding:14px 18px;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
+    .navInner{
+      height:72px;
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
     }
     .brand{
       display:flex; align-items:center; gap:12px;
-      font-weight:950;
-      letter-spacing:.2px;
-      min-width: 240px;
+      text-decoration:none; color:var(--text);
+      user-select:none;
     }
-    .logoImg{
-      width:34px; height:34px;
-      border-radius: 10px;
-      object-fit: cover;
-      border: 1px solid rgba(255,255,255,.12);
+    .logo{
+      width:42px; height:42px; border-radius:14px;
       background: rgba(255,255,255,.06);
-      box-shadow: 0 0 28px rgba(139,92,246,.28);
+      border:1px solid rgba(255,255,255,.12);
+      display:grid; place-items:center;
+      box-shadow: 0 0 34px rgba(124,58,237,.18);
+      overflow:hidden;
     }
-    .brand small{
-      display:block;
-      font-weight:800;
-      color:var(--muted2);
-      letter-spacing:.6px;
-      margin-top:2px;
-      font-size:12px;
+    .logo img{width:100%; height:100%; object-fit:cover}
+    .brandName{
+      font-weight:1000; letter-spacing:.2px; line-height:1;
     }
-
-    .navBtns{
-      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
-      align-items:center;
+    .brandSub{
+      color:var(--muted); font-weight:800; font-size:12px; margin-top:2px;
     }
 
-    .pillBtn{
+    .navLinks{display:flex; gap:16px; align-items:center}
+    .navLinks a{
+      color:rgba(238,242,255,.78);
+      text-decoration:none;
+      font-weight:900;
+      font-size:13px;
+      padding:10px 10px;
+      border-radius:12px;
+      transition: background .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
+    }
+    .navLinks a:hover{
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      transform: translateY(-1px);
+    }
+
+    .navBtns{display:flex; gap:10px; align-items:center}
+    .btn{
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
       color:var(--text);
-      padding:10px 12px;
-      border-radius:999px;
-      cursor:pointer;
-      font-weight:900;
+      border-radius: 999px;
+      padding: 11px 14px;
+      font-weight:1000;
       font-size:13px;
-      display:flex; align-items:center; gap:8px;
-      transition: .18s transform, .18s background, .18s border-color, .18s box-shadow;
-      box-shadow: 0 0 0 rgba(0,0,0,0);
+      letter-spacing:.2px;
+      cursor:pointer;
+      transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease), box-shadow .18s var(--ease);
+      display:inline-flex; align-items:center; gap:10px;
+      text-decoration:none;
+      user-select:none;
     }
-    .pillBtn:hover{
+    .btn:hover{
       transform: translateY(-1px);
-      border-color: rgba(139,92,246,.35);
-      background: rgba(139,92,246,.10);
-      box-shadow: 0 10px 26px rgba(139,92,246,.08);
+      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.09);
+      box-shadow: 0 14px 40px rgba(0,0,0,.30);
     }
-    .pillBtn.primary{
-      border-color: rgba(34,211,238,.35);
-      background: linear-gradient(90deg, rgba(139,92,246,.22), rgba(34,211,238,.14));
+    .btn:active{ transform: translateY(0px) scale(.99); }
+
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.85));
+      border-color: rgba(255,255,255,.16);
+      box-shadow: 0 22px 70px rgba(124,58,237,.18);
     }
-    .pillBtn.undo{
-      border-color: rgba(251,113,133,.25);
-      background: rgba(251,113,133,.08);
+    .btn.primary:hover{
+      box-shadow: 0 24px 80px rgba(56,189,248,.16);
     }
 
-    /* ---------- Layout ---------- */
-    .container{
-      position:relative;
-      z-index:2;
-      max-width:1200px;
-      margin:0 auto;
-      padding:22px 18px 44px;
+    .btn.good{
+      background: linear-gradient(135deg, rgba(34,197,94,.90), rgba(56,189,248,.65));
+      border-color: rgba(255,255,255,.16);
     }
 
-    .view{display:none}
-    .view.show{display:block; animation: viewIn .22s ease-out}
-    @keyframes viewIn{from{opacity:.0; transform: translateY(8px)} to{opacity:1; transform:none}}
-
-    .card{
-      background: var(--card);
-      border:1px solid var(--line);
-      border-radius: var(--r);
-      box-shadow: var(--shadow);
+    .hamburger{
+      display:none;
+      width:44px; height:44px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      cursor:pointer;
+    }
+    .hamburger span{
+      display:block; width:18px; height:2px; margin:6px auto;
+      background: rgba(238,242,255,.85);
+      border-radius:99px;
     }
 
+    /* Hero */
     .hero{
-      padding:18px;
-      border-radius: var(--r2);
-      background:
-        radial-gradient(900px 500px at 15% 0%, rgba(139,92,246,.28), transparent 60%),
-        radial-gradient(700px 520px at 95% 20%, rgba(34,211,238,.18), transparent 60%),
-        radial-gradient(700px 520px at 60% 110%, rgba(251,113,133,.12), transparent 60%),
-        rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.10);
+      padding: 54px 0 18px;
+    }
+    .heroGrid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      align-items:stretch;
+    }
+    .heroCard{
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
       box-shadow: var(--shadow);
       overflow:hidden;
       position:relative;
     }
-    .heroTop{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; flex-wrap:wrap;
+    .heroCard::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(700px 260px at 12% 10%, rgba(124,58,237,.20), transparent 55%),
+                  radial-gradient(700px 260px at 90% 30%, rgba(56,189,248,.16), transparent 55%);
+      opacity:.85;
+      pointer-events:none;
     }
+    .heroPad{padding: 28px; position:relative}
     .pill{
       display:inline-flex; align-items:center; gap:10px;
-      padding:8px 12px;
-      border-radius:999px;
+      padding: 10px 12px;
+      border-radius: 999px;
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      font-weight:900;
+      background: rgba(0,0,0,.22);
+      font-weight:1000;
       font-size:12px;
-      color: var(--muted);
+      color: rgba(238,242,255,.82);
     }
-    .pill .dot{
-      width:9px; height:9px; border-radius:999px;
-      background: linear-gradient(90deg, var(--p1), var(--p2));
-      box-shadow: 0 0 18px rgba(34,211,238,.25);
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(56,189,248,.75));
+      box-shadow: 0 0 18px rgba(34,197,94,.22);
     }
-
-    h1{
-      margin:14px 0 8px;
-      font-size: clamp(26px, 4vw, 44px);
-      line-height:1.05;
-      letter-spacing:-.6px;
+    .h1{
+      margin: 14px 0 10px;
+      font-size: clamp(28px, 4.2vw, 50px);
+      line-height:1.03;
+      letter-spacing:-1px;
+      font-weight:1000;
     }
     .grad{
-      background: linear-gradient(90deg, var(--p1), var(--p2), var(--p3));
+      background: linear-gradient(90deg, rgba(56,189,248,.95), rgba(124,58,237,.95), rgba(34,197,94,.95));
       -webkit-background-clip:text;
       background-clip:text;
       color:transparent;
     }
     .lead{
-      margin:0;
-      color: var(--muted);
-      font-weight:750;
-      line-height:1.55;
-      max-width: 72ch;
+      margin: 0;
+      color: rgba(238,242,255,.78);
+      font-weight:800;
+      line-height:1.6;
+      max-width: 62ch;
     }
-
-    .ctaRow{
+    .heroBtns{
       display:flex; gap:10px; flex-wrap:wrap;
       margin-top:16px;
     }
-    .btn{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      padding:11px 14px;
-      border-radius: 14px;
-      cursor:pointer;
-      font-weight:950;
-      letter-spacing:.2px;
-      transition:.18s transform,.18s background,.18s border-color,.18s box-shadow;
-      display:inline-flex; align-items:center; gap:10px;
-    }
-    .btn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(34,211,238,.28);
-      background: rgba(34,211,238,.10);
-      box-shadow: 0 18px 40px rgba(34,211,238,.06);
-    }
-    .btn.primary{
-      border-color: rgba(139,92,246,.45);
-      background: linear-gradient(90deg, rgba(139,92,246,.26), rgba(34,211,238,.14));
-    }
-    .btn.ghost{
-      background: rgba(255,255,255,.03);
-    }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:16px;
-    }
-    @media (min-width: 920px){
-      .grid.two{grid-template-columns: 1.1fr .9fr}
-      .grid.three{grid-template-columns: repeat(3, 1fr)}
-    }
-
-    /* ---------- Feature cards ---------- */
-    .sectionTitle{
-      font-weight:1050;
-      font-size:16px;
-      letter-spacing:.2px;
-      margin:0;
-      padding:14px 14px 0;
-    }
-    .sectionBody{
-      padding:14px;
-      color:var(--muted);
-      font-weight:750;
-      line-height:1.6;
-    }
-    .listRow{
-      display:flex; justify-content:space-between; align-items:center;
-      gap:12px;
-      padding:12px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.04);
-      border-radius: 16px;
-      transition:.16s transform,.16s border-color,.16s background;
-      margin-top:10px;
-    }
-    .listRow:hover{
-      transform: translateY(-1px);
-      border-color: rgba(139,92,246,.22);
-      background: rgba(139,92,246,.06)
-    }
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
-    .hint{color:var(--muted2); font-weight:750; font-size:12px; line-height:1.5; margin-top:6px}
-
-    .tag{
-      font-weight:950; font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      white-space:nowrap;
-    }
-    .tag.free{border-color: rgba(52,211,153,.32); background: rgba(52,211,153,.08)}
-    .tag.prem{border-color: rgba(139,92,246,.32); background: rgba(139,92,246,.10)}
-    .tag.bad{border-color: rgba(251,113,133,.32); background: rgba(251,113,133,.10)}
-
-    /* ---------- Dashboard layout like screenshots ---------- */
-    .dashWrap{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:16px;
-      margin-top:16px;
-    }
-    @media(min-width: 980px){
-      .dashWrap{ grid-template-columns: 260px 1fr; }
-    }
-
-    .side{
-      padding:12px;
-      border-radius: var(--r2);
-      background: rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow: var(--shadow);
-      height: fit-content;
-    }
-    .sideTitle{
-      display:flex; align-items:center; gap:10px;
-      padding:10px 10px 6px;
-      color: var(--muted);
-      font-weight:950;
-      letter-spacing:.2px;
-    }
-    .sideBtn{
-      width:100%;
-      justify-content:flex-start;
-      border-radius: 16px;
-      margin-top:10px;
-    }
-
-    .mainDash{
-      border-radius: var(--r2);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-
-    .dashHeader{
-      padding:16px 16px 12px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      display:flex; justify-content:space-between; align-items:flex-end;
-      gap:10px; flex-wrap:wrap;
-    }
-    .dashHeader h2{
-      margin:0;
-      font-size: 22px;
-      letter-spacing:-.3px;
-    }
-
-    .searchRow{
-      padding:14px 16px;
-      display:flex; gap:12px; align-items:center;
-      flex-wrap:wrap;
-    }
-    .search{
-      flex: 1;
-      min-width: 260px;
-      display:flex; align-items:center; gap:10px;
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
-    }
-    .search input{
-      flex:1;
-      border:none; outline:none;
-      background: transparent;
-      color: var(--text);
+    .miniRow{
+      margin-top: 16px;
+      display:flex; gap:10px; flex-wrap:wrap;
+      color: rgba(238,242,255,.70);
       font-weight:800;
       font-size:13px;
     }
-    .chip{
+    .miniStat{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.04);
-      padding:10px 12px;
-      border-radius: 14px;
-      font-weight:900;
-      color: var(--muted);
-      display:flex; gap:8px; align-items:center;
-      white-space:nowrap;
+    }
+    .badge{
+      font-weight:1000;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      font-size:12px;
     }
 
-    .serverGrid{
-      padding: 0 16px 16px;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:14px;
+    /* Right preview card */
+    .previewCard{
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
     }
-    @media(min-width: 860px){
-      .serverGrid{ grid-template-columns: repeat(2, 1fr); }
+    .previewTop{
+      padding: 14px 14px 10px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
     }
-    @media(min-width: 1120px){
-      .serverGrid{ grid-template-columns: repeat(3, 1fr); }
+    .chipRow{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .chip{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      font-weight:1000;
+      font-size:12px;
+      color: rgba(238,242,255,.82);
+      cursor:pointer;
+      transition: transform .18s var(--ease), background .18s var(--ease);
+      user-select:none;
     }
-
-    .serverCard{
+    .chip:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .chip.active{
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.75));
+      border-color: rgba(255,255,255,.16);
+      color: var(--text);
+    }
+    .previewBody{padding: 14px}
+    .mock{
       border-radius: 18px;
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
+      background: rgba(0,0,0,.18);
       overflow:hidden;
-      transition:.18s transform,.18s border-color,.18s background;
-      box-shadow: 0 16px 50px rgba(0,0,0,.35);
     }
-    .serverCard:hover{
-      transform: translateY(-2px);
-      border-color: rgba(139,92,246,.24);
-      background: rgba(139,92,246,.06);
+    .mockHead{
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      color: rgba(238,242,255,.82);
+      font-weight:1000;
+      font-size:12px;
     }
-    .serverTop{
-      display:flex; align-items:center; gap:12px;
-      padding:14px;
+    .dots{display:flex; gap:6px}
+    .dots i{width:10px; height:10px; border-radius:99px; display:inline-block; background: rgba(255,255,255,.14)}
+    .mockInner{padding: 12px}
+    .mockGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
-    .guildIcon{
+    .kpi{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding: 12px;
+    }
+    .kpi .t{font-weight:1000; font-size:12px; color: rgba(238,242,255,.72)}
+    .kpi .v{font-weight:1000; font-size:22px; margin-top:4px; letter-spacing:-.6px}
+    .spark{
+      margin-top: 10px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      overflow:hidden;
+    }
+    .spark > div{
+      height:100%;
+      width:60%;
+      border-radius:999px;
+      background: linear-gradient(90deg, rgba(56,189,248,.95), rgba(124,58,237,.95), rgba(34,197,94,.95));
+      filter: drop-shadow(0 0 12px rgba(56,189,248,.18));
+      animation: fill 2.6s var(--ease) infinite;
+    }
+    @keyframes fill{
+      0%,100%{ transform: translateX(-22%); width: 58%;}
+      50%{ transform: translateX(10%); width: 64%;}
+    }
+    .mockList{
+      margin-top: 10px;
+      display:grid;
+      gap:8px;
+    }
+    .line{
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding: 10px 10px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      color: rgba(238,242,255,.82);
+      font-weight:900;
+      font-size:12px;
+    }
+    .tag{
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-weight:1000;
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .tag.good{ background: rgba(34,197,94,.14); border-color: rgba(34,197,94,.28); }
+    .tag.warn{ background: rgba(251,191,36,.14); border-color: rgba(251,191,36,.28); }
+
+    /* Sections */
+    section{padding: 18px 0}
+    .sectionTitle{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:14px;
+      margin: 8px 0 12px;
+    }
+    .sectionTitle h2{
+      margin:0;
+      font-weight:1000;
+      letter-spacing:-.6px;
+      font-size: clamp(20px, 2.2vw, 28px);
+    }
+    .sectionTitle p{
+      margin:0;
+      color: rgba(238,242,255,.72);
+      font-weight:800;
+      line-height:1.6;
+      max-width: 60ch;
+      font-size: 13px;
+    }
+
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .card{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      padding: 16px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+      min-height: 140px;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(450px 140px at 12% 10%, rgba(56,189,248,.14), transparent 55%),
+                  radial-gradient(450px 140px at 80% 35%, rgba(124,58,237,.16), transparent 55%);
+      opacity:.65;
+      pointer-events:none;
+    }
+    .card > *{ position:relative; }
+    .icon{
       width:42px; height:42px;
+      border-radius: 16px;
+      display:grid; place-items:center;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-weight:1000;
+    }
+    .card h3{margin:12px 0 6px; font-weight:1000; letter-spacing:-.2px}
+    .card p{margin:0; color: rgba(238,242,255,.72); font-weight:800; line-height:1.6; font-size:13px}
+
+    /* Pricing */
+    .pricing{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+    }
+    .plan{
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      padding: 16px;
+      box-shadow: 0 18px 70px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+    }
+    .plan::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(600px 220px at 10% 0%, rgba(34,197,94,.12), transparent 55%),
+                  radial-gradient(600px 220px at 90% 18%, rgba(56,189,248,.14), transparent 55%);
+      opacity:.65; pointer-events:none;
+    }
+    .plan > *{position:relative}
+    .planTop{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .planName{margin-top:10px; font-weight:1000}
+    .money{font-weight:1000; font-size:30px; letter-spacing:-.9px; margin-top:6px}
+    .sub{color: rgba(238,242,255,.72); font-weight:900; line-height:1.55; font-size:13px; margin-top:6px}
+    .best{
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.75));
+      border-color: rgba(255,255,255,.16);
+    }
+    .ul{
+      margin: 12px 0 0;
+      padding: 0;
+      list-style:none;
+      display:grid;
+      gap:8px;
+      color: rgba(238,242,255,.78);
+      font-weight:800;
+      font-size:13px;
+    }
+    .ul li{display:flex; align-items:flex-start; gap:10px}
+    .check{
+      width:18px; height:18px;
+      border-radius:6px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(34,197,94,.14);
+      display:grid; place-items:center;
+      flex: 0 0 auto;
+      margin-top:1px;
+    }
+    .planBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+
+    /* FAQ */
+    .faq{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    details{
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      padding: 12px 14px;
+      box-shadow: 0 18px 70px rgba(0,0,0,.22);
+    }
+    summary{
+      cursor:pointer;
+      font-weight:1000;
+      list-style:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    details p{
+      margin: 10px 0 0;
+      color: rgba(238,242,255,.72);
+      font-weight:800;
+      line-height:1.6;
+      font-size:13px;
+    }
+
+    /* Footer */
+    footer{
+      margin-top: 18px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding: 22px 0 28px;
+      background: rgba(0,0,0,.14);
+    }
+    .footGrid{
+      display:grid;
+      grid-template-columns: 1.3fr .7fr .7fr;
+      gap: 14px;
+      align-items:start;
+    }
+    .footTitle{font-weight:1000}
+    .footText{margin:8px 0 0; color: rgba(238,242,255,.72); font-weight:800; line-height:1.6; font-size:13px}
+    .footLinks{display:grid; gap:8px; margin-top:8px}
+    .footLinks a{
+      color: rgba(238,242,255,.78);
+      text-decoration:none;
+      font-weight:900;
+      font-size:13px;
+      padding:8px 10px;
+      border-radius: 12px;
+      transition: background .18s var(--ease), transform .18s var(--ease);
+    }
+    .footLinks a:hover{background: rgba(255,255,255,.06); transform: translateY(-1px)}
+    .tiny{margin-top:12px; color: rgba(238,242,255,.55); font-weight:800; font-size:12px; line-height:1.6}
+
+    /* Overlays / Modals (only Checkout + Menu now) */
+    .overlay{
+      position:fixed; inset:0;
+      display:none;
+      place-items:center;
+      z-index:200;
+      background: rgba(0,0,0,.56);
+      backdrop-filter: blur(10px);
+      padding: 18px;
+    }
+    .overlay.show{display:grid; animation: fadeIn .18s var(--ease) both}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    .panel{
+      width:min(980px, 100%);
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(10,12,26,.92), rgba(8,10,20,.88));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transform: translateY(8px) scale(.99);
+      animation: pop .22s var(--ease) both;
+    }
+    @keyframes pop{to{transform: translateY(0) scale(1)}}
+    .panelTop{
+      padding: 14px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+    }
+    .panelTop .title{
+      display:flex; gap:10px; align-items:center;
+      font-weight:1000;
+      letter-spacing:-.2px;
+    }
+    .x{
+      width:44px; height:44px;
       border-radius: 14px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.06);
-      object-fit: cover;
-      flex:none;
+      color:var(--text);
+      cursor:pointer;
+      transition: transform .18s var(--ease), background .18s var(--ease);
+      font-weight:1000;
     }
-    .guildName{
-      font-weight:1050;
-      line-height:1.1;
-      letter-spacing:-.2px;
+    .x:hover{transform: translateY(-1px); background: rgba(255,255,255,.09)}
+    .panelBody{padding: 14px}
+
+    /* Checkout */
+    .checkoutGrid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 12px;
     }
-    .guildSub{
-      color: var(--muted2);
-      font-weight:800;
-      font-size:12px;
-      margin-top:4px;
+    .box{
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      padding: 12px;
     }
-    .serverActions{
-      padding: 0 14px 14px;
+    .label{
+      font-weight:1000; font-size:12px; color: rgba(238,242,255,.72);
     }
-    .bigAction{
+    .input{
+      margin-top: 8px;
       width:100%;
-      justify-content:center;
       border-radius: 14px;
-      padding: 11px 12px;
-      font-weight:1050;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.24);
+      color: var(--text);
+      padding: 12px 12px;
+      font-weight:900;
+      outline:none;
     }
-    .bigAction.good{
-      border-color: rgba(52,211,153,.28);
-      background: rgba(52,211,153,.10);
-    }
-    .bigAction.bad{
-      border-color: rgba(251,113,133,.28);
-      background: rgba(251,113,133,.10);
-    }
-    .bigAction.neutral{
-      border-color: rgba(34,211,238,.22);
-      background: rgba(34,211,238,.10);
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+    .rowBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .fine{
+      margin-top:10px;
+      color: rgba(238,242,255,.72);
+      font-weight:800;
+      line-height:1.6;
+      font-size:13px;
     }
 
-    /* ---------- Toast ---------- */
+    /* Mobile Menu Overlay */
+    .menuSheet{
+      width:min(520px, 100%);
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(10,12,26,.92), rgba(8,10,20,.88));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .menuBody{padding: 12px}
+    .menuLinks{display:grid; gap:8px}
+    .menuLinks a{justify-content:flex-start; width:100%}
+
+    /* Scroll animations */
+    .reveal{
+      opacity:0;
+      transform: translateY(10px);
+      transition: opacity .45s var(--ease), transform .45s var(--ease);
+    }
+    .reveal.on{
+      opacity:1;
+      transform: translateY(0);
+    }
+
+    /* To top */
+    .toTop{
+      position:fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 46px; height: 46px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      display:none;
+      z-index:120;
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      font-weight:1000;
+    }
+    .toTop.show{display:block}
+
+    /* Toast */
     .toast{
       position:fixed;
-      left:50%; bottom:18px;
-      transform: translateX(-50%);
-      padding:12px 14px;
+      left:50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(10px);
+      padding: 10px 14px;
       border-radius: 999px;
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(10,12,22,.86);
-      box-shadow: var(--shadow);
+      background: rgba(0,0,0,.56);
       color: var(--text);
-      font-weight:950;
-      z-index:90;
+      font-weight:1000;
+      font-size:13px;
       opacity:0;
       pointer-events:none;
-      transition: .18s opacity, .18s transform;
+      z-index:250;
+      transition: opacity .18s var(--ease), transform .18s var(--ease);
+      backdrop-filter: blur(10px);
     }
-    .toast.show{
-      opacity:1;
-      transform: translateX(-50%) translateY(-2px);
-    }
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(0)}
 
-    footer{
-      margin-top:22px;
-      color: var(--muted2);
-      font-weight:800;
-      font-size:12px;
-      text-align:center;
-      opacity:.92;
+    /* Responsive */
+    @media (max-width: 980px){
+      .heroGrid{grid-template-columns: 1fr; }
+      .cards{grid-template-columns: 1fr; }
+      .pricing{grid-template-columns: 1fr; }
+      .faq{grid-template-columns: 1fr; }
+      .checkoutGrid{grid-template-columns: 1fr;}
+    }
+    @media (max-width: 860px){
+      .navLinks{display:none}
+      .hamburger{display:block}
     }
   </style>
 </head>
 
 <body>
-  <div class="stars" aria-hidden="true"></div>
-  <div class="stars2" aria-hidden="true"></div>
-  <div class="stars3" aria-hidden="true"></div>
-  <div class="noise" aria-hidden="true"></div>
+  <div class="bg">
+    <div class="glow"></div>
+    <canvas id="stars"></canvas>
+  </div>
 
-  <!-- TOP NAV -->
-  <div class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">
-        <!-- Put your logo at: assets/nozzarri.png -->
-        <img class="logoImg" src="assets/nozzarri.png" alt="Nozzarri Logo" onerror="this.style.display='none'">
+  <!-- NAV -->
+  <header class="nav">
+    <div class="container">
+      <div class="navInner">
+        <a class="brand" href="#top" aria-label="Nozzarri Tickets Home">
+          <div class="logo"><img src="assets/nozzarri.png" alt="Nozzarri logo"></div>
+          <div>
+            <div class="brandName">Nozzarri Tickets</div>
+            <div class="brandSub">Discord Ticket System</div>
+          </div>
+        </a>
+
+        <nav class="navLinks" aria-label="Primary">
+          <a href="#features">Features</a>
+          <a href="#pricing">Premium</a>
+          <a href="#faq">FAQ</a>
+          <a id="navDiscord" href="#" target="_blank" rel="noreferrer">Discord</a>
+          <a id="navYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
+        </nav>
+
+        <div class="navBtns">
+          <a class="btn good" id="botBtn" href="#" target="_blank" rel="noreferrer">🤖 Invite Bot</a>
+          <!-- REAL DASHBOARD -->
+          <a class="btn primary" id="openDashboard" href="#" target="_blank" rel="noreferrer">📊 Dashboard</a>
+          <button class="hamburger" id="openMenu" type="button" aria-label="Open menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main id="top" class="hero">
+    <div class="container">
+      <div class="heroGrid">
+        <div class="heroCard reveal">
+          <div class="heroPad">
+            <div class="pill"><span class="dot"></span> Online • Fast setup • Clean UI</div>
+
+            <div class="h1">
+              The <span class="grad">Ticket Bot</span> that makes your server look professional.
+            </div>
+
+            <p class="lead">
+              Build a clean support system in minutes: ticket panels, logs, staff roles, categories and
+              smooth workflow. Premium keys unlock more customization and extra commands.
+            </p>
+
+            <div class="heroBtns">
+              <a class="btn primary" id="inviteServerBtn" href="#" target="_blank" rel="noreferrer">✨ Join Discord</a>
+              <a class="btn" id="youtubeBtn" href="#" target="_blank" rel="noreferrer">▶️ YouTube</a>
+              <!-- REAL DASHBOARD -->
+              <a class="btn" id="dashboardHeroBtn" href="#" target="_blank" rel="noreferrer">📊 Dashboard Login</a>
+              <button class="btn" id="scrollPricing" type="button">💎 View Premium</button>
+            </div>
+
+            <div class="miniRow">
+              <div class="miniStat"><span class="badge">Tickets</span> Support + Trade categories</div>
+              <div class="miniStat"><span class="badge">Logs</span> Cleaner moderation record</div>
+              <div class="miniStat"><span class="badge">Keys</span> $1 / $2 / $4 premium access</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="previewCard reveal">
+          <div class="previewTop">
+            <div class="chipRow">
+              <div class="chip active" data-mock="analytics">Analytics</div>
+              <div class="chip" data-mock="panels">Panels</div>
+              <div class="chip" data-mock="logs">Logs</div>
+            </div>
+            <button class="btn" id="openCheckoutFromHero" type="button">💎 Buy Key</button>
+          </div>
+
+          <div class="previewBody">
+            <div class="mock" id="mockBox">
+              <div class="mockHead">
+                <div>Dashboard Preview</div>
+                <div class="dots"><i></i><i></i><i></i></div>
+              </div>
+              <div class="mockInner">
+                <div class="mockGrid" id="mockKpis">
+                  <div class="kpi">
+                    <div class="t">Open Tickets</div>
+                    <div class="v" id="kpi1">12</div>
+                    <div class="spark"><div></div></div>
+                  </div>
+                  <div class="kpi">
+                    <div class="t">Avg Response</div>
+                    <div class="v" id="kpi2">3m</div>
+                    <div class="spark"><div></div></div>
+                  </div>
+                  <div class="kpi">
+                    <div class="t">Resolved Today</div>
+                    <div class="v" id="kpi3">28</div>
+                    <div class="spark"><div></div></div>
+                  </div>
+                  <div class="kpi">
+                    <div class="t">Satisfaction</div>
+                    <div class="v" id="kpi4">98%</div>
+                    <div class="spark"><div></div></div>
+                  </div>
+                </div>
+
+                <div class="mockList" id="mockList">
+                  <div class="line"><span>#support • New ticket</span><span class="tag warn">Needs staff</span></div>
+                  <div class="line"><span>#trade • Payment checked</span><span class="tag good">Resolved</span></div>
+                  <div class="line"><span>#support • Bug report</span><span class="tag warn">Open</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tiny">
+              Preview UI only. The REAL dashboard login is on the Dashboard button (top).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="container">
+      <div class="sectionTitle reveal">
         <div>
-          Nozzarri Tickets
-          <small>Galaxy UI • Free Dashboard • Premium Options</small>
+          <h2>Features that feel premium</h2>
+          <p>Clean design, fast workflow, and a setup that scales from small servers to big communities.</p>
         </div>
       </div>
 
-      <div class="navBtns">
-        <button class="pillBtn undo" id="navUndo" type="button" title="Undo / Go back">↩ Undo</button>
-        <button class="pillBtn" id="navHome" type="button">🏠 Home</button>
-        <button class="pillBtn" id="navFree" type="button">✅ Free</button>
-        <button class="pillBtn" id="navPremium" type="button">💎 Premium</button>
-        <button class="pillBtn primary" id="navDashboard" type="button">🧩 Dashboard</button>
+      <div class="cards">
+        <div class="card reveal">
+          <div class="icon">🎫</div>
+          <h3>Ticket Panels</h3>
+          <p>Create support/trade panels with categories, roles, and custom messages.</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon">🧾</div>
+          <h3>Logs & History</h3>
+          <p>Keep everything organized: closures, transcripts, and staff actions.</p>
+        </div>
+        <div class="card reveal">
+          <div class="icon">⚡</div>
+          <h3>Fast Setup</h3>
+          <p>Invite the bot, configure roles, and you’re ready. No messy menus.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="container">
+      <div class="sectionTitle reveal">
+        <div>
+          <h2>Premium Keys</h2>
+          <p>Same prices you had before — just a cleaner purchase UI. Payments in LTC.</p>
+        </div>
+        <button class="btn primary" id="openCheckout" type="button">💎 Buy Premium</button>
+      </div>
+
+      <div class="pricing">
+        <div class="plan reveal" data-plan="15 DAYS" data-price="1">
+          <div class="planTop">
+            <span class="tag">15 DAYS</span>
+            <span class="tag">$1</span>
+          </div>
+          <div class="planName">Starter Key</div>
+          <div class="money">$1</div>
+          <div class="sub">Try premium for 15 days.</div>
+          <ul class="ul">
+            <li><span class="check">✓</span> Extra premium commands</li>
+            <li><span class="check">✓</span> More customization</li>
+            <li><span class="check">✓</span> Priority style</li>
+          </ul>
+          <div class="planBtns">
+            <button class="btn primary buyBtn" type="button">Buy</button>
+            <button class="btn copyLtcBtn" type="button">Copy LTC</button>
+          </div>
+        </div>
+
+        <div class="plan reveal best" data-plan="1 MONTH" data-price="2">
+          <div class="planTop">
+            <span class="tag">1 MONTH • BEST</span>
+            <span class="tag">$2</span>
+          </div>
+          <div class="planName">Pro Key</div>
+          <div class="money">$2</div>
+          <div class="sub">Most popular plan.</div>
+          <ul class="ul">
+            <li><span class="check">✓</span> Extra premium commands</li>
+            <li><span class="check">✓</span> Better customization</li>
+            <li><span class="check">✓</span> Great value</li>
+          </ul>
+          <div class="planBtns">
+            <button class="btn primary buyBtn" type="button">Buy</button>
+            <button class="btn copyLtcBtn" type="button">Copy LTC</button>
+          </div>
+        </div>
+
+        <div class="plan reveal" data-plan="3 MONTHS" data-price="4">
+          <div class="planTop">
+            <span class="tag">3 MONTHS</span>
+            <span class="tag">$4</span>
+          </div>
+          <div class="planName">Ultra Key</div>
+          <div class="money">$4</div>
+          <div class="sub">Best value (longer access).</div>
+          <ul class="ul">
+            <li><span class="check">✓</span> Extra premium commands</li>
+            <li><span class="check">✓</span> Long access</li>
+            <li><span class="check">✓</span> Best deal</li>
+          </ul>
+          <div class="planBtns">
+            <button class="btn primary buyBtn" type="button">Buy</button>
+            <button class="btn copyLtcBtn" type="button">Copy LTC</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tiny reveal" style="margin-top:10px;">
+        Payments are in LTC. Send the USD value in LTC (rate changes). Always double-check the address.
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <div class="sectionTitle reveal">
+        <div>
+          <h2>FAQ</h2>
+          <p>Quick answers so your site feels legit and clear.</p>
+        </div>
+      </div>
+
+      <div class="faq">
+        <details class="reveal">
+          <summary>Where is the real dashboard login?</summary>
+          <p>
+            Press <b>Dashboard</b> (top). It opens the real dashboard on your server.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>How do I get my premium key after paying?</summary>
+          <p>
+            After payment, DM the owner on Discord with your plan + TX info. Manual verification avoids fake systems.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>Can I host this on GitHub Pages?</summary>
+          <p>
+            Yes — it’s a single HTML file + your assets/nozzarri.png. Works clean on PC + mobile.
+          </p>
+        </details>
+        <details class="reveal">
+          <summary>Why not embed the dashboard inside this site?</summary>
+          <p>
+            Usually it breaks because of browser security (CORS/iframe restrictions). Opening it as a separate page is the clean solution.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footGrid">
+        <div>
+          <div class="footTitle">Nozzarri Tickets</div>
+          <div class="footText">
+            A modern Discord ticket experience with clean panels, logs and premium upgrades.
+          </div>
+          <div class="tiny">© <span id="year"></span> Nozzarri Tickets • Owner: <span id="ownerName"></span></div>
+        </div>
+
+        <div>
+          <div class="footTitle">Links</div>
+          <div class="footLinks">
+            <a id="footerDiscord" href="#" target="_blank" rel="noreferrer">Discord</a>
+            <a id="footerYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
+            <a id="footerBot" href="#" target="_blank" rel="noreferrer">Bot Invite</a>
+            <!-- REAL DASHBOARD -->
+            <a id="footerDashboard" href="#" target="_blank" rel="noreferrer">Dashboard</a>
+          </div>
+        </div>
+
+        <div>
+          <div class="footTitle">Premium</div>
+          <div class="footLinks">
+            <button class="btn primary" id="openCheckoutFooter" type="button">💎 Buy Premium</button>
+            <button class="btn" id="copyLtcFooter" type="button">📋 Copy LTC</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- To top + Toast -->
+  <button id="toTop" class="toTop" type="button" aria-label="Back to top">⬆️</button>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- CHECKOUT OVERLAY -->
+  <div class="overlay" id="buyOverlay" aria-hidden="true">
+    <div class="panel" role="dialog" aria-modal="true" aria-label="Buy Premium">
+      <div class="panelTop">
+        <div class="title" id="buyTitle">💎 Buy Premium</div>
+        <button class="x" id="closeCheckout" type="button" aria-label="Close checkout">✕</button>
+      </div>
+
+      <div class="panelBody">
+        <div class="checkoutGrid">
+          <div class="box">
+            <div class="label">Selected plan</div>
+            <input class="input" id="planPicked" readonly />
+
+            <div class="label" style="margin-top:12px;">Payment message (copy & DM owner)</div>
+            <input class="input mono" id="payMsg" readonly />
+
+            <div class="rowBtns">
+              <button class="btn primary" id="copyPayInfo" type="button">📋 Copy payment + message</button>
+              <button class="btn" id="copyAddrOnly" type="button">📋 Copy LTC only</button>
+              <button class="btn" id="copyOwnerOnly" type="button">👤 Copy owner</button>
+            </div>
+
+            <div class="fine">
+              After you send payment, add/DM the owner on Discord: <b class="mono" id="ownerSpan"></b> and paste the message.
+              Manual verification avoids fake auto systems.
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="label">LTC address</div>
+            <input class="input mono" id="ltcAddr" readonly />
+
+            <div class="fine">
+              Send the USD value in LTC (rate changes). Always double-check address before sending.
+            </div>
+
+            <div class="rowBtns">
+              <a class="btn good" id="checkoutDiscord" href="#" target="_blank" rel="noreferrer">Join Discord</a>
+              <a class="btn" id="checkoutBot" href="#" target="_blank" rel="noreferrer">Invite Bot</a>
+              <a class="btn" id="checkoutYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
+              <a class="btn primary" id="checkoutDashboard" href="#" target="_blank" rel="noreferrer">Dashboard</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="tiny" style="margin-top:10px;">
+          This checkout UI is clean on PC and mobile and always has Undo/Close.
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="container">
-
-    <!-- HOME -->
-    <div class="view show" id="viewHome">
-      <div class="hero">
-        <div class="heroTop">
-          <div class="pill"><span class="dot"></span> Ticket Bot • Support • Trade • Logs</div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="pillBtn" id="openDiscord" type="button">💬 Discord</button>
-            <button class="pillBtn" id="copySite" type="button">🔗 Copy site</button>
-          </div>
-        </div>
-
-        <h1>Galaxy UI for <span class="grad">Nozzarri Tickets</span></h1>
-        <p class="lead">
-          Free ticket bot + dashboard access. Premium adds extra options (only locked settings — dashboard stays usable).
-        </p>
-
-        <div class="ctaRow">
-          <button class="btn primary" id="goFree" type="button">✅ Open Free</button>
-          <button class="btn" id="goPrem" type="button">💎 Open Premium</button>
-          <button class="btn ghost" id="goDash" type="button">🧩 Open Dashboard</button>
+  <!-- MOBILE MENU OVERLAY -->
+  <div class="overlay" id="menuOverlay" aria-hidden="true">
+    <div class="menuSheet" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="panelTop">
+        <div class="title">Menu</div>
+        <button class="x" id="closeMenu" type="button" aria-label="Close menu">✕</button>
+      </div>
+      <div class="menuBody">
+        <div class="menuLinks">
+          <a class="btn" href="#features" data-close="menu">✨ Features</a>
+          <a class="btn" href="#pricing" data-close="menu">💎 Premium</a>
+          <a class="btn" href="#faq" data-close="menu">❓ FAQ</a>
+          <a class="btn good" id="menuDiscord" href="#" target="_blank" rel="noreferrer">Join Discord</a>
+          <a class="btn" id="menuYouTube" href="#" target="_blank" rel="noreferrer">YouTube</a>
+          <a class="btn" id="menuBot" href="#" target="_blank" rel="noreferrer">Invite Bot</a>
+          <!-- REAL DASHBOARD -->
+          <a class="btn primary" id="menuDashboard" href="#" target="_blank" rel="noreferrer">📊 Dashboard</a>
+          <button class="btn primary" id="menuBuy" type="button">💎 Buy Premium</button>
         </div>
       </div>
-
-      <div class="grid three" style="margin-top:16px;">
-        <div class="card">
-          <p class="sectionTitle">⚡ Fast panels</p>
-          <div class="sectionBody">Clean embed panels, buttons, and a simple flow your members understand.</div>
-        </div>
-        <div class="card">
-          <p class="sectionTitle">🧾 Logs</p>
-          <div class="sectionBody">Track actions and ticket events with safer permission checks.</div>
-        </div>
-        <div class="card">
-          <p class="sectionTitle">🧩 Dashboard</p>
-          <div class="sectionBody">Open the dashboard and manage your server (tile UI, no scrolling).</div>
-        </div>
-      </div>
-
-      <footer>© <span id="year"></span> Nozzarri Tickets</footer>
     </div>
-
-    <!-- FREE -->
-    <div class="view" id="viewFree">
-      <div class="hero">
-        <div class="heroTop">
-          <div class="pill"><span class="dot"></span> Free • Main Commands</div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="pillBtn primary" id="freeOpenDash" type="button">🧩 Dashboard</button>
-          </div>
-        </div>
-
-        <h1>Free commands: <span class="grad">simple</span> and clean</h1>
-        <p class="lead">Only the commands you told me to show here.</p>
-
-        <div class="ctaRow">
-          <a class="btn primary" id="botInviteBtn" href="#" target="_blank" rel="noreferrer">➕ Add Bot</a>
-          <a class="btn ghost" id="serverInviteBtn" href="#" target="_blank" rel="noreferrer">💬 Join Discord</a>
-          <button class="btn" id="copyServerInvite" type="button">📋 Copy invite</button>
-        </div>
-      </div>
-
-      <div class="grid two" style="margin-top:16px;">
-        <div class="card">
-          <p class="sectionTitle">✅ Free features</p>
-          <div class="sectionBody" id="freeFeatures"></div>
-        </div>
-
-        <div class="card">
-          <p class="sectionTitle">⌨️ Free commands</p>
-          <div class="sectionBody" id="freeCommands"></div>
-        </div>
-      </div>
-
-      <footer>Tip: Dashboard is free — premium options should be locked, not removed.</footer>
-    </div>
-
-    <!-- PREMIUM -->
-    <div class="view" id="viewPremium">
-      <div class="hero">
-        <div class="heroTop">
-          <div class="pill"><span class="dot"></span> Premium • Extra Options</div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="pillBtn primary" id="premOpenDash" type="button">🧩 Dashboard</button>
-          </div>
-        </div>
-
-        <h1>Premium (optional) <span class="grad">upgrades</span></h1>
-        <p class="lead">
-          Premium is optional — Free still works great. Premium should only unlock extra settings, not break the dashboard.
-        </p>
-
-        <div class="grid two" style="margin-top:16px;">
-          <div class="card">
-            <p class="sectionTitle">⭐ Premium idea list</p>
-            <div class="sectionBody">
-              <div class="listRow">
-                <div>
-                  <div style="font-weight:1050;">Ticket name templates</div>
-                  <div class="hint">Example: <span class="mono">ticket-username</span> or <span class="mono">support-username</span></div>
-                </div>
-                <span class="tag prem">Premium</span>
-              </div>
-              <div class="listRow">
-                <div>
-                  <div style="font-weight:1050;">Priority role / ping role</div>
-                  <div class="hint">Role ping when a ticket is created (if enabled).</div>
-                </div>
-                <span class="tag prem">Premium</span>
-              </div>
-              <div class="listRow">
-                <div>
-                  <div style="font-weight:1050;">Theme styles</div>
-                  <div class="hint">Different panel themes (neon / galaxy).</div>
-                </div>
-                <span class="tag prem">Premium</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <p class="sectionTitle">💎 Plans</p>
-            <div class="sectionBody">
-              <div class="listRow">
-                <div>
-                  <div style="font-weight:1050;">15 days</div>
-                  <div class="hint">Test premium</div>
-                </div>
-                <span class="tag prem">$1</span>
-              </div>
-              <div class="listRow">
-                <div>
-                  <div style="font-weight:1050;">1 month</div>
-                  <div class="hint">Most common</div>
-                </div>
-                <span class="tag prem">$2</span>
-              </div>
-              <div class="listRow">
-                <div>
-                  <div style="font-weight:1050;">3 months</div>
-                  <div class="hint">Best value</div>
-                </div>
-                <span class="tag prem">$4</span>
-              </div>
-
-              <div class="hint" style="margin-top:10px;">
-                (You can plug your payment UI here later. This page is only website UI.)
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <footer>Premium should never hide Dashboard access — only lock premium settings.</footer>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div class="view" id="viewDashboard">
-      <div class="hero">
-        <div class="heroTop">
-          <div class="pill"><span class="dot"></span> Dashboard • Tile UI</div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="pillBtn primary" id="openRealDash" type="button">🧩 Open Real Dashboard</button>
-          </div>
-        </div>
-
-        <h1>Server <span class="grad">Dashboard</span></h1>
-        <p class="lead">
-          This page is the website “dashboard UI preview”. The real dashboard (OAuth, sessions) opens from your backend.
-        </p>
-
-        <div class="ctaRow">
-          <button class="btn primary" id="dashLogin" type="button">🔐 Login (Real)</button>
-          <button class="btn ghost" id="dashCopyUrl" type="button">📋 Copy dashboard URL</button>
-        </div>
-      </div>
-
-      <div class="dashWrap">
-        <!-- Sidebar -->
-        <div class="side">
-          <div class="sideTitle">🧭 Dashboard</div>
-          <button class="btn sideBtn primary" id="sideHome" type="button">🏠 Home</button>
-          <button class="btn sideBtn" id="sideServers" type="button">🗂 Servers</button>
-          <button class="btn sideBtn" id="sideSettings" type="button">⚙️ Settings</button>
-          <button class="btn sideBtn" id="sideSupport" type="button">💬 Support</button>
-          <div class="hint" style="padding:10px;">
-            No scroll navigation — it switches like a real panel.
-          </div>
-        </div>
-
-        <!-- Main -->
-        <div class="mainDash">
-          <div class="dashHeader">
-            <div>
-              <h2 id="dashTitle">Home</h2>
-              <div class="hint" id="dashSubtitle">Overview of your server data and dashboard links.</div>
-            </div>
-            <div class="chip">🟢 Status: <b style="color:var(--good);">Online</b></div>
-          </div>
-
-          <div class="searchRow" id="dashSearchRow" style="display:none;">
-            <div class="search">
-              <span style="opacity:.8;">🔎</span>
-              <input id="serverSearch" placeholder="Search for a server..." />
-            </div>
-            <div class="chip" id="serverCountChip">📊 0 Servers</div>
-          </div>
-
-          <div id="dashContent" style="padding:16px;">
-            <!-- Filled by JS -->
-          </div>
-        </div>
-      </div>
-
-      <footer>Real dashboard URL: <b class="mono" id="realDashUrl"></b></footer>
-    </div>
-
   </div>
-
-  <!-- TOAST -->
-  <div class="toast" id="toast" aria-hidden="true"></div>
 
   <script>
-    // ==========================
-    // CONFIG (EDIT THESE)
-    // ==========================
-    const SITE_URL = location.origin;
+    // =========================
+    // CONFIG (YOUR REAL VALUES)
+    // =========================
+    const BRAND = "Nozzarri Tickets";
+    const OWNER_DISCORD = "n_om_e";
 
-    // Your Discord server invite
+    const CLIENT_ID = "1442592762108186675";
+
+    // Minimal perms for ticket bot:
+    const PERMISSIONS = "126032";
+
+    const BOT_INVITE_URL =
+      `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=bot%20applications.commands&permissions=${PERMISSIONS}`;
+
+    const YT_URL = "https://www.youtube.com/channel/UC8Ovc5xT-tXXIjxLnVe72dQ";
     const SERVER_INVITE_URL = "https://discord.gg/FHRSPyXw";
 
-    // Your bot invite (your real OAuth2 link is best; basic one still works)
-    const BOT_INVITE_URL = "https://discord.com/oauth2/authorize?client_id=1442592762108186675";
+    // LTC address (keep same)
+    const LTC_ADDRESS = "LPxonLCBtrcHnYAompBSXsboTfJQ8Eyuz8";
 
-    // REAL DASHBOARD BASE (your backend from index.js)
-    // Will open: http://85.215.159.4:9717/dashboard
-    const DASHBOARD_BASE = "http://85.215.159.4:9717";
+    // ✅ REAL DASHBOARD URL (your working one)
+    const REAL_DASHBOARD_URL = "http://85.215.159.4:9717/dashboard";
 
-    // ==========================
-    // Helpers
-    // ==========================
-    const $ = (id) => document.getElementById(id);
+    // =========================
+    // Helpers: toast + copy
+    // =========================
+    const toast = document.getElementById("toast");
+    let toastTimer = null;
 
     function showToast(msg){
-      const t = $("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      t.setAttribute("aria-hidden","false");
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=>{
-        t.classList.remove("show");
-        t.setAttribute("aria-hidden","true");
-      }, 1600);
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=> toast.classList.remove("show"), 1700);
     }
 
     async function copyText(text){
@@ -820,382 +1147,273 @@
         document.body.appendChild(ta);
         ta.select();
         document.execCommand("copy");
-        ta.remove();
+        document.body.removeChild(ta);
         showToast("Copied ✅");
       }
     }
 
-    function openUrl(url){
-      window.open(url, "_blank", "noopener,noreferrer");
+    // =========================
+    // Link wiring
+    // =========================
+    document.getElementById("year").textContent = new Date().getFullYear();
+    document.getElementById("ownerName").textContent = OWNER_DISCORD;
+    document.getElementById("ownerSpan").textContent = OWNER_DISCORD;
+
+    const linkIdsDiscord = ["navDiscord","footerDiscord","inviteServerBtn","checkoutDiscord","menuDiscord"];
+    const linkIdsYoutube = ["navYouTube","footerYouTube","youtubeBtn","checkoutYouTube","menuYouTube"];
+    const linkIdsBot = ["botBtn","footerBot","checkoutBot","menuBot"];
+
+    linkIdsDiscord.forEach(id => { const a = document.getElementById(id); if(a) a.href = SERVER_INVITE_URL; });
+    linkIdsYoutube.forEach(id => { const a = document.getElementById(id); if(a) a.href = YT_URL; });
+    linkIdsBot.forEach(id => { const a = document.getElementById(id); if(a) a.href = BOT_INVITE_URL; });
+
+    // Real Dashboard links
+    ["openDashboard","dashboardHeroBtn","footerDashboard","menuDashboard","checkoutDashboard"]
+      .forEach(id => { const a = document.getElementById(id); if(a) a.href = REAL_DASHBOARD_URL; });
+
+    // =========================
+    // Stars background (no cursor-follow)
+    // =========================
+    const canvas = document.getElementById("stars");
+    const ctx = canvas.getContext("2d");
+    let stars = [];
+
+    function resizeStars(){
+      canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
+      canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+      stars = [];
+      const count = Math.floor(Math.min(220, (window.innerWidth * window.innerHeight) / 9000));
+      for(let i=0;i<count;i++){
+        stars.push({
+          x: Math.random()*canvas.width,
+          y: Math.random()*canvas.height,
+          r: (Math.random()*1.4 + .4) * devicePixelRatio,
+          a: Math.random()*0.8 + 0.2,
+          s: (Math.random()*0.35 + 0.08) * devicePixelRatio
+        });
+      }
     }
 
-    // ==========================
-    // Router + UNDO stack
-    // ==========================
-    const views = {
-      home: $("viewHome"),
-      free: $("viewFree"),
-      premium: $("viewPremium"),
-      dashboard: $("viewDashboard")
+    function drawStars(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      for(const st of stars){
+        st.y += st.s;
+        if(st.y > canvas.height + 10) st.y = -10;
+        ctx.globalAlpha = st.a;
+        ctx.beginPath();
+        ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+      }
+      requestAnimationFrame(drawStars);
+    }
+
+    window.addEventListener("resize", resizeStars);
+    resizeStars();
+    drawStars();
+
+    // =========================
+    // Reveal on scroll
+    // =========================
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add("on");
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold: .12});
+    document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+
+    // =========================
+    // To top button
+    // =========================
+    const toTop = document.getElementById("toTop");
+    window.addEventListener("scroll", ()=>{
+      if(window.scrollY > 700) toTop.classList.add("show");
+      else toTop.classList.remove("show");
+    });
+    toTop.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
+
+    // =========================
+    // Mock switch (right hero card)
+    // =========================
+    const chips = document.querySelectorAll(".chip");
+    const k1 = document.getElementById("kpi1");
+    const k2 = document.getElementById("kpi2");
+    const k3 = document.getElementById("kpi3");
+    const k4 = document.getElementById("kpi4");
+    const mockList = document.getElementById("mockList");
+
+    const mockData = {
+      analytics: {
+        kpis: ["12","3m","28","98%"],
+        lines: [
+          ["#support • New ticket","Open","warn"],
+          ["#trade • Payment checked","Resolved","good"],
+          ["#support • Bug report","Open","warn"]
+        ]
+      },
+      panels: {
+        kpis: ["3","2","5","Ready"],
+        lines: [
+          ["Panel: Support","Active","good"],
+          ["Panel: Trade","Active","good"],
+          ["Panel: Appeals","Draft","warn"]
+        ]
+      },
+      logs: {
+        kpis: ["74","12","2","OK"],
+        lines: [
+          ["Closed tickets today","Logged","good"],
+          ["Staff actions","Tracked","good"],
+          ["Missing transcript","Review","warn"]
+        ]
+      }
     };
 
-    let historyStack = ["home"];  // our own stack
-    function hideAll(){
-      Object.values(views).forEach(v=>{
-        v.classList.remove("show");
-        v.style.display = "none";
+    function renderMock(key){
+      const m = mockData[key];
+      [k1.textContent,k2.textContent,k3.textContent,k4.textContent] = m.kpis;
+      mockList.innerHTML = m.lines.map(([l,tag,kind]) =>
+        `<div class="line"><span>${l}</span><span class="tag ${kind}">${tag}</span></div>`
+      ).join("");
+    }
+
+    chips.forEach(ch=>{
+      ch.addEventListener("click", ()=>{
+        chips.forEach(x=>x.classList.remove("active"));
+        ch.classList.add("active");
+        renderMock(ch.dataset.mock);
       });
-    }
-    function showView(name, push=true){
-      if(!views[name]) return;
+    });
 
-      hideAll();
-      views[name].style.display = "block";
-      views[name].classList.add("show");
+    // =========================
+    // Overlay system (only Checkout + Menu)
+    // =========================
+    const buyOverlay = document.getElementById("buyOverlay");
+    const menuOverlay = document.getElementById("menuOverlay");
 
-      if(push){
-        // push internal stack
-        const last = historyStack[historyStack.length-1];
-        if(last !== name) historyStack.push(name);
-
-        // push browser URL hash
-        const newHash = "#" + name;
-        if(location.hash !== newHash){
-          history.pushState({view:name}, "", newHash);
-        }
-      }
+    function lockScroll(lock){
+      document.body.style.overflow = lock ? "hidden" : "";
     }
 
-    function undo(){
-      if(historyStack.length <= 1){
-        showToast("Nothing to undo");
-        return;
+    function showOverlay(which){
+      history.pushState({overlay: which}, "", "#"+which);
+      openOverlay(which, false);
+    }
+
+    function openOverlay(which, push){
+      if(push) history.pushState({overlay: which}, "", "#"+which);
+
+      [buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
+      if(which === "checkout") buyOverlay.classList.add("show");
+      if(which === "menu") menuOverlay.classList.add("show");
+
+      lockScroll(true);
+    }
+
+    function closeAllOverlays(){
+      [buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
+      lockScroll(false);
+    }
+
+    function closeViaBack(){
+      if(buyOverlay.classList.contains("show") || menuOverlay.classList.contains("show")){
+        history.back();
       }
-      historyStack.pop();
-      const prev = historyStack[historyStack.length-1] || "home";
-      showView(prev, false);
-      showToast("Undo ↩");
     }
 
     window.addEventListener("popstate", (e)=>{
-      const v = (e.state && e.state.view) ? e.state.view : (location.hash || "#home").replace("#","");
-      if(views[v]){
-        // sync our stack lightly
-        historyStack.push(v);
-        showView(v, false);
+      if(e.state && e.state.overlay){
+        openOverlay(e.state.overlay, false);
+      }else{
+        closeAllOverlays();
       }
     });
 
-    // start view from hash
-    const start = (location.hash || "#home").replace("#","");
-    showView(views[start] ? start : "home", false);
-
-    // ==========================
-    // Top Nav
-    // ==========================
-    $("navUndo").addEventListener("click", undo);
-
-    $("navHome").addEventListener("click", ()=>showView("home"));
-    $("navFree").addEventListener("click", ()=>showView("free"));
-    $("navPremium").addEventListener("click", ()=>showView("premium"));
-    $("navDashboard").addEventListener("click", ()=>showView("dashboard"));
-
-    $("goFree").addEventListener("click", ()=>showView("free"));
-    $("goPrem").addEventListener("click", ()=>showView("premium"));
-    $("goDash").addEventListener("click", ()=>showView("dashboard"));
-
-    $("openDiscord").addEventListener("click", ()=>openUrl(SERVER_INVITE_URL));
-    $("copySite").addEventListener("click", ()=>copyText(SITE_URL));
-
-    // Free buttons
-    $("botInviteBtn").href = BOT_INVITE_URL;
-    $("serverInviteBtn").href = SERVER_INVITE_URL;
-    $("copyServerInvite").addEventListener("click", ()=>copyText(SERVER_INVITE_URL));
-
-    // Dashboard real URL
-    const REAL_DASH_URL = DASHBOARD_BASE.replace(/\/+$/,"") + "/dashboard";
-    $("realDashUrl").textContent = REAL_DASH_URL;
-
-    function openRealDashboard(){
-      openUrl(REAL_DASH_URL);
-    }
-    $("openRealDash").addEventListener("click", openRealDashboard);
-    $("dashLogin").addEventListener("click", openRealDashboard);
-    $("dashCopyUrl").addEventListener("click", ()=>copyText(REAL_DASH_URL));
-
-    $("freeOpenDash").addEventListener("click", ()=>showView("dashboard"));
-    $("premOpenDash").addEventListener("click", ()=>showView("dashboard"));
-
-    // ==========================
-    // Free features + commands (ONLY what you asked)
-    // ==========================
-    const freeFeatures = [
-      "✅ Support tickets + trade tickets",
-      "✅ Clean panels & buttons",
-      "✅ Logs / transcript (if enabled in bot)",
-      "✅ Staff-friendly flow",
-      "🧩 Dashboard access (premium options locked)"
-    ];
-
-    const freeCommands = [
-      { cmd: "?help", desc: "Shows help menu & main commands." },
-      { cmd: "?ticket", desc: "Open a ticket panel / create a ticket." },
-      { cmd: "?support", desc: "Open support ticket (shortcut)." }
-    ];
-
-    $("freeFeatures").innerHTML =
-      freeFeatures.map(x=>`
-        <div class="listRow">
-          <div style="font-weight:950;">${x}</div>
-          <span class="tag free">Free</span>
-        </div>
-      `).join("");
-
-    $("freeCommands").innerHTML =
-      freeCommands.map(c=>`
-        <div class="listRow">
-          <div>
-            <div class="mono" style="font-weight:1050;">${c.cmd}</div>
-            <div class="hint">${c.desc}</div>
-          </div>
-          <button class="btn" type="button" data-copy="${c.cmd}">Copy</button>
-        </div>
-      `).join("");
-
-    document.querySelectorAll("[data-copy]").forEach(btn=>{
-      btn.addEventListener("click", ()=>copyText(btn.getAttribute("data-copy")));
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape") closeViaBack();
     });
 
-    // ==========================
-    // Dashboard tile UI (preview like screenshot)
-    // ==========================
-    const dashTitle = $("dashTitle");
-    const dashSubtitle = $("dashSubtitle");
-    const dashContent = $("dashContent");
-    const dashSearchRow = $("dashSearchRow");
-    const serverSearch = $("serverSearch");
-    const serverCountChip = $("serverCountChip");
-
-    // Example tile data (replace later with real API if you want)
-    const servers = [
-      {
-        name:"Sub5s trying to ticketmaxx",
-        status:"Bot Active",
-        state:"active",
-        icon:"assets/nozzarri.png",
-        action:"Manage Server",
-        actionType:"good"
-      },
-      {
-        name:"Nozzarri Ticket",
-        status:"Missing Bot",
-        state:"missing",
-        icon:"assets/nozzarri.png",
-        action:"Missing Bot • Click to Invite",
-        actionType:"bad"
-      },
-      {
-        name:"Add New Server",
-        status:"Invite bot to another server",
-        state:"add",
-        icon:"",
-        action:"Add to Server",
-        actionType:"neutral"
-      }
-    ];
-
-    function renderHomePanel(){
-      dashSearchRow.style.display = "none";
-      dashTitle.textContent = "Home";
-      dashSubtitle.textContent = "Overview of your server dashboard and quick actions.";
-
-      dashContent.innerHTML = `
-        <div class="grid two">
-          <div class="card">
-            <p class="sectionTitle">🚀 Quick actions</p>
-            <div class="sectionBody">
-              <div class="listRow">
-                <div>
-                  <div style="font-weight:1050;">Open Real Dashboard</div>
-                  <div class="hint mono">${REAL_DASH_URL}</div>
-                </div>
-                <button class="btn primary" type="button" id="qaOpen">Open</button>
-              </div>
-              <div class="listRow">
-                <div>
-                  <div style="font-weight:1050;">Copy Dashboard URL</div>
-                  <div class="hint">Use it on your website buttons.</div>
-                </div>
-                <button class="btn" type="button" id="qaCopy">Copy</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="card">
-            <p class="sectionTitle">📌 Info</p>
-            <div class="sectionBody">
-              Dashboard is free to open. Premium items should show as locked (not hidden).
-              <div class="hint" style="margin-top:10px;">
-                If you want real tiles with your real servers, the backend must provide an API (Discord OAuth).
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-
-      $("qaOpen").addEventListener("click", openRealDashboard);
-      $("qaCopy").addEventListener("click", ()=>copyText(REAL_DASH_URL));
-    }
-
-    function renderServersPanel(filter=""){
-      dashSearchRow.style.display = "flex";
-      dashTitle.textContent = "Server Dashboard";
-      dashSubtitle.textContent = "Manage your Discord servers with Nozzarri Tickets (tile view).";
-
-      const q = (filter || "").toLowerCase().trim();
-      const filtered = servers.filter(s => s.name.toLowerCase().includes(q));
-
-      serverCountChip.textContent = `📊 ${filtered.length} Servers`;
-
-      dashContent.innerHTML = `
-        <div class="serverGrid">
-          ${filtered.map(s=>{
-            const iconHtml = s.icon
-              ? `<img class="guildIcon" src="${s.icon}" alt="icon" onerror="this.style.display='none'">`
-              : `<div class="guildIcon" style="display:flex;align-items:center;justify-content:center;">➕</div>`;
-
-            const tag = s.state === "active"
-              ? `<span class="tag free">Bot Active</span>`
-              : s.state === "missing"
-                ? `<span class="tag bad">Missing Bot</span>`
-                : `<span class="tag prem">New</span>`;
-
-            return `
-              <div class="serverCard" data-server="${encodeURIComponent(s.name)}">
-                <div class="serverTop">
-                  ${iconHtml}
-                  <div style="min-width:0;">
-                    <div class="guildName">${s.name}</div>
-                    <div class="guildSub">${s.status}</div>
-                  </div>
-                  <div style="margin-left:auto;">${tag}</div>
-                </div>
-                <div class="serverActions">
-                  <button class="btn bigAction ${s.actionType}" type="button">${s.action}</button>
-                </div>
-              </div>
-            `;
-          }).join("")}
-        </div>
-      `;
-
-      // click handlers
-      document.querySelectorAll(".serverCard .bigAction").forEach(btn=>{
-        btn.addEventListener("click", (e)=>{
-          const card = e.target.closest(".serverCard");
-          const name = decodeURIComponent(card.getAttribute("data-server") || "");
-          if(btn.classList.contains("bad")){
-            // Missing bot => open invite
-            openUrl(BOT_INVITE_URL);
-            showToast("Opening bot invite…");
-          }else if(btn.classList.contains("neutral")){
-            openUrl(BOT_INVITE_URL);
-            showToast("Add bot to server…");
-          }else{
-            openRealDashboard();
-            showToast(`Opening dashboard for: ${name}`);
-          }
-        });
+    [buyOverlay,menuOverlay].forEach(o=>{
+      o.addEventListener("mousedown", (e)=>{
+        if(e.target === o) closeViaBack();
       });
+    });
+
+    // Buttons
+    document.getElementById("openCheckout").addEventListener("click", ()=> showOverlay("checkout"));
+    document.getElementById("openCheckoutFromHero").addEventListener("click", ()=> showOverlay("checkout"));
+    document.getElementById("openCheckoutFooter").addEventListener("click", ()=> showOverlay("checkout"));
+    document.getElementById("closeCheckout").addEventListener("click", closeViaBack);
+
+    document.getElementById("openMenu").addEventListener("click", ()=> showOverlay("menu"));
+    document.getElementById("closeMenu").addEventListener("click", closeViaBack);
+
+    document.getElementById("menuBuy").addEventListener("click", ()=>{
+      closeViaBack();
+      setTimeout(()=> showOverlay("checkout"), 80);
+    });
+    document.querySelectorAll('[data-close="menu"]').forEach(a=>{
+      a.addEventListener("click", ()=> closeViaBack());
+    });
+
+    document.getElementById("scrollPricing").addEventListener("click", ()=>{
+      document.getElementById("pricing").scrollIntoView({behavior:"smooth", block:"start"});
+    });
+
+    // =========================
+    // Checkout logic (keeps your prices + LTC)
+    // =========================
+    const planPicked = document.getElementById("planPicked");
+    const payMsg = document.getElementById("payMsg");
+    const ltcAddr = document.getElementById("ltcAddr");
+    ltcAddr.value = LTC_ADDRESS;
+
+    function setPlan(plan, price){
+      planPicked.value = `${plan} — $${price}`;
+      const msg = `${BRAND} Premium | Plan: ${plan} | Price: $${price} | User: (your discord) | TXID: (paste txid)`;
+      payMsg.value = msg;
+      document.getElementById("buyTitle").textContent = `💎 Buy Premium — ${plan} ($${price})`;
     }
 
-    function renderSettingsPanel(){
-      dashSearchRow.style.display = "none";
-      dashTitle.textContent = "Settings";
-      dashSubtitle.textContent = "Settings are managed inside the real dashboard backend.";
+    setPlan("1 MONTH", 2);
 
-      dashContent.innerHTML = `
-        <div class="card">
-          <p class="sectionTitle">⚙️ Settings</p>
-          <div class="sectionBody">
-            Website preview can’t change your bot settings by itself.
-            <div class="hint" style="margin-top:10px;">
-              Use the real dashboard for: server selection, ticket config, logs, premium locks, etc.
-            </div>
+    document.querySelectorAll(".plan").forEach(card=>{
+      const plan = card.dataset.plan;
+      const price = card.dataset.price;
 
-            <div class="listRow">
-              <div>
-                <div style="font-weight:1050;">Open Real Dashboard</div>
-                <div class="hint mono">${REAL_DASH_URL}</div>
-              </div>
-              <button class="btn primary" type="button" id="openSettingsReal">Open</button>
-            </div>
-          </div>
-        </div>
-      `;
-      $("openSettingsReal").addEventListener("click", openRealDashboard);
-    }
+      card.querySelector(".buyBtn").addEventListener("click", ()=>{
+        setPlan(plan, price);
+        showOverlay("checkout");
+      });
 
-    function renderSupportPanel(){
-      dashSearchRow.style.display = "none";
-      dashTitle.textContent = "Support";
-      dashSubtitle.textContent = "Join Discord for help / premium / setup.";
+      card.querySelector(".copyLtcBtn").addEventListener("click", ()=> copyText(LTC_ADDRESS));
+    });
 
-      dashContent.innerHTML = `
-        <div class="grid two">
-          <div class="card">
-            <p class="sectionTitle">💬 Discord</p>
-            <div class="sectionBody">
-              Need help setting panels or fixing commands?
-              <div class="listRow">
-                <div>
-                  <div style="font-weight:1050;">Join the server</div>
-                  <div class="hint mono">${SERVER_INVITE_URL}</div>
-                </div>
-                <a class="btn primary" href="${SERVER_INVITE_URL}" target="_blank" rel="noreferrer">Join</a>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <p class="sectionTitle">⌨️ Commands</p>
-            <div class="sectionBody">
-              Only showing the commands you want:
-              <div class="listRow">
-                <div class="mono" style="font-weight:1050;">?help</div>
-                <span class="tag free">Free</span>
-              </div>
-              <div class="listRow">
-                <div class="mono" style="font-weight:1050;">?ticket</div>
-                <span class="tag free">Free</span>
-              </div>
-              <div class="listRow">
-                <div class="mono" style="font-weight:1050;">?support</div>
-                <span class="tag free">Free</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
+    document.getElementById("copyLtcFooter").addEventListener("click", ()=> copyText(LTC_ADDRESS));
 
-    // Sidebar nav
-    function setSideActive(btn){
-      [$("sideHome"), $("sideServers"), $("sideSettings"), $("sideSupport")].forEach(b=>b.classList.remove("primary"));
-      btn.classList.add("primary");
-    }
+    document.getElementById("copyPayInfo").addEventListener("click", ()=>{
+      const combo =
+`LTC Address: ${LTC_ADDRESS}
+Owner: ${OWNER_DISCORD}
+Message: ${payMsg.value}`;
+      copyText(combo);
+    });
+    document.getElementById("copyAddrOnly").addEventListener("click", ()=> copyText(LTC_ADDRESS));
+    document.getElementById("copyOwnerOnly").addEventListener("click", ()=> copyText(OWNER_DISCORD));
 
-    $("sideHome").addEventListener("click", ()=>{ setSideActive($("sideHome")); renderHomePanel(); });
-    $("sideServers").addEventListener("click", ()=>{ setSideActive($("sideServers")); renderServersPanel(serverSearch.value); });
-    $("sideSettings").addEventListener("click", ()=>{ setSideActive($("sideSettings")); renderSettingsPanel(); });
-    $("sideSupport").addEventListener("click", ()=>{ setSideActive($("sideSupport")); renderSupportPanel(); });
-
-    serverSearch.addEventListener("input", ()=>renderServersPanel(serverSearch.value));
-
-    // Default dashboard panel
-    renderHomePanel();
-
-    // misc
-    $("year").textContent = new Date().getFullYear();
+    // Boot hash
+    (function boot(){
+      const hash = (location.hash || "").replace("#","");
+      if(hash === "checkout" || hash === "menu"){
+        history.replaceState({overlay: hash}, "", "#"+hash);
+        openOverlay(hash, false);
+      }else{
+        history.replaceState(null, "", "#top");
+      }
+    })();
   </script>
 </body>
 </html>

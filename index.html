@@ -22,6 +22,7 @@
     :root{
       --bg0:#05060f;
       --bg1:#070824;
+
       --card: rgba(255,255,255,.06);
       --card2: rgba(255,255,255,.09);
       --border: rgba(255,255,255,.12);
@@ -39,7 +40,6 @@
       --radius2: 26px;
 
       --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-
       --ease: cubic-bezier(.2,.8,.2,1);
     }
 
@@ -57,9 +57,34 @@
       overflow-x:hidden;
     }
 
+    /* Sexy texture overlays */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(1200px 800px at 30% 15%, rgba(124,58,237,.10), transparent 60%),
+        radial-gradient(900px 650px at 70% 20%, rgba(56,189,248,.08), transparent 62%),
+        radial-gradient(1100px 750px at 50% 90%, rgba(34,197,94,.06), transparent 64%);
+      filter: blur(0px);
+      opacity:1;
+      z-index:-3;
+    }
+    body::after{
+      /* noise */
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+      opacity:.08;
+      mix-blend-mode: overlay;
+      z-index:-1;
+    }
+
     /* Background layers */
     .bg{position:fixed; inset:0; z-index:-2; pointer-events:none;}
     canvas#stars{position:absolute; inset:0; width:100%; height:100%; opacity:.26;}
+
     .glow{
       position:absolute; inset:-200px;
       background:
@@ -73,6 +98,23 @@
     @keyframes float{
       0%,100%{ transform: translate3d(0,0,0) scale(1); }
       50%{ transform: translate3d(28px,-16px,0) scale(1.02); }
+    }
+
+    /* Subtle animated grid */
+    .gridTex{
+      position:absolute; inset:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at 50% 20%, rgba(0,0,0,1), transparent 70%);
+      opacity:.08;
+      transform: translateY(0);
+      animation: gridMove 16s linear infinite;
+    }
+    @keyframes gridMove{
+      0%{ transform: translateY(0); }
+      100%{ transform: translateY(44px); }
     }
 
     .container{max-width:1200px; margin:0 auto; padding:0 20px}
@@ -100,6 +142,21 @@
       display:grid; place-items:center;
       box-shadow: 0 0 34px rgba(124,58,237,.18);
       overflow:hidden;
+      position:relative;
+    }
+    .logo::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, transparent, rgba(56,189,248,.22), rgba(124,58,237,.20), transparent);
+      transform: translateX(-70%);
+      animation: shine 5.2s var(--ease) infinite;
+      pointer-events:none;
+      opacity:.8;
+    }
+    @keyframes shine{
+      0%, 40%{ transform: translateX(-70%); opacity:.0; }
+      55%{ opacity:.8; }
+      70%, 100%{ transform: translateX(70%); opacity:0; }
     }
     .logo img{width:100%; height:100%; object-fit:cover}
     .brandName{font-weight:1000; letter-spacing:.2px; line-height:1;}
@@ -136,7 +193,19 @@
       display:inline-flex; align-items:center; gap:10px;
       text-decoration:none;
       user-select:none;
+      position:relative;
+      overflow:hidden;
     }
+    .btn::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, transparent, rgba(56,189,248,.14), rgba(124,58,237,.12), transparent);
+      transform: translateX(-80%);
+      transition: transform .55s var(--ease);
+      pointer-events:none;
+      opacity:.8;
+    }
+    .btn:hover::after{ transform: translateX(80%); }
     .btn:hover{
       transform: translateY(-1px);
       border-color: rgba(255,255,255,.18);
@@ -186,6 +255,7 @@
       box-shadow: var(--shadow);
       overflow:hidden;
       position:relative;
+      transform: translateZ(0);
     }
     .heroCard::before{
       content:"";
@@ -194,6 +264,20 @@
                   radial-gradient(700px 260px at 90% 30%, rgba(56,189,248,.16), transparent 55%);
       opacity:.85;
       pointer-events:none;
+    }
+    .heroCard::after{
+      content:"";
+      position:absolute; inset:-2px;
+      border-radius: var(--radius2);
+      background: linear-gradient(90deg, rgba(56,189,248,.12), rgba(124,58,237,.14), rgba(34,197,94,.10));
+      filter: blur(0px);
+      opacity:.7;
+      pointer-events:none;
+      mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+      -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+      padding:1px;
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
     }
     .heroPad{padding: 28px; position:relative}
     .pill{
@@ -293,6 +377,13 @@
       position:relative;
       overflow:hidden;
       min-height: 140px;
+      transition: transform .22s var(--ease), border-color .22s var(--ease), background .22s var(--ease);
+      will-change: transform;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.03));
     }
     .card::before{
       content:"";
@@ -302,6 +393,16 @@
       opacity:.65;
       pointer-events:none;
     }
+    .card::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, transparent, rgba(56,189,248,.10), rgba(124,58,237,.10), transparent);
+      transform: translateX(-70%);
+      transition: transform .65s var(--ease);
+      pointer-events:none;
+      opacity:.8;
+    }
+    .card:hover::after{ transform: translateX(70%); }
     .card > *{ position:relative; }
     .icon{
       width:42px; height:42px;
@@ -321,6 +422,14 @@
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       box-shadow: 0 18px 70px rgba(0,0,0,.35);
       overflow:hidden;
+      position:relative;
+    }
+    .cmdWrap::before{
+      content:"";
+      position:absolute; inset:0;
+      opacity:.6;
+      pointer-events:none;
+      background: radial-gradient(900px 380px at 50% 0%, rgba(124,58,237,.12), transparent 60%);
     }
     .cmdTop{
       padding: 14px;
@@ -328,6 +437,8 @@
       border-bottom: 1px solid rgba(255,255,255,.08);
       background: rgba(0,0,0,.18);
       flex-wrap:wrap;
+      position:relative;
+      z-index:1;
     }
     .tabs{display:flex; gap:8px; flex-wrap:wrap}
     .tab{
@@ -360,7 +471,21 @@
       font-weight:900;
       outline:none;
     }
-    .cmdBody{padding: 14px;}
+    .cmdBody{padding: 14px; position:relative; z-index:1;}
+    .cmdMeta{
+      display:flex; gap:10px; flex-wrap:wrap;
+      color: rgba(238,242,255,.70);
+      font-weight:900;
+      font-size:12px;
+      margin-bottom:10px;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+    }
     .cmdGrid{
       display:grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -372,8 +497,26 @@
       background: rgba(255,255,255,.05);
       padding: 12px;
       box-shadow: 0 18px 70px rgba(0,0,0,.22);
+      position:relative;
+      overflow:hidden;
+      transition: transform .20s var(--ease), border-color .20s var(--ease), background .20s var(--ease);
     }
-    .cmdHead{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+    .cmdCard:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+    }
+    .cmdCard::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, transparent, rgba(56,189,248,.12), rgba(124,58,237,.12), transparent);
+      transform: translateX(-60%);
+      transition: transform .55s var(--ease);
+      pointer-events:none;
+      opacity:.8;
+    }
+    .cmdCard:hover::after{ transform: translateX(60%); }
+    .cmdHead{display:flex; align-items:center; justify-content:space-between; gap:10px; position:relative; z-index:1;}
     .cmdName{
       font-weight:1000;
       letter-spacing:-.2px;
@@ -393,12 +536,17 @@
       background: rgba(124,58,237,.18);
       border-color: rgba(124,58,237,.30);
     }
+    .cmdTag.slash{
+      background: rgba(56,189,248,.14);
+      border-color: rgba(56,189,248,.30);
+    }
     .cmdDesc{
       margin-top:8px;
       color: rgba(238,242,255,.74);
       font-weight:800;
       line-height:1.6;
       font-size:13px;
+      position:relative; z-index:1;
     }
     .cmdUsage{
       margin-top:10px;
@@ -412,6 +560,7 @@
       font-size:12px;
       overflow:auto;
       white-space:nowrap;
+      position:relative; z-index:1;
     }
 
     /* Pricing */
@@ -428,7 +577,9 @@
       box-shadow: 0 18px 70px rgba(0,0,0,.35);
       position:relative;
       overflow:hidden;
+      transition: transform .20s var(--ease), border-color .20s var(--ease);
     }
+    .plan:hover{ transform: translateY(-2px); border-color: rgba(255,255,255,.18); }
     .plan::before{
       content:"";
       position:absolute; inset:-2px;
@@ -549,6 +700,14 @@
       overflow:hidden;
       transform: translateY(8px) scale(.99);
       animation: pop .22s var(--ease) both;
+      position:relative;
+    }
+    .panel::before{
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      opacity:.25;
+      background: radial-gradient(900px 320px at 50% 0%, rgba(56,189,248,.22), transparent 60%);
     }
     @keyframes pop{to{transform: translateY(0) scale(1)}}
     .panelTop{
@@ -556,6 +715,8 @@
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       border-bottom: 1px solid rgba(255,255,255,.08);
       background: rgba(0,0,0,.18);
+      position:relative;
+      z-index:1;
     }
     .panelTop .title{
       display:flex; gap:10px; align-items:center;
@@ -573,7 +734,7 @@
       font-weight:1000;
     }
     .x:hover{transform: translateY(-1px); background: rgba(255,255,255,.09)}
-    .panelBody{padding: 14px}
+    .panelBody{padding: 14px; position:relative; z-index:1;}
 
     /* Checkout */
     .checkoutGrid{
@@ -586,8 +747,20 @@
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.05);
       padding: 12px;
+      position:relative;
+      overflow:hidden;
     }
-    .label{font-weight:1000; font-size:12px; color: rgba(238,242,255,.72);}
+    .box::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, transparent, rgba(56,189,248,.10), rgba(124,58,237,.10), transparent);
+      transform: translateX(-70%);
+      transition: transform .65s var(--ease);
+      pointer-events:none;
+      opacity:.8;
+    }
+    .box:hover::after{ transform: translateX(70%); }
+    .label{font-weight:1000; font-size:12px; color: rgba(238,242,255,.72); position:relative; z-index:1;}
     .input{
       margin-top: 8px;
       width:100%;
@@ -598,15 +771,17 @@
       padding: 12px 12px;
       font-weight:900;
       outline:none;
+      position:relative; z-index:1;
     }
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
-    .rowBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .rowBtns{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; position:relative; z-index:1;}
     .fine{
       margin-top:10px;
       color: rgba(238,242,255,.72);
       font-weight:800;
       line-height:1.6;
       font-size:13px;
+      position:relative; z-index:1;
     }
 
     /* Mobile Menu */
@@ -617,6 +792,7 @@
       background: linear-gradient(180deg, rgba(10,12,26,.92), rgba(8,10,20,.88));
       box-shadow: var(--shadow);
       overflow:hidden;
+      position:relative;
     }
     .menuBody{padding: 12px}
     .menuLinks{display:grid; gap:8px}
@@ -685,6 +861,7 @@
 <body>
   <div class="bg">
     <div class="glow"></div>
+    <div class="gridTex"></div>
     <canvas id="stars"></canvas>
   </div>
 
@@ -771,11 +948,11 @@
         <div class="card reveal">
           <div class="icon">🎫</div>
           <h3>Ticket Panels</h3>
-          <p>Create support/trade panels with categories, roles, and custom messages.</p>
+          <p>Support/trade panels with categories, roles, and smooth workflow.</p>
         </div>
         <div class="card reveal">
           <div class="icon">🧾</div>
-          <h3>Logs & History</h3>
+          <h3>Logs & Transcripts</h3>
           <p>Keep everything organized: closures, transcripts, and staff actions.</p>
         </div>
         <div class="card reveal">
@@ -793,7 +970,7 @@
       <div class="sectionTitle reveal">
         <div>
           <h2>Commands</h2>
-          <p>Everything your users and staff need. Use the tabs to switch between Free & Premium.</p>
+          <p>Real commands from your bot script (prefix + slash). Use tabs to switch Free & Premium.</p>
         </div>
       </div>
 
@@ -803,14 +980,15 @@
             <button class="tab active" data-tab="free" type="button">✅ Free Commands</button>
             <button class="tab" data-tab="premium" type="button">💎 Premium Commands</button>
           </div>
-          <input id="cmdSearch" class="search" placeholder="Search commands… (ex: setup, panel, pingrole, rename)" />
+          <input id="cmdSearch" class="search" placeholder="Search commands… (ex: setup, premium, pingrole, ticketname)" />
         </div>
 
         <div class="cmdBody">
+          <div class="cmdMeta" id="cmdMeta"></div>
           <div class="cmdGrid" id="cmdGrid"></div>
+
           <div class="tiny" style="margin-top:10px;">
-            Tip: keep names exactly like your bot uses (ex: <span class="mono">?panel</span> / <span class="mono">?setup</span> etc).
-            If you want, tell me your exact command names and I’ll mirror them 1:1 here.
+            Notes: Prefix commands start with <span class="mono">?</span>. Slash commands use <span class="mono">/</span>.
           </div>
         </div>
       </div>
@@ -823,7 +1001,7 @@
       <div class="sectionTitle reveal">
         <div>
           <h2>Premium Keys</h2>
-          <p>Same prices you had before — just a cleaner purchase UI. Payments in LTC.</p>
+          <p>Same prices — cleaner purchase UI. Payments in LTC.</p>
         </div>
         <button class="btn primary" id="openCheckout" type="button">💎 Buy Premium</button>
       </div>
@@ -838,9 +1016,9 @@
           <div class="money">$1</div>
           <div class="sub">Try premium for 15 days.</div>
           <ul class="ul">
-            <li><span class="check">✓</span> Extra premium commands</li>
-            <li><span class="check">✓</span> More customization</li>
-            <li><span class="check">✓</span> Priority style</li>
+            <li><span class="check">✓</span> Premium panel</li>
+            <li><span class="check">✓</span> Ticket customization</li>
+            <li><span class="check">✓</span> More automation</li>
           </ul>
           <div class="planBtns">
             <button class="btn primary buyBtn" type="button">Buy</button>
@@ -857,9 +1035,9 @@
           <div class="money">$2</div>
           <div class="sub">Most popular plan.</div>
           <ul class="ul">
-            <li><span class="check">✓</span> Extra premium commands</li>
+            <li><span class="check">✓</span> Premium panel</li>
             <li><span class="check">✓</span> Better customization</li>
-            <li><span class="check">✓</span> Great value</li>
+            <li><span class="check">✓</span> Best value</li>
           </ul>
           <div class="planBtns">
             <button class="btn primary buyBtn" type="button">Buy</button>
@@ -876,7 +1054,7 @@
           <div class="money">$4</div>
           <div class="sub">Best value (longer access).</div>
           <ul class="ul">
-            <li><span class="check">✓</span> Extra premium commands</li>
+            <li><span class="check">✓</span> Premium panel</li>
             <li><span class="check">✓</span> Long access</li>
             <li><span class="check">✓</span> Best deal</li>
           </ul>
@@ -906,27 +1084,19 @@
       <div class="faq">
         <details class="reveal">
           <summary>Where is the real dashboard login?</summary>
-          <p>
-            Press <b>Dashboard</b> (top). It opens the real dashboard on your server.
-          </p>
+          <p>Press <b>Dashboard</b> (top). It opens the real dashboard on your server.</p>
         </details>
         <details class="reveal">
           <summary>How do I get my premium key after paying?</summary>
-          <p>
-            After payment, DM the owner on Discord with your plan + TX info. Manual verification avoids fake systems.
-          </p>
+          <p>After payment, DM the owner on Discord with your plan + TX info. Manual verification avoids fake systems.</p>
         </details>
         <details class="reveal">
           <summary>Can I host this on GitHub Pages?</summary>
-          <p>
-            Yes — it’s a single HTML file + your assets/nozzarri.png. Works clean on PC + mobile.
-          </p>
+          <p>Yes — it’s a single HTML file + your assets/nozzarri.png. Works clean on PC + mobile.</p>
         </details>
         <details class="reveal">
           <summary>Why not embed the dashboard inside this site?</summary>
-          <p>
-            Usually it breaks because of browser security (CORS/iframe restrictions). Opening it as a separate page is the clean solution.
-          </p>
+          <p>Usually it breaks because of browser security (CORS/iframe restrictions). Opening it separately is clean.</p>
         </details>
       </div>
     </div>
@@ -1016,7 +1186,7 @@
         </div>
 
         <div class="tiny" style="margin-top:10px;">
-          This checkout UI is clean on PC and mobile and always has Undo/Close.
+          Clean checkout UI on PC + mobile.
         </div>
       </div>
     </div>
@@ -1065,27 +1235,52 @@
     // ✅ REAL DASHBOARD URL
     const REAL_DASHBOARD_URL = "http://85.215.159.4:9717/dashboard";
 
-    // =========================
-    // Commands data (edit here)
-    // =========================
+    // ==========================================================
+    // REAL Commands list (based on your bot index.js command checks)
+    // - Prefix commands: ?...
+    // - Slash commands: /...
+    // NOTE: you said you deleted ?help => it's NOT listed here.
+    // ==========================================================
     const COMMANDS = {
       free: [
-        { name: "?help", tag: "General", desc: "Show help panel with categories.", usage: "?help" },
-        { name: "?panel", tag: "Tickets", desc: "Send ticket panel (support/trade) in a channel.", usage: "?panel #channel" },
-        { name: "?setup", tag: "Setup", desc: "Setup ticket categories, roles, logs, transcripts.", usage: "?setup" },
-        { name: "?close", tag: "Tickets", desc: "Close a ticket (staff).", usage: "?close" },
-        { name: "?add", tag: "Tickets", desc: "Add a user to a ticket.", usage: "?add @user" },
-        { name: "?remove", tag: "Tickets", desc: "Remove a user from a ticket.", usage: "?remove @user" },
-        { name: "?rename", tag: "Tickets", desc: "Rename ticket channel.", usage: "?rename new-name" },
-        { name: "?transcript", tag: "Logs", desc: "Generate transcript for a ticket.", usage: "?transcript" }
+        { name: "?setup", tag: "Setup", type: "Prefix", desc: "Open server setup panel (roles/categories/logs/panels).", usage: "?setup" },
+        { name: "?support", tag: "Tickets", type: "Prefix", desc: "Open a Support ticket (uses your configured system).", usage: "?support" },
+        { name: "?trade", tag: "Tickets", type: "Prefix", desc: "Open a Trade ticket (uses your configured system).", usage: "?trade" },
+
+        { name: "/help", tag: "General", type: "Slash", desc: "Open the private help panel (slash).", usage: "/help" },
+        { name: "/add", tag: "Tickets", type: "Slash", desc: "Add a user to the current ticket.", usage: "/add user:@someone" },
+        { name: "/close", tag: "Tickets", type: "Slash", desc: "Close the current ticket (staff only).", usage: "/close reason:(optional)" },
+        { name: "/toptrade", tag: "Stats", type: "Slash", desc: "Show top trade staff by rating.", usage: "/toptrade" }
       ],
       premium: [
-        { name: "?pingmode", tag: "Premium", desc: "Change ping behavior on ticket create.", usage: "?pingmode on | off" },
-        { name: "?pingrole", tag: "Premium", desc: "Set role that gets pinged when ticket is created.", usage: "?pingrole @role" },
-        { name: "?ticketname", tag: "Premium", desc: "Customize ticket channel name format.", usage: "?ticketname support-{user} | trade-{user}" },
-        { name: "?embedaccent", tag: "Premium", desc: "Set embed accent color.", usage: "?embedaccent #RRGGBB" },
-        { name: "?stafftitle", tag: "Premium", desc: "Change staff display title inside ticket messages.", usage: "?stafftitle Support Team" },
-        { name: "?premiuminfo", tag: "Premium", desc: "Show premium features + key info.", usage: "?premiuminfo" }
+        { name: "?premium", tag: "Premium", type: "Prefix", desc: "Open the Premium control panel (buttons).", usage: "?premium" },
+        { name: "?premium-help", tag: "Premium", type: "Prefix", desc: "Show premium help + panel info.", usage: "?premium-help" },
+        { name: "?premium-features", tag: "Premium", type: "Prefix", desc: "List premium features & info.", usage: "?premium-features" },
+        { name: "?premium-redeem <key>", tag: "Premium", type: "Prefix", desc: "Redeem premium key for this server.", usage: "?premium-redeem ABCD-KEY-1234" },
+        { name: "?premium-gen <days>", tag: "Owner", type: "Prefix", desc: "Generate premium key (owner/admin).", usage: "?premium-gen 30" },
+
+        { name: "?displayname <name>", tag: "Branding", type: "Prefix", desc: "Set brand/display name used in premium UI.", usage: "?displayname Nozzarri Tickets" },
+        { name: "?brandname <name>", tag: "Branding", type: "Prefix", desc: "Alias for display name.", usage: "?brandname Nozzarri Tickets" },
+        { name: "?premium-name <name>", tag: "Branding", type: "Prefix", desc: "Alias for display name.", usage: "?premium-name Nozzarri Tickets" },
+
+        { name: "?brandicon <url>", tag: "Branding", type: "Prefix", desc: "Set brand icon URL used in premium UI.", usage: "?brandicon https://..." },
+        { name: "?premium-icon <url>", tag: "Branding", type: "Prefix", desc: "Alias for brand icon.", usage: "?premium-icon https://..." },
+
+        { name: "?botnick <nickname>", tag: "Bot", type: "Prefix", desc: "Change bot nickname in the server.", usage: "?botnick Nozzarri" },
+        { name: "?accent <#hex>", tag: "Style", type: "Prefix", desc: "Set premium accent color.", usage: "?accent #7c3aed" },
+
+        { name: "?ticketname <template>", tag: "Tickets", type: "Prefix", desc: "Set ticket channel name template (ex: support-{user}).", usage: "?ticketname support-{user}" },
+        { name: "?welcome <message>", tag: "Tickets", type: "Prefix", desc: "Set welcome message in tickets (supports {user}/{type}).", usage: "?welcome Welcome {user}!" },
+
+        { name: "?pingmode on|off", tag: "Automation", type: "Prefix", desc: "Toggle ping on ticket creation.", usage: "?pingmode on" },
+        { name: "?pingrole @role", tag: "Automation", type: "Prefix", desc: "Set role to ping when ticket is created.", usage: "?pingrole @Support" },
+        { name: "?autoclose <minutes>", tag: "Automation", type: "Prefix", desc: "Auto-close after minutes (0 = off).", usage: "?autoclose 60" },
+
+        { name: "?transcripts on|off", tag: "Logs", type: "Prefix", desc: "Enable/disable transcripts.", usage: "?transcripts on" },
+        { name: "?transcript-channel #channel", tag: "Logs", type: "Prefix", desc: "Where transcripts are posted.", usage: "?transcript-channel #transcripts" },
+
+        { name: "?botname <name>", tag: "Bot", type: "Prefix", desc: "Change bot username (if enabled in your script).", usage: "?botname Nozzarri Tickets" },
+        { name: "?botavatar <url>", tag: "Bot", type: "Prefix", desc: "Change bot avatar (if enabled in your script).", usage: "?botavatar https://..." }
       ]
     };
 
@@ -1146,7 +1341,7 @@
       canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
       canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
       stars = [];
-      const count = Math.floor(Math.min(220, (window.innerWidth * window.innerHeight) / 9000));
+      const count = Math.floor(Math.min(240, (window.innerWidth * window.innerHeight) / 8500));
       for(let i=0;i<count;i++){
         stars.push({
           x: Math.random()*canvas.width,
@@ -1204,22 +1399,44 @@
     // =========================
     const cmdGrid = document.getElementById("cmdGrid");
     const cmdSearch = document.getElementById("cmdSearch");
+    const cmdMeta = document.getElementById("cmdMeta");
     const tabs = document.querySelectorAll(".tab");
     let activeTab = "free";
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
 
     function renderCommands(){
       const q = (cmdSearch.value || "").trim().toLowerCase();
       const list = COMMANDS[activeTab] || [];
       const filtered = list.filter(c=>{
-        const blob = `${c.name} ${c.tag} ${c.desc} ${c.usage}`.toLowerCase();
+        const blob = `${c.name} ${c.tag} ${c.type} ${c.desc} ${c.usage}`.toLowerCase();
         return !q || blob.includes(q);
       });
+
+      const prefixCount = filtered.filter(x=>x.type === "Prefix").length;
+      const slashCount = filtered.filter(x=>x.type === "Slash").length;
+
+      cmdMeta.innerHTML = `
+        <div class="chip">Showing <b>${filtered.length}</b> commands</div>
+        <div class="chip">Prefix <b>${prefixCount}</b></div>
+        <div class="chip">Slash <b>${slashCount}</b></div>
+        <div class="chip">Tab: <b>${activeTab === "free" ? "Free" : "Premium"}</b></div>
+      `;
 
       cmdGrid.innerHTML = filtered.map(c => `
         <div class="cmdCard">
           <div class="cmdHead">
             <div class="cmdName">${escapeHtml(c.name)}</div>
-            <div class="cmdTag ${activeTab === "premium" ? "premium" : ""}">${escapeHtml(c.tag)}</div>
+            <div class="cmdTag ${
+              c.type === "Slash" ? "slash" : (activeTab === "premium" ? "premium" : "")
+            }">${escapeHtml(c.type)}</div>
           </div>
           <div class="cmdDesc">${escapeHtml(c.desc)}</div>
           <div class="cmdUsage">${escapeHtml(c.usage)}</div>
@@ -1233,20 +1450,11 @@
               <div class="cmdName">No results</div>
               <div class="cmdTag">Search</div>
             </div>
-            <div class="cmdDesc">Try a different word. Example: <span class="mono">pingrole</span>, <span class="mono">setup</span>, <span class="mono">ticketname</span>.</div>
-            <div class="cmdUsage">Tip: You can edit commands list in the HTML (COMMANDS object).</div>
+            <div class="cmdDesc">Try: <span class="mono">setup</span>, <span class="mono">premium</span>, <span class="mono">pingrole</span>, <span class="mono">ticketname</span>.</div>
+            <div class="cmdUsage">Tip: search works across name/desc/usage.</div>
           </div>
         `;
       }
-    }
-
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
     }
 
     tabs.forEach(t=>{

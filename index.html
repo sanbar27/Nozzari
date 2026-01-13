@@ -855,6 +855,86 @@
       .navLinks{display:none}
       .hamburger{display:block}
     }
+
+    /* Extra graphics: Aurora + floating blobs + section separators */
+    .aurora{
+      position:absolute; inset:-40%;
+      background:
+        radial-gradient(800px 380px at 18% 30%, rgba(56,189,248,.18), transparent 60%),
+        radial-gradient(900px 420px at 78% 20%, rgba(124,58,237,.20), transparent 62%),
+        radial-gradient(1000px 520px at 60% 86%, rgba(34,197,94,.14), transparent 64%),
+        conic-gradient(from 180deg at 50% 50%, rgba(56,189,248,.10), rgba(124,58,237,.10), rgba(34,197,94,.08), rgba(56,189,248,.10));
+      filter: blur(60px) saturate(120%);
+      opacity:.55;
+      animation: auroraMove 18s var(--ease) infinite, auroraHue 22s linear infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes auroraMove{
+      0%,100%{ transform: translate3d(-2%, -2%, 0) rotate(0deg) scale(1.02); }
+      50%{ transform: translate3d(2%, 3%, 0) rotate(6deg) scale(1.06); }
+    }
+    @keyframes auroraHue{
+      0%{ filter: blur(60px) saturate(125%) hue-rotate(0deg); }
+      100%{ filter: blur(60px) saturate(125%) hue-rotate(360deg); }
+    }
+
+    .floaters{ position:absolute; inset:0; pointer-events:none; opacity:.55; }
+    .floaters span{
+      position:absolute;
+      width: 280px; height: 280px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.22), rgba(255,255,255,0));
+      border: 1px solid rgba(255,255,255,.08);
+      filter: blur(.2px);
+      animation: floater 14s var(--ease) infinite;
+      transform: translate3d(0,0,0);
+    }
+    .floaters span:nth-child(1){ left: -60px; top: 120px; animation-duration: 18s; opacity:.45; }
+    .floaters span:nth-child(2){ right: -80px; top: 220px; animation-duration: 16s; opacity:.36; width: 340px; height: 340px;}
+    .floaters span:nth-child(3){ left: 18%; bottom: -120px; animation-duration: 20s; opacity:.30; width: 420px; height: 420px;}
+    .floaters span:nth-child(4){ right: 12%; bottom: -160px; animation-duration: 22s; opacity:.28; width: 520px; height: 520px;}
+    .floaters span:nth-child(5){ left: 55%; top: -140px; animation-duration: 19s; opacity:.26; width: 460px; height: 460px;}
+    @keyframes floater{
+      0%,100%{ transform: translate3d(0,0,0) scale(1); }
+      50%{ transform: translate3d(26px,-18px,0) scale(1.06); }
+    }
+
+    /* Section separators (subtle neon line) */
+    section::before{
+      content:"";
+      display:block;
+      height:1px;
+      width:100%;
+      background: linear-gradient(90deg, transparent, rgba(56,189,248,.20), rgba(124,58,237,.22), rgba(34,197,94,.18), transparent);
+      opacity:.55;
+      margin-bottom: 18px;
+      border-radius: 999px;
+    }
+
+    /* Micro-interactions */
+    .btn{ will-change: transform; }
+    .card, .plan, .cmdCard{ transform-style: preserve-3d; }
+
+    /* Button ripple */
+    .ripple{
+      position:absolute;
+      border-radius:999px;
+      transform: translate(-50%,-50%);
+      background: radial-gradient(circle, rgba(255,255,255,.28), rgba(255,255,255,0) 60%);
+      width: 18px; height:18px;
+      pointer-events:none;
+      animation: ripple .6s var(--ease) both;
+      mix-blend-mode: screen;
+    }
+    @keyframes ripple{
+      to{ width: 380px; height: 380px; opacity:0; }
+    }
+
+    /* Respect user motion preferences */
+    @media (prefers-reduced-motion: reduce){
+      .glow, .gridTex, .logo::after, .btn::after, .card::after, .plan::before, .aurora, .floaters span{ animation:none !important; transition:none !important; }
+      .reveal{ opacity:1; transform:none; }
+    }
   </style>
 </head>
 
@@ -862,6 +942,12 @@
   <div class="bg">
     <div class="glow"></div>
     <div class="gridTex"></div>
+
+    <div class="aurora"></div>
+    <div class="floaters" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
     <canvas id="stars"></canvas>
   </div>
 
@@ -1229,7 +1315,7 @@
       `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=bot%20applications.commands&permissions=${PERMISSIONS}`;
 
     const YT_URL = "https://www.youtube.com/channel/UC8Ovc5xT-tXXIjxLnVe72dQ";
-    const SERVER_INVITE_URL = "https://discord.gg/FHRSPyXw";
+    const SERVER_INVITE_URL = "https://discord.gg/QwzxD49A";
     const LTC_ADDRESS = "LPxonLCBtrcHnYAompBSXsboTfJQ8Eyuz8";
 
     // ✅ REAL DASHBOARD URL
@@ -1277,318 +1363,275 @@
         { name: "?autoclose <minutes>", tag: "Automation", type: "Prefix", desc: "Auto-close after minutes (0 = off).", usage: "?autoclose 60" },
 
         { name: "?transcripts on|off", tag: "Logs", type: "Prefix", desc: "Enable/disable transcripts.", usage: "?transcripts on" },
-        { name: "?transcript-channel #channel", tag: "Logs", type: "Prefix", desc: "Where transcripts are posted.", usage: "?transcript-channel #transcripts" },
-
-        { name: "?botname <name>", tag: "Bot", type: "Prefix", desc: "Change bot username (if enabled in your script).", usage: "?botname Nozzarri Tickets" },
-        { name: "?botavatar <url>", tag: "Bot", type: "Prefix", desc: "Change bot avatar (if enabled in your script).", usage: "?botavatar https://..." }
+        { name: "?transcript-channel #channel", tag: "Logs", type: "Prefix", desc: "Where transcripts are posted.", usage: "?transcript-channel #transcripts" }
       ]
     };
 
     // =========================
-    // Helpers: toast + copy
+    // UTILITIES
     // =========================
-    const toast = document.getElementById("toast");
-    let toastTimer = null;
+    const $ = (q, el=document) => el.querySelector(q);
+    const $$ = (q, el=document) => [...el.querySelectorAll(q)];
 
-    function showToast(msg){
-      toast.textContent = msg;
-      toast.classList.add("show");
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=> toast.classList.remove("show"), 1700);
+    const toastEl = $("#toast");
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(() => toastEl.classList.remove("show"), 1700);
     }
 
-    async function copyText(text){
-      try{
-        await navigator.clipboard.writeText(text);
-        showToast("Copied ✅");
-      }catch{
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-        showToast("Copied ✅");
-      }
+    function copy(text){
+      navigator.clipboard.writeText(text).then(() => toast("Copied ✅"));
+    }
+
+    // Smooth scroll buttons
+    $("#scrollCommands")?.addEventListener("click", () => document.querySelector("#commands")?.scrollIntoView({behavior:"smooth"}));
+    $("#scrollPricing")?.addEventListener("click", () => document.querySelector("#pricing")?.scrollIntoView({behavior:"smooth"}));
+
+    // Set year + owner
+    $("#year").textContent = new Date().getFullYear();
+    $("#ownerName").textContent = OWNER_DISCORD;
+    $("#ownerSpan").textContent = OWNER_DISCORD;
+
+    // Links everywhere
+    const linkMap = [
+      ["#navDiscord", SERVER_INVITE_URL],
+      ["#footerDiscord", SERVER_INVITE_URL],
+      ["#inviteServerBtn", SERVER_INVITE_URL],
+      ["#checkoutDiscord", SERVER_INVITE_URL],
+      ["#menuDiscord", SERVER_INVITE_URL],
+
+      ["#navYouTube", YT_URL],
+      ["#footerYouTube", YT_URL],
+      ["#youtubeBtn", YT_URL],
+      ["#checkoutYouTube", YT_URL],
+      ["#menuYouTube", YT_URL],
+
+      ["#botBtn", BOT_INVITE_URL],
+      ["#footerBot", BOT_INVITE_URL],
+      ["#checkoutBot", BOT_INVITE_URL],
+      ["#menuBot", BOT_INVITE_URL],
+
+      ["#openDashboard", REAL_DASHBOARD_URL],
+      ["#footerDashboard", REAL_DASHBOARD_URL],
+      ["#dashboardHeroBtn", REAL_DASHBOARD_URL],
+      ["#checkoutDashboard", REAL_DASHBOARD_URL],
+      ["#menuDashboard", REAL_DASHBOARD_URL],
+    ];
+
+    for (const [sel, url] of linkMap){
+      const el = $(sel);
+      if (el) el.href = url;
     }
 
     // =========================
-    // Link wiring
-    // =========================
-    document.getElementById("year").textContent = new Date().getFullYear();
-    document.getElementById("ownerName").textContent = OWNER_DISCORD;
-    document.getElementById("ownerSpan").textContent = OWNER_DISCORD;
-
-    const linkIdsDiscord = ["navDiscord","footerDiscord","inviteServerBtn","checkoutDiscord","menuDiscord"];
-    const linkIdsYoutube = ["navYouTube","footerYouTube","youtubeBtn","checkoutYouTube","menuYouTube"];
-    const linkIdsBot = ["botBtn","footerBot","checkoutBot","menuBot"];
-
-    linkIdsDiscord.forEach(id => { const a = document.getElementById(id); if(a) a.href = SERVER_INVITE_URL; });
-    linkIdsYoutube.forEach(id => { const a = document.getElementById(id); if(a) a.href = YT_URL; });
-    linkIdsBot.forEach(id => { const a = document.getElementById(id); if(a) a.href = BOT_INVITE_URL; });
-
-    ["openDashboard","dashboardHeroBtn","footerDashboard","menuDashboard","checkoutDashboard"]
-      .forEach(id => { const a = document.getElementById(id); if(a) a.href = REAL_DASHBOARD_URL; });
-
-    // =========================
-    // Stars background
+    // Stars canvas (lightweight)
     // =========================
     const canvas = document.getElementById("stars");
     const ctx = canvas.getContext("2d");
-    let stars = [];
-
-    function resizeStars(){
-      canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
-      canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
-      stars = [];
-      const count = Math.floor(Math.min(240, (window.innerWidth * window.innerHeight) / 8500));
-      for(let i=0;i<count;i++){
-        stars.push({
-          x: Math.random()*canvas.width,
-          y: Math.random()*canvas.height,
-          r: (Math.random()*1.4 + .4) * devicePixelRatio,
-          a: Math.random()*0.8 + 0.2,
-          s: (Math.random()*0.35 + 0.08) * devicePixelRatio
-        });
-      }
+    let W, H, stars = [];
+    function resize(){
+      W = canvas.width = window.innerWidth * devicePixelRatio;
+      H = canvas.height = window.innerHeight * devicePixelRatio;
+      stars = Array.from({length: Math.min(220, Math.floor((window.innerWidth*window.innerHeight)/8000))}, () => ({
+        x: Math.random()*W,
+        y: Math.random()*H,
+        r: (Math.random()*1.2 + 0.4) * devicePixelRatio,
+        a: Math.random()*0.6 + 0.2,
+        s: Math.random()*0.25 + 0.05
+      }));
     }
+    window.addEventListener("resize", resize, {passive:true});
+    resize();
 
-    function drawStars(){
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      for(const st of stars){
-        st.y += st.s;
-        if(st.y > canvas.height + 10) st.y = -10;
-        ctx.globalAlpha = st.a;
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      for (const st of stars){
+        st.y += st.s*devicePixelRatio;
+        if (st.y > H) { st.y = -10; st.x = Math.random()*W; }
         ctx.beginPath();
         ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = `rgba(255,255,255,${st.a})`;
         ctx.fill();
       }
-      requestAnimationFrame(drawStars);
+      requestAnimationFrame(draw);
     }
-
-    window.addEventListener("resize", resizeStars);
-    resizeStars();
-    drawStars();
+    draw();
 
     // =========================
-    // Reveal on scroll
+    // Scroll reveal
     // =========================
     const io = new IntersectionObserver((entries)=>{
       entries.forEach(e=>{
-        if(e.isIntersecting){
-          e.target.classList.add("on");
-          io.unobserve(e.target);
-        }
+        if (e.isIntersecting) e.target.classList.add("on");
       });
-    }, {threshold: .12});
-    document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+    }, {threshold:.12});
+    $$(".reveal").forEach(el => io.observe(el));
 
     // =========================
-    // To top button
+    // To top
     // =========================
-    const toTop = document.getElementById("toTop");
+    const toTopBtn = $("#toTop");
     window.addEventListener("scroll", ()=>{
-      if(window.scrollY > 700) toTop.classList.add("show");
-      else toTop.classList.remove("show");
-    });
-    toTop.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
+      if (window.scrollY > 450) toTopBtn.classList.add("show");
+      else toTopBtn.classList.remove("show");
+    }, {passive:true});
+    toTopBtn.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
 
     // =========================
-    // Commands rendering
+    // Commands UI
     // =========================
-    const cmdGrid = document.getElementById("cmdGrid");
-    const cmdSearch = document.getElementById("cmdSearch");
-    const cmdMeta = document.getElementById("cmdMeta");
-    const tabs = document.querySelectorAll(".tab");
     let activeTab = "free";
-
-    function escapeHtml(str){
-      return String(str)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
+    const cmdGrid = $("#cmdGrid");
+    const cmdMeta = $("#cmdMeta");
+    const cmdSearch = $("#cmdSearch");
 
     function renderCommands(){
       const q = (cmdSearch.value || "").trim().toLowerCase();
       const list = COMMANDS[activeTab] || [];
-      const filtered = list.filter(c=>{
-        const blob = `${c.name} ${c.tag} ${c.type} ${c.desc} ${c.usage}`.toLowerCase();
-        return !q || blob.includes(q);
-      });
-
-      const prefixCount = filtered.filter(x=>x.type === "Prefix").length;
-      const slashCount = filtered.filter(x=>x.type === "Slash").length;
+      const filtered = list.filter(c =>
+        !q ||
+        c.name.toLowerCase().includes(q) ||
+        c.desc.toLowerCase().includes(q) ||
+        c.tag.toLowerCase().includes(q) ||
+        c.usage.toLowerCase().includes(q)
+      );
 
       cmdMeta.innerHTML = `
-        <div class="chip">Showing <b>${filtered.length}</b> commands</div>
-        <div class="chip">Prefix <b>${prefixCount}</b></div>
-        <div class="chip">Slash <b>${slashCount}</b></div>
-        <div class="chip">Tab: <b>${activeTab === "free" ? "Free" : "Premium"}</b></div>
+        <span class="chip">Showing <b>${filtered.length}</b> / ${list.length}</span>
+        <span class="chip">Tab: <b>${activeTab === "free" ? "Free" : "Premium"}</b></span>
       `;
 
       cmdGrid.innerHTML = filtered.map(c => `
         <div class="cmdCard">
           <div class="cmdHead">
-            <div class="cmdName">${escapeHtml(c.name)}</div>
-            <div class="cmdTag ${
-              c.type === "Slash" ? "slash" : (activeTab === "premium" ? "premium" : "")
-            }">${escapeHtml(c.type)}</div>
+            <div class="cmdName">${c.name}</div>
+            <div class="cmdTag ${activeTab === "premium" ? "premium" : ""} ${c.type === "Slash" ? "slash" : ""}">
+              ${c.type === "Slash" ? "Slash" : "Prefix"} • ${c.tag}
+            </div>
           </div>
-          <div class="cmdDesc">${escapeHtml(c.desc)}</div>
-          <div class="cmdUsage">${escapeHtml(c.usage)}</div>
+          <div class="cmdDesc">${c.desc}</div>
+          <div class="cmdUsage">${c.usage}</div>
         </div>
       `).join("");
-
-      if(filtered.length === 0){
-        cmdGrid.innerHTML = `
-          <div class="cmdCard" style="grid-column: 1 / -1;">
-            <div class="cmdHead">
-              <div class="cmdName">No results</div>
-              <div class="cmdTag">Search</div>
-            </div>
-            <div class="cmdDesc">Try: <span class="mono">setup</span>, <span class="mono">premium</span>, <span class="mono">pingrole</span>, <span class="mono">ticketname</span>.</div>
-            <div class="cmdUsage">Tip: search works across name/desc/usage.</div>
-          </div>
-        `;
-      }
     }
 
-    tabs.forEach(t=>{
+    $$(".tab").forEach(t=>{
       t.addEventListener("click", ()=>{
-        tabs.forEach(x=>x.classList.remove("active"));
+        $$(".tab").forEach(x=>x.classList.remove("active"));
         t.classList.add("active");
         activeTab = t.dataset.tab;
         renderCommands();
       });
     });
-
     cmdSearch.addEventListener("input", renderCommands);
     renderCommands();
 
     // =========================
-    // Overlay system
+    // Checkout overlay
     // =========================
-    const buyOverlay = document.getElementById("buyOverlay");
-    const menuOverlay = document.getElementById("menuOverlay");
+    const buyOverlay = $("#buyOverlay");
+    const openCheckout = () => { buyOverlay.classList.add("show"); buyOverlay.setAttribute("aria-hidden","false"); };
+    const closeCheckout = () => { buyOverlay.classList.remove("show"); buyOverlay.setAttribute("aria-hidden","true"); };
 
-    function lockScroll(lock){ document.body.style.overflow = lock ? "hidden" : ""; }
+    $("#openCheckout").addEventListener("click", openCheckout);
+    $("#openCheckoutFooter").addEventListener("click", openCheckout);
+    $("#closeCheckout").addEventListener("click", closeCheckout);
+    buyOverlay.addEventListener("click", (e)=>{ if (e.target === buyOverlay) closeCheckout(); });
 
-    function showOverlay(which){
-      history.pushState({overlay: which}, "", "#"+which);
-      openOverlay(which, false);
-    }
-
-    function openOverlay(which, push){
-      if(push) history.pushState({overlay: which}, "", "#"+which);
-
-      [buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
-      if(which === "checkout") buyOverlay.classList.add("show");
-      if(which === "menu") menuOverlay.classList.add("show");
-      lockScroll(true);
-    }
-
-    function closeAllOverlays(){
-      [buyOverlay,menuOverlay].forEach(o=>o.classList.remove("show"));
-      lockScroll(false);
-    }
-
-    function closeViaBack(){
-      if(buyOverlay.classList.contains("show") || menuOverlay.classList.contains("show")){
-        history.back();
-      }
-    }
-
-    window.addEventListener("popstate", (e)=>{
-      if(e.state && e.state.overlay){
-        openOverlay(e.state.overlay, false);
-      }else{
-        closeAllOverlays();
-      }
-    });
-
-    window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeViaBack(); });
-
-    [buyOverlay,menuOverlay].forEach(o=>{
-      o.addEventListener("mousedown", (e)=>{ if(e.target === o) closeViaBack(); });
-    });
-
-    // Buttons
-    document.getElementById("openCheckout").addEventListener("click", ()=> showOverlay("checkout"));
-    document.getElementById("openCheckoutFooter").addEventListener("click", ()=> showOverlay("checkout"));
-    document.getElementById("closeCheckout").addEventListener("click", closeViaBack);
-
-    document.getElementById("openMenu").addEventListener("click", ()=> showOverlay("menu"));
-    document.getElementById("closeMenu").addEventListener("click", closeViaBack);
-
-    document.getElementById("menuBuy").addEventListener("click", ()=>{
-      closeViaBack();
-      setTimeout(()=> showOverlay("checkout"), 80);
-    });
-    document.querySelectorAll('[data-close="menu"]').forEach(a=>{
-      a.addEventListener("click", ()=> closeViaBack());
-    });
-
-    document.getElementById("scrollPricing").addEventListener("click", ()=>{
-      document.getElementById("pricing").scrollIntoView({behavior:"smooth", block:"start"});
-    });
-    document.getElementById("scrollCommands").addEventListener("click", ()=>{
-      document.getElementById("commands").scrollIntoView({behavior:"smooth", block:"start"});
-    });
-
-    // =========================
-    // Checkout logic
-    // =========================
-    const planPicked = document.getElementById("planPicked");
-    const payMsg = document.getElementById("payMsg");
-    const ltcAddr = document.getElementById("ltcAddr");
+    // Plan selection -> fill inputs
+    const planPicked = $("#planPicked");
+    const payMsg = $("#payMsg");
+    const ltcAddr = $("#ltcAddr");
     ltcAddr.value = LTC_ADDRESS;
 
     function setPlan(plan, price){
       planPicked.value = `${plan} — $${price}`;
-      const msg = `${BRAND} Premium | Plan: ${plan} | Price: $${price} | User: (your discord) | TXID: (paste txid)`;
-      payMsg.value = msg;
-      document.getElementById("buyTitle").textContent = `💎 Buy Premium — ${plan} ($${price})`;
+      payMsg.value = `[Nozzarri Premium] Plan=${plan} Price=$${price} | YourUser=YOURNAME | TxID=PASTE_TXID`;
+      $("#buyTitle").textContent = `💎 Buy Premium • ${plan}`;
     }
-    setPlan("1 MONTH", 2);
+    // default
+    setPlan("1 MONTH", "2");
 
-    document.querySelectorAll(".plan").forEach(card=>{
-      const plan = card.dataset.plan;
-      const price = card.dataset.price;
-
-      card.querySelector(".buyBtn").addEventListener("click", ()=>{
+    $$(".plan").forEach(p=>{
+      const plan = p.dataset.plan;
+      const price = p.dataset.price;
+      p.querySelector(".buyBtn")?.addEventListener("click", ()=>{
         setPlan(plan, price);
-        showOverlay("checkout");
+        openCheckout();
       });
-
-      card.querySelector(".copyLtcBtn").addEventListener("click", ()=> copyText(LTC_ADDRESS));
+      p.querySelector(".copyLtcBtn")?.addEventListener("click", ()=> copy(LTC_ADDRESS));
+      p.addEventListener("click", (e)=>{
+        if (e.target.closest("button")) return;
+        setPlan(plan, price);
+      });
     });
 
-    document.getElementById("copyLtcFooter").addEventListener("click", ()=> copyText(LTC_ADDRESS));
+    $("#copyPayInfo").addEventListener("click", ()=> copy(`LTC: ${LTC_ADDRESS}\nMessage: ${payMsg.value}\nOwner: ${OWNER_DISCORD}`));
+    $("#copyAddrOnly").addEventListener("click", ()=> copy(LTC_ADDRESS));
+    $("#copyOwnerOnly").addEventListener("click", ()=> copy(OWNER_DISCORD));
+    $("#copyLtcFooter").addEventListener("click", ()=> copy(LTC_ADDRESS));
 
-    document.getElementById("copyPayInfo").addEventListener("click", ()=>{
-      const combo =
-`LTC Address: ${LTC_ADDRESS}
-Owner: ${OWNER_DISCORD}
-Message: ${payMsg.value}`;
-      copyText(combo);
+    // =========================
+    // Mobile menu overlay
+    // =========================
+    const menuOverlay = $("#menuOverlay");
+    const openMenu = () => { menuOverlay.classList.add("show"); menuOverlay.setAttribute("aria-hidden","false"); };
+    const closeMenu = () => { menuOverlay.classList.remove("show"); menuOverlay.setAttribute("aria-hidden","true"); };
+
+    $("#openMenu").addEventListener("click", openMenu);
+    $("#closeMenu").addEventListener("click", closeMenu);
+    menuOverlay.addEventListener("click", (e)=>{ if (e.target === menuOverlay) closeMenu(); });
+
+    $("[data-close='menu']")?.addEventListener("click", closeMenu);
+    $$("[data-close='menu']").forEach(a => a.addEventListener("click", closeMenu));
+    $("#menuBuy").addEventListener("click", ()=>{ closeMenu(); openCheckout(); });
+
+    // ESC to close overlays
+    window.addEventListener("keydown", (e)=>{
+      if (e.key !== "Escape") return;
+      if (buyOverlay.classList.contains("show")) closeCheckout();
+      if (menuOverlay.classList.contains("show")) closeMenu();
     });
-    document.getElementById("copyAddrOnly").addEventListener("click", ()=> copyText(LTC_ADDRESS));
-    document.getElementById("copyOwnerOnly").addEventListener("click", ()=> copyText(OWNER_DISCORD));
 
-    // Boot hash
-    (function boot(){
-      const hash = (location.hash || "").replace("#","");
-      if(hash === "checkout" || hash === "menu"){
-        history.replaceState({overlay: hash}, "", "#"+hash);
-        openOverlay(hash, false);
-      }else{
-        history.replaceState(null, "", "#top");
-      }
-    })();
+    // -------------------------
+    // Extra polish: Button ripple
+    // -------------------------
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".btn, .tab, .x");
+      if (!btn) return;
+      const rect = btn.getBoundingClientRect();
+      const span = document.createElement("span");
+      span.className = "ripple";
+      span.style.left = (e.clientX - rect.left) + "px";
+      span.style.top  = (e.clientY - rect.top) + "px";
+      btn.appendChild(span);
+      span.addEventListener("animationend", () => span.remove());
+    });
+
+    // -------------------------
+    // Hero tilt (desktop only)
+    // -------------------------
+    const heroCard = document.querySelector(".heroCard");
+    if (heroCard && window.matchMedia("(pointer:fine)").matches){
+      let raf = null;
+      const maxTilt = 7;
+      const onMove = (ev) => {
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const r = heroCard.getBoundingClientRect();
+          const px = (ev.clientX - (r.left + r.width/2)) / (r.width/2);
+          const py = (ev.clientY - (r.top  + r.height/2)) / (r.height/2);
+          const rx = (-py * maxTilt).toFixed(2);
+          const ry = ( px * maxTilt).toFixed(2);
+          heroCard.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateY(-1px)`;
+        });
+      };
+      const reset = () => { heroCard.style.transform = ""; };
+      heroCard.addEventListener("mousemove", onMove);
+      heroCard.addEventListener("mouseleave", reset);
+    }
   </script>
 </body>
 </html>

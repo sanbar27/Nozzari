@@ -66,7 +66,6 @@
         radial-gradient(1200px 800px at 30% 15%, rgba(124,58,237,.10), transparent 60%),
         radial-gradient(900px 650px at 70% 20%, rgba(56,189,248,.08), transparent 62%),
         radial-gradient(1100px 750px at 50% 90%, rgba(34,197,94,.06), transparent 64%);
-      filter: blur(0px);
       opacity:1;
       z-index:-3;
     }
@@ -125,10 +124,12 @@
       backdrop-filter: blur(12px);
       background: linear-gradient(180deg, rgba(5,6,15,.80), rgba(5,6,15,.45));
       border-bottom: 1px solid rgba(255,255,255,.08);
+      transition: background .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
     }
     .navInner{
       height:72px;
       display:flex; align-items:center; justify-content:space-between; gap:14px;
+      transition: height .25s var(--ease);
     }
     .brand{
       display:flex; align-items:center; gap:12px;
@@ -143,6 +144,7 @@
       box-shadow: 0 0 34px rgba(124,58,237,.18);
       overflow:hidden;
       position:relative;
+      transition: width .25s var(--ease), height .25s var(--ease);
     }
     .logo::after{
       content:"";
@@ -256,6 +258,7 @@
       overflow:hidden;
       position:relative;
       transform: translateZ(0);
+      will-change: transform;
     }
     .heroCard::before{
       content:"";
@@ -270,7 +273,6 @@
       position:absolute; inset:-2px;
       border-radius: var(--radius2);
       background: linear-gradient(90deg, rgba(56,189,248,.12), rgba(124,58,237,.14), rgba(34,197,94,.10));
-      filter: blur(0px);
       opacity:.7;
       pointer-events:none;
       mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
@@ -452,6 +454,8 @@
       cursor:pointer;
       transition: transform .18s var(--ease), background .18s var(--ease), border-color .18s var(--ease);
       user-select:none;
+      position:relative;
+      overflow:hidden;
     }
     .tab:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
     .tab.active{
@@ -850,13 +854,14 @@
       .pricing{grid-template-columns: 1fr; }
       .faq{grid-template-columns: 1fr; }
       .checkoutGrid{grid-template-columns: 1fr;}
+      .footGrid{grid-template-columns: 1fr;}
     }
     @media (max-width: 860px){
       .navLinks{display:none}
       .hamburger{display:block}
     }
 
-    /* Extra graphics: Aurora + floating blobs + section separators */
+    /* Extra graphics: Aurora + floating blobs */
     .aurora{
       position:absolute; inset:-40%;
       background:
@@ -885,7 +890,6 @@
       border-radius: 999px;
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.22), rgba(255,255,255,0));
       border: 1px solid rgba(255,255,255,.08);
-      filter: blur(.2px);
       animation: floater 14s var(--ease) infinite;
       transform: translate3d(0,0,0);
     }
@@ -911,10 +915,6 @@
       border-radius: 999px;
     }
 
-    /* Micro-interactions */
-    .btn{ will-change: transform; }
-    .card, .plan, .cmdCard{ transform-style: preserve-3d; }
-
     /* Button ripple */
     .ripple{
       position:absolute;
@@ -930,10 +930,172 @@
       to{ width: 380px; height: 380px; opacity:0; }
     }
 
+    /* =========================
+       PC vs MOBILE “2 versions”
+       ========================= */
+
+    /* PC top scroll progress */
+    .pcProgress{
+      position:fixed; top:0; left:0; right:0;
+      height:3px;
+      background: rgba(255,255,255,.06);
+      z-index:999;
+      display:none;
+    }
+    .pcProgressFill{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(56,189,248,.9), rgba(124,58,237,.9), rgba(34,197,94,.85));
+      box-shadow: 0 0 20px rgba(56,189,248,.18);
+      border-radius: 999px;
+    }
+
+    /* PC: navbar “follows” + shrinks */
+    .nav.pcFollow{
+      border-bottom-color: rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(5,6,15,.88), rgba(5,6,15,.52));
+      box-shadow: 0 18px 80px rgba(0,0,0,.40);
+    }
+    .nav.pcFollow .navInner{ height:64px; }
+    .nav.pcFollow .logo{ width:38px; height:38px; border-radius: 14px; }
+
+    /* MOBILE dock (hidden on PC) */
+    .mDock{
+      position:fixed;
+      left:10px; right:10px; bottom:10px;
+      height:64px;
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,12,26,.70);
+      backdrop-filter: blur(16px);
+      display:none;
+      z-index:999;
+      padding: 8px 8px;
+      box-shadow: 0 20px 80px rgba(0,0,0,.55);
+      gap:6px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .mDockBtn{
+      appearance:none;
+      border:none;
+      background: transparent;
+      color: rgba(238,242,255,.86);
+      font-family: var(--font);
+      font-weight: 950;
+      cursor:pointer;
+      width:20%;
+      height:100%;
+      border-radius: 16px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      text-decoration:none;
+      transition: transform .18s var(--ease), background .18s var(--ease);
+    }
+    .mDockBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); }
+    .mDockI{ font-size:18px; line-height:1; }
+    .mDockT{ font-size:11px; line-height:1; opacity:.92; }
+    .mDockBtn.active{
+      background: linear-gradient(135deg, rgba(124,58,237,.35), rgba(56,189,248,.22));
+      border: 1px solid rgba(255,255,255,.10);
+    }
+
+    /* MOBILE draggable widget */
+    .mDragWrap{
+      position: fixed;
+      left: 14px;
+      right: 14px;
+      bottom: 88px; /* above dock */
+      z-index: 998;
+      display:none;
+      pointer-events:none;
+    }
+    .mDragCard{
+      pointer-events:auto;
+      width: 100%;
+      border-radius: 24px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: 0 24px 90px rgba(0,0,0,.55);
+      overflow:hidden;
+      transform: translate3d(0,0,0);
+      touch-action:none;
+      user-select:none;
+    }
+    .mDragTop{
+      padding: 12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.16);
+    }
+    .mDragPill{
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-weight: 1000;
+      font-size: 12px;
+    }
+    .mDragHint{ font-weight: 900; font-size:12px; color: rgba(238,242,255,.70); }
+    .mDragBody{ padding: 14px; }
+    .mDragRow{ display:flex; gap:10px; align-items:center; }
+    .mDot{
+      width:12px; height:12px; border-radius:999px;
+      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(56,189,248,.75));
+      box-shadow: 0 0 18px rgba(34,197,94,.22);
+    }
+    .mDragTitle{ font-weight:1000; letter-spacing:-.2px; }
+    .mDragSub{ font-weight:850; font-size:12px; color: rgba(238,242,255,.70); margin-top:2px; }
+    .mDragBtns{ display:flex; gap:10px; margin-top:12px; }
+    .mMiniBtn{
+      flex:1;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      font-weight:1000;
+      padding: 12px 12px;
+      cursor:pointer;
+      transition: transform .18s var(--ease), background .18s var(--ease);
+    }
+    .mMiniBtn:active{ transform: scale(.99); }
+    .mMiniBtn.primary{
+      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(56,189,248,.85));
+      border-color: rgba(255,255,255,.16);
+    }
+
+    /* MOBILE layout cleanup: reduce “busy” effects */
+    @media (max-width: 860px){
+      canvas#stars{ opacity:.18; }
+      .gridTex{ opacity:.05; }
+      .aurora{ opacity:.38; }
+      .floaters{ opacity:.32; }
+      .navLinks{ display:none !important; }
+      .mDock{ display:flex; }
+      .mDragWrap{ display:block; }
+      body{ padding-bottom: 92px; } /* space for dock */
+      .hero{ padding-top: 22px; }
+      .heroPad{ padding: 18px; }
+      .miniRow{ gap:8px; }
+      .miniStat{ flex: 1 1 auto; }
+    }
+
+    /* PC only */
+    @media (min-width: 861px){
+      .pcProgress{ display:block; }
+    }
+
     /* Respect user motion preferences */
     @media (prefers-reduced-motion: reduce){
       .glow, .gridTex, .logo::after, .btn::after, .card::after, .plan::before, .aurora, .floaters span{ animation:none !important; transition:none !important; }
       .reveal{ opacity:1; transform:none; }
+      canvas#stars{ display:none !important; }
     }
   </style>
 </head>
@@ -950,6 +1112,9 @@
 
     <canvas id="stars"></canvas>
   </div>
+
+  <!-- TOP PROGRESS BAR (PC) -->
+  <div class="pcProgress" aria-hidden="true"><div class="pcProgressFill" id="pcProgressFill"></div></div>
 
   <!-- NAV -->
   <header class="nav">
@@ -1301,6 +1466,48 @@
     </div>
   </div>
 
+  <!-- MOBILE BOTTOM DOCK (mobile only) -->
+  <nav class="mDock" aria-label="Mobile navigation">
+    <button class="mDockBtn" data-go="#top" type="button">
+      <span class="mDockI">🏠</span><span class="mDockT">Home</span>
+    </button>
+    <button class="mDockBtn" data-go="#features" type="button">
+      <span class="mDockI">✨</span><span class="mDockT">Features</span>
+    </button>
+    <button class="mDockBtn" data-go="#commands" type="button">
+      <span class="mDockI">📚</span><span class="mDockT">Commands</span>
+    </button>
+    <button class="mDockBtn" data-go="#pricing" type="button">
+      <span class="mDockI">💎</span><span class="mDockT">Premium</span>
+    </button>
+    <a class="mDockBtn link" id="mDockDiscord" href="#" target="_blank" rel="noreferrer">
+      <span class="mDockI">🟣</span><span class="mDockT">Discord</span>
+    </a>
+  </nav>
+
+  <!-- MOBILE DRAGGABLE CARD (mobile only) -->
+  <div class="mDragWrap" aria-hidden="true">
+    <div class="mDragCard" id="mDragCard">
+      <div class="mDragTop">
+        <div class="mDragPill">🎫 Drag me</div>
+        <div class="mDragHint">Ticket widget vibe</div>
+      </div>
+      <div class="mDragBody">
+        <div class="mDragRow">
+          <span class="mDot"></span>
+          <div>
+            <div class="mDragTitle">Nozzarri Tickets</div>
+            <div class="mDragSub">Support • Trade • Logs • Premium keys</div>
+          </div>
+        </div>
+        <div class="mDragBtns">
+          <button class="mMiniBtn" data-go="#commands" type="button">View Commands</button>
+          <button class="mMiniBtn primary" id="mMiniJoin" type="button">Join Discord</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     // =========================
     // CONFIG (YOUR REAL VALUES)
@@ -1315,17 +1522,14 @@
       `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&scope=bot%20applications.commands&permissions=${PERMISSIONS}`;
 
     const YT_URL = "https://www.youtube.com/channel/UC8Ovc5xT-tXXIjxLnVe72dQ";
-    const SERVER_INVITE_URL = "https://discord.gg/QwzxD49A";
+    const SERVER_INVITE_URL = "https://discord.gg/QwzxD49A"; // ✅ updated
     const LTC_ADDRESS = "LPxonLCBtrcHnYAompBSXsboTfJQ8Eyuz8";
 
     // ✅ REAL DASHBOARD URL
     const REAL_DASHBOARD_URL = "http://85.215.159.4:9717/dashboard";
 
     // ==========================================================
-    // REAL Commands list (based on your bot index.js command checks)
-    // - Prefix commands: ?...
-    // - Slash commands: /...
-    // NOTE: you said you deleted ?help => it's NOT listed here.
+    // Commands list
     // ==========================================================
     const COMMANDS = {
       free: [
@@ -1401,6 +1605,7 @@
       ["#inviteServerBtn", SERVER_INVITE_URL],
       ["#checkoutDiscord", SERVER_INVITE_URL],
       ["#menuDiscord", SERVER_INVITE_URL],
+      ["#mDockDiscord", SERVER_INVITE_URL],
 
       ["#navYouTube", YT_URL],
       ["#footerYouTube", YT_URL],
@@ -1551,7 +1756,6 @@
       payMsg.value = `[Nozzarri Premium] Plan=${plan} Price=$${price} | YourUser=YOURNAME | TxID=PASTE_TXID`;
       $("#buyTitle").textContent = `💎 Buy Premium • ${plan}`;
     }
-    // default
     setPlan("1 MONTH", "2");
 
     $$(".plan").forEach(p=>{
@@ -1584,7 +1788,6 @@
     $("#closeMenu").addEventListener("click", closeMenu);
     menuOverlay.addEventListener("click", (e)=>{ if (e.target === menuOverlay) closeMenu(); });
 
-    $("[data-close='menu']")?.addEventListener("click", closeMenu);
     $$("[data-close='menu']").forEach(a => a.addEventListener("click", closeMenu));
     $("#menuBuy").addEventListener("click", ()=>{ closeMenu(); openCheckout(); });
 
@@ -1632,6 +1835,125 @@
       heroCard.addEventListener("mousemove", onMove);
       heroCard.addEventListener("mouseleave", reset);
     }
+
+    // =========================
+    // PC follow navbar + progress
+    // =========================
+    (function(){
+      const nav = document.querySelector(".nav");
+      const fill = document.getElementById("pcProgressFill");
+      function onScroll(){
+        const isDesktop = window.matchMedia("(min-width: 861px)").matches;
+        if (!isDesktop) return;
+
+        const y = window.scrollY || 0;
+        if (y > 30) nav.classList.add("pcFollow");
+        else nav.classList.remove("pcFollow");
+
+        const doc = document.documentElement;
+        const max = (doc.scrollHeight - doc.clientHeight) || 1;
+        const pct = Math.max(0, Math.min(1, y / max));
+        if (fill) fill.style.width = (pct * 100).toFixed(1) + "%";
+      }
+      window.addEventListener("scroll", onScroll, {passive:true});
+      onScroll();
+    })();
+
+    // =========================
+    // Mobile dock navigation (active highlight)
+    // =========================
+    (function(){
+      const dock = document.querySelector(".mDock");
+      if (!dock) return;
+
+      dock.addEventListener("click", (e)=>{
+        const btn = e.target.closest(".mDockBtn");
+        if (!btn || btn.classList.contains("link")) return;
+        const go = btn.getAttribute("data-go");
+        if (!go) return;
+        document.querySelector(go)?.scrollIntoView({behavior:"smooth"});
+      });
+
+      const sections = ["#top","#features","#commands","#pricing"].map(id => document.querySelector(id)).filter(Boolean);
+      const buttons = [...dock.querySelectorAll(".mDockBtn")].filter(b => !b.classList.contains("link"));
+
+      function setActive(hash){
+        buttons.forEach(b => b.classList.toggle("active", b.getAttribute("data-go") === hash));
+      }
+
+      const io2 = new IntersectionObserver((entries)=>{
+        const vis = entries.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];
+        if (!vis) return;
+        const id = "#" + vis.target.id;
+        setActive(id === "#top" ? "#top" : id);
+      }, {threshold:[.25,.45,.65]});
+
+      sections.forEach(s => io2.observe(s));
+      setActive("#top");
+    })();
+
+    // =========================
+    // Mobile draggable “ticket widget” (mobile only)
+    // =========================
+    (function(){
+      const card = document.getElementById("mDragCard");
+      if (!card) return;
+
+      const isMobile = window.matchMedia("(max-width: 860px)").matches && window.matchMedia("(pointer:coarse)").matches;
+      const wrap = document.querySelector(".mDragWrap");
+      if (!isMobile){
+        if (wrap) wrap.style.display = "none";
+        return;
+      }
+      if (wrap) wrap.style.pointerEvents = "auto";
+
+      card.addEventListener("click", (e)=>{
+        const goBtn = e.target.closest("[data-go]");
+        if (goBtn){
+          const go = goBtn.getAttribute("data-go");
+          document.querySelector(go)?.scrollIntoView({behavior:"smooth"});
+          return;
+        }
+        if (e.target && e.target.id === "mMiniJoin"){
+          window.open(SERVER_INVITE_URL, "_blank", "noopener,noreferrer");
+        }
+      });
+
+      let startX=0, startY=0, dragging=false;
+
+      card.addEventListener("pointerdown", (ev)=>{
+        dragging = true;
+        card.setPointerCapture(ev.pointerId);
+        startX = ev.clientX; startY = ev.clientY;
+        card.style.transition = "";
+        card.style.transform = "translate3d(0,0,0) scale(1.01)";
+      });
+
+      card.addEventListener("pointermove", (ev)=>{
+        if (!dragging) return;
+        const dx = ev.clientX - startX;
+        const dy = ev.clientY - startY;
+        const maxX = 46, maxY = 36;
+        const cx = Math.max(-maxX, Math.min(maxX, dx));
+        const cy = Math.max(-maxY, Math.min(maxY, dy));
+        const rot = (cx / maxX) * 2.2;
+        card.style.transform = `translate3d(${cx}px, ${cy}px, 0) rotate(${rot}deg) scale(1.01)`;
+      });
+
+      function snapBack(){
+        card.style.transition = "transform 420ms cubic-bezier(.2,.8,.2,1)";
+        card.style.transform = "translate3d(0,0,0) scale(1)";
+        setTimeout(()=>{ card.style.transition = ""; }, 460);
+      }
+
+      function endDrag(){
+        if (!dragging) return;
+        dragging = false;
+        snapBack();
+      }
+      card.addEventListener("pointerup", endDrag);
+      card.addEventListener("pointercancel", endDrag);
+    })();
   </script>
 </body>
 </html>

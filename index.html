@@ -1097,6 +1097,42 @@
       .reveal{ opacity:1; transform:none; }
       canvas#stars{ display:none !important; }
     }
+
+
+    /* ======================================================
+       MOBILE FIX PATCH (No delete — overrides only)
+       - disables the draggable widget that blocks the screen
+       - prevents cut/overflow issues on phones
+       ====================================================== */
+
+    /* Never let any element force horizontal scrolling */
+    html, body { max-width: 100%; overflow-x: hidden; }
+
+    /* Make long text/code not break layouts */
+    .cmdUsage { max-width: 100%; }
+    @media (max-width: 860px){
+      .cmdUsage{
+        white-space: normal;
+        overflow: visible;
+        word-break: break-word;
+      }
+      /* Buttons on mobile: full width and easy to tap */
+      .heroBtns .btn{
+        width: 100%;
+        justify-content: center;
+      }
+      .navBtns .btn{ padding: 12px 14px; }
+
+      /* Disable the draggable widget (it was blocking the whole window) */
+      .mDragWrap{ display:none !important; }
+      /* Keep the dock spacing */
+      body{ padding-bottom: 92px; }
+
+      /* Panels/overlays always fit inside the screen */
+      .overlay{ padding: 14px; }
+      .panel, .menuSheet{ max-height: calc(100vh - 28px); }
+    }
+
   </style>
 </head>
 
@@ -1954,6 +1990,86 @@
       card.addEventListener("pointerup", endDrag);
       card.addEventListener("pointercancel", endDrag);
     })();
+
+
+    // ======================================================
+    // MOBILE FIX PATCH (No delete — safe runtime overrides)
+    // - fallback copy for http / non-secure contexts
+    // - lock scroll when overlays are open (prevents jump + cut)
+    // ======================================================
+
+    // Fallback copy when navigator.clipboard is blocked
+    (function(){
+      const _copy = window.copy;
+      window.copy = function(text){
+        if (navigator.clipboard && window.isSecureContext){
+          navigator.clipboard.writeText(text).then(()=>toast("Copied ✅")).catch(()=>fallback(text));
+        } else fallback(text);
+      };
+      function fallback(text){
+        try{
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          ta.style.top = "-9999px";
+          document.body.appendChild(ta);
+          ta.focus(); ta.select();
+          document.execCommand("copy");
+          ta.remove();
+          toast("Copied ✅");
+        }catch(err){
+          toast("Copy failed ❌");
+        }
+      }
+    })();
+
+    // Lock/unlock body scroll when overlay opens (mobile-friendly)
+    (function(){
+      const buyOverlay = document.getElementById("buyOverlay");
+      const menuOverlay = document.getElementById("menuOverlay");
+      if (!buyOverlay || !menuOverlay) return;
+
+      let savedY = 0;
+      const body = document.body;
+
+      function anyOpen(){
+        return buyOverlay.classList.contains("show") || menuOverlay.classList.contains("show");
+      }
+      function lock(){
+        savedY = window.scrollY || 0;
+        body.style.position = "fixed";
+        body.style.top = `-${savedY}px`;
+        body.style.left = "0";
+        body.style.right = "0";
+        body.style.width = "100%";
+      }
+      function unlock(){
+        body.style.position = "";
+        body.style.top = "";
+        body.style.left = "";
+        body.style.right = "";
+        body.style.width = "";
+        window.scrollTo(0, savedY);
+      }
+
+      const obs = new MutationObserver(()=>{
+        if (anyOpen()) lock();
+        else unlock();
+      });
+      obs.observe(buyOverlay, {attributes:true, attributeFilter:["class"]});
+      obs.observe(menuOverlay, {attributes:true, attributeFilter:["class"]});
+    })();
+
+    // Hard-disable the mobile drag widget in JS too (extra safety)
+    (function(){
+      const wrap = document.querySelector(".mDragWrap");
+      if (wrap){
+        wrap.style.display = "none";
+        wrap.style.pointerEvents = "none";
+      }
+    })();
+
   </script>
 </body>
 </html>
